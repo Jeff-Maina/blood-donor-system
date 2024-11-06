@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .form import RegisterUserForm
+from .form import RegisterUserForm, UserProfileForm
 from .models import CustomUser
 from django.contrib.auth import authenticate, login, logout
 
@@ -31,7 +31,26 @@ def register_user(request):
             )
 
             login(request, user)
-            return redirect("home")
+            return redirect("complete-profile")
     else:
         form = RegisterUserForm()
     return render(request, "user/register.html", {'form': form})
+
+
+def complete_profile(request):
+    if request.method == "POST":
+
+        form = UserProfileForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+
+            profile.save()
+            return redirect("dashboard")
+    else:
+        form = UserProfileForm()
+    return render(request, "user/complete-profile.html", {"form": form})
+
+
+def dashboard(request):
+    return render(request, 'user/dashboard')

@@ -25,15 +25,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    firstname = models.CharField(max_length=15,null=True)
+    lastname = models.CharField(max_length=15,null=True)
     date_of_birth = models.DateField()
     phone = models.CharField(max_length=15)
     county = models.CharField(max_length=100)
-    address = models.TextField()
     blood_group = models.CharField(max_length=3)
     gender = models.CharField(max_length=50)
-    weight = models.FloatField()
-    hemoglobin_level = models.FloatField()
-    is_in_good_health = models.BooleanField(default=True)
     emergency_contact_name = models.CharField(max_length=100, blank=True)
     emergency_contact_phone = models.CharField(max_length=15, blank=True)
 

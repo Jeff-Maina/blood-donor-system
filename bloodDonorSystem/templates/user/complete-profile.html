@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %} Blood Donor System | User Signup{% endblock %}
+
+{% block navbar%} {% endblock %}
+
+{% block content %}
+<div class="w-full max-w-7xl mx-auto pt-6">
+   <div class="max-w-lg mx-auto flex flex-col gap-6 items-start">
+
+      <div class="flex flex-col gap-2">
+         <h1 class="text-2xl font-bold tracking-tight text-neutral-800">Let's finish setting up your account</h1>
+         <p class=" text-neutral-600 text-sm  mb-6">
+            Welcome! Please fill in the details to get started.
+
+         </p>
+      </div>
+
+      <form method="POST" action="{% url 'complete-profile' %}" class="form w-full">
+         {% csrf_token %}
+
+         {{form.as_p}}
+         <button type="submit"
+            class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 rounded py-2 justify-center font-medium text-white">Register
+            <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
+         </button>
+      </form>
+
+ 
+   </div>
+</div>
+{% endblock %}
