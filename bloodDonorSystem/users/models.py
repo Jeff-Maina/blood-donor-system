@@ -32,8 +32,7 @@ class UserProfile(models.Model):
     county = models.CharField(max_length=100)
     blood_group = models.CharField(max_length=3)
     gender = models.CharField(max_length=50)
-    emergency_contact_name = models.CharField(max_length=100, blank=True)
-    emergency_contact_phone = models.CharField(max_length=15, blank=True)
+
 
     def age(self):
         return (timezone.now().date() - self.date_of_birth).days // 365

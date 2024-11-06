@@ -71,9 +71,11 @@ class UserProfileForm(forms.ModelForm):
             'firstname': forms.TextInput(attrs={'placeholder': 'Enter your firstname'}),
             'lastname': forms.TextInput(attrs={'placeholder': 'Enter your lastname'}),
             'county': forms.TextInput(attrs={'placeholder': 'Enter your county'}),
-            'blood_group': forms.Select(choices=BLOOD_TYPES),
+            'blood_group': forms.Select(choices=BLOOD_TYPES, attrs={"class": "custom-select"}),
             'gender': forms.Select(choices=GENDERS),
         }
+
+        
 
     def complete_profile(self):
         if self.is_valid:

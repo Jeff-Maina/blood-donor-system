@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .form import RegisterUserForm, UserProfileForm
 from .models import CustomUser
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
@@ -36,7 +37,7 @@ def register_user(request):
         form = RegisterUserForm()
     return render(request, "user/register.html", {'form': form})
 
-
+@login_required
 def complete_profile(request):
     if request.method == "POST":
 
@@ -51,6 +52,6 @@ def complete_profile(request):
         form = UserProfileForm()
     return render(request, "user/complete-profile.html", {"form": form})
 
-
+@login_required
 def dashboard(request):
-    return render(request, 'user/dashboard')
+    return render(request, 'user/dashboard.html')

@@ -12,23 +12,69 @@
 }
 
 .form {
-  @apply  mx-auto flex flex-col gap-3;
+  @apply mx-auto flex flex-col gap-3;
 }
 
-.form p {
+.form p,
+.form-group {
   @apply flex flex-col gap-1;
 }
 
-.form p label {
-  @apply font-medium text-neutral-800
+.form p label,
+.form-group label {
+  @apply font-medium text-neutral-800;
 }
 
-
-.form p input {
+.form p input,
+.form-group input {
   @apply flex flex-col border border-neutral-200 rounded-md px-3 py-1.5 placeholder:text-neutral-400 placeholder:text-sm outline-none focus:border-neutral-500;
 }
 
-
-.errorlist > li{
+.errorlist > li {
   @apply text-red-500 text-sm;
+}
+
+select {
+  appearance: none;
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  position: relative;
+  cursor: pointer;
+  @apply px-3 py-1.5 border rounded-md;
+}
+
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select::before,
+.custom-select::after {
+  --size: 0.3rem;
+  position: absolute;
+  content: "";
+  right: 1rem;
+  pointer-events: none;
+}
+
+.custom-select::before {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-bottom: var(--size) solid #858585;
+  top: 60%;
+  z-index: 10;
+}
+
+.custom-select::after {
+  border-left: var(--size) solid transparent;
+  border-right: var(--size) solid transparent;
+  border-top: var(--size) solid #858585;
+  top: 72%;
+}
+
+
+option{
+  appearance: none !important;
+  @apply p-2 hover: hover:!bg-neutral-200 !cursor-pointer
 }
