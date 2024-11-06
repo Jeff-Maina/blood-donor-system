@@ -1,1 +1,20 @@
 /bloodDonorSystem/node_modules
+/bloodDonorSystem/db.sqlite3
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore log files
+*.log
+
+# Ignore temporary files and folders
+temp/
+*.tmp
+
+# Ignore environment variables and configurations
+.env
+
+# Ignore IDE-specific files (e.g., PyCharm)
+.idea/
+.vscode/

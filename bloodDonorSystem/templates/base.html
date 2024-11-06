@@ -22,8 +22,7 @@
 <body>
     <nav id="navbar" class="w-full h-16 flex items-center justify-between mx-auto max-w-7xl">
 
-        {% block navbar %}
-        <div>
+        <div class="">
             <div class="flex items-center gap-2">
                 <i data-lucide="heart-pulse" class="stroke-red-500"></i>
                 <a href="{% url 'home' %}" class="font-bold ">
@@ -31,9 +30,14 @@
                 </a>
             </div>
         </div>
+        {% block navbar %}
         <ul class="flex items-center gap-6">
 
-            <li><button class="text-sm font-medium hover;text-neutral-700 hover:text-black">Sign in</button></li>
+            <li>
+                <a href="{% url 'login' %}">
+                    <button class="text-sm font-medium hover;text-neutral-700 hover:text-black">Sign in</button>
+                </a>
+            </li>
             <li>
                 <a href="{% url 'get-started' %}">
                     <button

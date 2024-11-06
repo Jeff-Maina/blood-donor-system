@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .form import RegisterUserForm
+from .models import CustomUser
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
@@ -9,3 +12,26 @@ def home_view(request):
 
 def get_started(request):
     return render(request, 'get-started.html')
+
+
+def login_user(request):
+    return render(request, 'login.html')
+
+
+def register_user(request):
+    if request.method == "POST":
+        form = RegisterUserForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+
+            user = CustomUser.objects.create_user(
+                email=email, password=password
+            )
+
+            login(request, user)
+            return redirect("home")
+    else:
+        form = RegisterUserForm()
+    return render(request, "user/register.html", {'form': form})

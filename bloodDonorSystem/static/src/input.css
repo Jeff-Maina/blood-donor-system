@@ -10,3 +10,25 @@
 
 .button {
 }
+
+.form {
+  @apply  mx-auto flex flex-col gap-3;
+}
+
+.form p {
+  @apply flex flex-col gap-1;
+}
+
+.form p label {
+  @apply font-medium text-neutral-800
+}
+
+
+.form p input {
+  @apply flex flex-col border border-neutral-200 rounded-md px-3 py-1.5 placeholder:text-neutral-400 placeholder:text-sm outline-none focus:border-neutral-500;
+}
+
+
+.errorlist > li{
+  @apply text-red-500 text-sm;
+}

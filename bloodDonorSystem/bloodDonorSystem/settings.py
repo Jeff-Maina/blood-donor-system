@@ -74,6 +74,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "bloodDonorSystem.wsgi.application"
 
 
+AUTHENTICATION_BACKENDS = [
+    'users.auth_backends.EmailBackend',  # Replace 'yourapp' with your actual app name
+]
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -102,6 +106,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = 'users.CustomUser'
 
 
 # Internationalization
