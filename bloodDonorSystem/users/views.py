@@ -61,6 +61,9 @@ def login_user(request):
                     return redirect("user-dashboard")
                 else:
                     return redirect("complete-profile")
+            else:
+                return redirect("facility-dashboard")
+            
         else:
             if CustomUser.objects.filter(email=email).exists():
                 print(f"{email,password}")
@@ -107,7 +110,7 @@ def dashboard_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
-        
+
     if user.role == 'individual':
         return render(request, 'user/dashboard.html')
     else:
