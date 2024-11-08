@@ -38,4 +38,9 @@ class UserProfile(models.Model):
 
 
     def age(self):
-        return (timezone.now().date() - self.date_of_birth).days // 365
+        today = timezone.now().date()
+        return (today - self.date_of_birth).days // 365
+    
+    @property
+    def age_display(self):
+        return self.age()
