@@ -8,17 +8,15 @@ FACILITY_TYPES = [
     ('clinic', 'Clinic'),
     ('community_center', 'Community Center'),
 ]
-
 DAY_CHOICES = [
-    (1, 'Monday'),
-    (2, 'Tuesday'),
-    (3, 'Wednesday'),
-    (4, 'Thursday'),
-    (5, 'Friday'),
-    (6, 'Saturday'),
-    (7, 'Sunday'),
+    ('mon', 'Monday'),
+    ('tue', 'Tuesday'),
+    ('wed', 'Wednesday'),
+    ('thu', 'Thursday'),
+    ('fri', 'Friday'),
+    ('sat', 'Saturday'),
+    ('sun', 'Sunday'),
 ]
-
 
 class RegisterFacilityForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(
@@ -56,30 +54,41 @@ class RegisterFacilityForm(forms.ModelForm):
 
 
 class ProfileFacilityForm(forms.ModelForm):
+    open_days = forms.MultipleChoiceField(
+        choices=DAY_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        help_text="Select all days the facility is open."
+    )
+
     class Meta:
         model = FacilityProfile
-        fields = ['name',
-                  'contact_number',
+        fields = [
                   'facility_type',
+                  'contact_number',
                   'county',
                   'open_days',
                   'opening_time',
-                  'closing_time',
-                  'registration_number']
+                  'closing_time']
 
         widgets = {
-            'name': forms.TextInput(attrs={'placeholder': 'Enter the name of the facility'}),
-            'contact_number': forms.TextInput(attrs={'placeholder': 'Enter the contact name of the facility'}),
             'facility_type': forms.Select(choices=FACILITY_TYPES),
+            'contact_number': forms.TextInput(attrs={'placeholder': 'Enter the contact name of the facility'}),
             'county': forms.TextInput(attrs={'placeholder': 'Enter the county of the facility'}),
-            'open_days': forms.Select(choices=DAY_CHOICES),
-            'opening_time': forms.TimeInput(format='%I:%M %p'),
-            'closing_time': forms.TimeInput(format='%I:%M %p'),
-            'registration_number': forms.TextInput(attrs={'placeholder': 'Enter the registration of the facility'}),
+            'opening_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
+            'closing_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
+        }
+
+        help_texts = {
+            'opening_time': 'Enter opening time in HH:MM AM/PM format.',
+            'closing_time': 'Enter closing time in HH:MM AM/PM format.',
         }
 
     def complete_profile(self):
-        if self.is_valid:
-            profile = self.save()
-
+        if self.is_valid():
+            profile = self.save(commit=False)
+            profile.user = self.instance.user
+            profile.open_days = ','.join(self.cleaned_data['open_days'])
+            profile.save()
+            self.instance.user.profile_completed = True
+            self.instance.user.save()
             return profile

@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .form import RegisterFacilityForm
+from .form import RegisterFacilityForm, ProfileFacilityForm
 from users.models import CustomUser
 from django.contrib.auth import authenticate, login, logout
-
+from .decorators import facility_required
 
 # Create your views here.
 
@@ -51,3 +51,23 @@ def awaiting_approval(request):
             return render(request, "facility/awaiting-approval.html", {'email': user.email})
     else:
         return redirect('user-dashboard')
+
+
+@facility_required
+def complete_profile(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = ProfileFacilityForm(request.POST)
+
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = user
+            profile.user.profile_completed = True
+            request.user.save()
+            profile.save()
+            return redirect("facility-dashboard")
+
+    else:
+        form = ProfileFacilityForm()
+    return render(request, "facility/complete-profile.html", {'form': form})

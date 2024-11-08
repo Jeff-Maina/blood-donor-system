@@ -25,7 +25,7 @@ class FacilityProfile(models.Model):
     contact_number = models.CharField(max_length=50)
     facility_type = models.CharField(max_length=50, choices=FACILITY_TYPES)
     county = models.CharField(max_length=50)
-    open_days = models.IntegerField(choices=DAY_CHOICES)
+    open_days = models.CharField(max_length=100) 
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     registration_number = models.CharField(max_length=50)
