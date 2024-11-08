@@ -3,12 +3,14 @@
 {% block title %} Blood Donor System | User Signup{% endblock %}
 
 {% block navbar%}
-<a href="{% url 'get-started' %}">
-    <button
-        class="bg-red-500 hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign out
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit"
+        class="bg-red-500 hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign
+        out
         <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
     </button>
-</a>
+</form>
 {% endblock %}
 
 {% block content %}

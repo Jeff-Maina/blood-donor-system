@@ -30,7 +30,8 @@
   @apply flex flex-col border border-neutral-200 rounded-md px-3 py-1.5 placeholder:text-neutral-400 placeholder:text-sm outline-none focus:border-neutral-500;
 }
 
-.errorlist > li {
+.errorlist > li,
+.error {
   @apply text-red-500 text-sm;
 }
 
@@ -43,7 +44,6 @@ select {
   cursor: pointer;
   @apply px-3 py-1.5 border rounded-md;
 }
-
 
 .custom-select {
   position: relative;
@@ -72,4 +72,3 @@ select {
   border-top: var(--size) solid #858585;
   top: 72%;
 }
-

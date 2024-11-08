@@ -21,11 +21,6 @@ GENDERS = [
 ]
 
 
-class LoginForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['email', 'password']
-
 
 class RegisterUserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(

@@ -33,6 +33,10 @@
             </button>
         </form>
 
+        {% if error %}
+        <p class="error text-sm !text-red-500">{{ error }}</p>
+        {% endif %}
+
         <div class="text-center flex justify-center w-full">
             <p class="text-center max-w-fit text-sm font-medium text-neutral-700">Don't have an account ? <a
                     href="{% url 'register' %}" class="text-blue-500 font-semibold hover:underline">Register</a> </p>

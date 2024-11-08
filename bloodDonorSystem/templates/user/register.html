@@ -17,6 +17,7 @@
       </div>
 
       <form method="POST" action="{% url 'register' %}" class="form w-full">
+   
          {% csrf_token %}
          {{form.as_p}}
          <button type="submit"
