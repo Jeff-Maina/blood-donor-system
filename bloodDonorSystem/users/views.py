@@ -36,11 +36,12 @@ def register_user(request):
 
 def login_user(request):
     error_message = None
-    if request.method == "POST": 
+    if request.method == "POST":
 
         email = request.POST.get("email")
         password = request.POST.get("password")
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, email=email,
+                            password=password, is_approved=True)
 
         if user is not None:
             login(request, user)
@@ -70,14 +71,15 @@ def logout_view(request):
 
 @login_required
 def complete_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-    
+    user_profile, created = UserProfile.objects.get_or_create(
+        user=request.user)
+
     if request.user.profile_completed:
         return redirect("dashboard")
-    
+
     if request.method == "POST":
 
-        form = UserProfileForm(request.POST, instance=user_profile) 
+        form = UserProfileForm(request.POST, instance=user_profile)
 
         if form.is_valid():
             profile = form.save(commit=False)
@@ -87,7 +89,7 @@ def complete_profile(request):
             profile.save()
             return redirect("dashboard")
     else:
-        form = UserProfileForm(instance=user_profile) 
+        form = UserProfileForm(instance=user_profile)
     return render(request, "user/complete-profile.html", {"form": form})
 
 
