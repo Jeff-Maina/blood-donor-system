@@ -36,6 +36,17 @@ def register_user(request):
 
 def login_user(request):
     error_message = None
+
+    if request.user.is_authenticated:
+        if request.user.role == 'individual':
+            return redirect("user-dashboard")
+        else:
+            if request.user.is_approved:
+                return redirect('facility-dashboard')
+            else:
+                return redirect("awaiting-approval") 
+            
+
     if request.method == "POST":
 
         email = request.POST.get("email")

@@ -11,11 +11,13 @@ from django.contrib.auth import authenticate, login, logout
 @login_required
 def dashboard_view(request):
     user = request.user
-    if user.is_approved:
-        return render(request, 'user/dashboard.html')
+    if user.role == 'facility':
+        if user.is_approved:
+            return render(request, 'facility/dashboard.html')
+        else:
+            return redirect('awaiting-approval', {'email': user.email})
     else:
-        return redirect(request,'awaiting-approval', {'email': user.email})
-
+        return redirect('user-dashboard')
 
 
 def register_facility(request):
@@ -33,7 +35,7 @@ def register_facility(request):
 
             login(request, user)
 
-            return redirect("awaiting-approval", {'email': email})
+            return redirect("awaiting-approval")
     else:
         form = RegisterFacilityForm()
     return render(request, "facility/register.html", {'form': form})
@@ -42,11 +44,10 @@ def register_facility(request):
 @login_required
 def awaiting_approval(request):
     user = request.user
-    if user == 'facility':
+    if user.role == 'facility':
         if user.is_approved:
             return redirect("facility-dashboard")
         else:
             return render(request, "facility/awaiting-approval.html", {'email': user.email})
     else:
         return redirect('user-dashboard')
-    # email = request.user.email
