@@ -48,7 +48,7 @@ def login_user(request):
 
             if user.role == 'individual':
                 if user.profile_completed:
-                    return redirect("dashboard")
+                    return redirect("user-dashboard")
                 else:
                     return redirect("complete-profile")
         else:
@@ -71,15 +71,13 @@ def logout_view(request):
 
 @login_required
 def complete_profile(request):
-    user_profile, created = UserProfile.objects.get_or_create(
-        user=request.user)
 
     if request.user.profile_completed:
-        return redirect("dashboard")
+        return redirect("user-dashboard")
 
     if request.method == "POST":
 
-        form = UserProfileForm(request.POST, instance=user_profile)
+        form = UserProfileForm(request.POST)
 
         if form.is_valid():
             profile = form.save(commit=False)
@@ -87,12 +85,16 @@ def complete_profile(request):
             profile.user.profile_completed = True
             request.user.save()
             profile.save()
-            return redirect("dashboard")
+            return redirect("user-dashboard")
     else:
-        form = UserProfileForm(instance=user_profile)
+        form = UserProfileForm()
     return render(request, "user/complete-profile.html", {"form": form})
 
 
 @login_required
-def dashboard(request):
-    return render(request, 'user/dashboard.html')
+def dashboard_view(request):
+    user = request.user
+    if user.role == 'individual':
+        return render(request, 'user/dashboard.html')
+    else:
+        return redirect(request, 'facility-dashboard')
