@@ -15,7 +15,7 @@ def dashboard_view(request):
         if user.is_approved:
             return render(request, 'facility/dashboard.html')
         else:
-            return redirect('awaiting-approval', {'email': user.email})
+            return redirect('awaiting-approval')
     else:
         return redirect('user-dashboard')
 

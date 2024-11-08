@@ -44,8 +44,7 @@ def login_user(request):
             if request.user.is_approved:
                 return redirect('facility-dashboard')
             else:
-                return redirect("awaiting-approval") 
-            
+                return redirect("awaiting-approval")
 
     if request.method == "POST":
 
@@ -105,6 +104,10 @@ def complete_profile(request):
 @login_required
 def dashboard_view(request):
     user = request.user
+
+    if user.is_superuser:
+        return redirect('admin:index')  # Redirect to the admin index page
+        
     if user.role == 'individual':
         return render(request, 'user/dashboard.html')
     else:

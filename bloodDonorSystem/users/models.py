@@ -23,7 +23,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.username
+        return self.email
 
 
 class UserProfile(models.Model):
