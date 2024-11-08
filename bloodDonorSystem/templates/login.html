@@ -5,7 +5,38 @@
 {% block navbar%} {% endblock %}
 
 {% block content %}
-<div class="w-full max-w-7xl mx-auto">
-    login
+<div class="w-full max-w-7xl mx-auto pt-32">
+    <div class="max-w-lg mx-auto flex flex-col gap-6 items-start">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-2xl font-bold tracking-tight text-neutral-800">Welcome back</h1>
+            <p class=" text-neutral-600 text-sm  mb-6">
+                Enter your details to sign in.
+
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'login' %}" class="form w-full">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input placeholder="Enter your email" type="text" name="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" placeholder="Enter your email" name="password" id="password" required>
+            </div>
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 rounded py-2 justify-center font-medium text-white">Sign
+                in
+                <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
+            </button>
+        </form>
+
+        <div class="text-center flex justify-center w-full">
+            <p class="text-center max-w-fit text-sm font-medium text-neutral-700">Don't have an account ? <a
+                    href="{% url 'register' %}" class="text-blue-500 font-semibold hover:underline">Register</a> </p>
+        </div>
+    </div>
 </div>
 {% endblock %}

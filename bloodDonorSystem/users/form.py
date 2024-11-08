@@ -21,6 +21,12 @@ GENDERS = [
 ]
 
 
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'password']
+
+
 class RegisterUserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={"placeholder": "Password"}))
@@ -74,8 +80,6 @@ class UserProfileForm(forms.ModelForm):
             'blood_group': forms.Select(choices=BLOOD_TYPES, attrs={"class": "custom-select"}),
             'gender': forms.Select(choices=GENDERS),
         }
-
-        
 
     def complete_profile(self):
         if self.is_valid:

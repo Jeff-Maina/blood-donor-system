@@ -73,8 +73,3 @@ select {
   top: 72%;
 }
 
-
-option{
-  appearance: none !important;
-  @apply p-2 hover: hover:!bg-neutral-200 !cursor-pointer
-}
