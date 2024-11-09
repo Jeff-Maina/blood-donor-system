@@ -1,24 +1,27 @@
 # # facilities/admin.py
 from django.contrib import admin
-# from users.models import CustomUser  
+from .models import FacilityProfile
 
-# class FacilitiesAdmin(admin.ModelAdmin):
-#     list_display = ('email', 'is_approved', 'role', 'is_active','facility_name', 'registration_number')
-#     actions = ['approve_users', 'disapprove_users']
 
-#     def get_queryset(self, request):
-#         qs = super().get_queryset(request)
-#         return qs.filter(role='facility')  
+class FacilitiesAdmin(admin.ModelAdmin):
+    list_display = ('name', 'contact_number', 'facility_type',
+                    'county', "open_days", "opening_time", "closing_time", "user_email", "is_superuser", "profile_completed", "registration_number")
 
-#     def approve_users(self, request, queryset):
-#         queryset.update(is_approved=True)
-#         self.message_user(request, "Selected users have been approved.")
+    list_filter = ['facility_type', 'county']
 
-#     def disapprove_users(self, request, queryset):
-#         queryset.update(is_approved=False)
-#         self.message_user(request, "Selected users have been disapproved.")
+    def registration_number(self, obj):
+        return obj.user.registration_number if obj.user else "N/A"
 
-#     approve_users.short_description = "Approve selected users"
-#     disapprove_users.short_description = "Disapprove selected users"
+    def user_email(self, obj):
+        return obj.user.email if obj.user else "N/A"
 
-# admin.site.register(CustomUser, FacilitiesAdmin)
+    @admin.display(boolean=True)
+    def is_superuser(self, obj):
+        return obj.user.is_superuser if obj.user else "N/A"
+
+    @admin.display(boolean=True)
+    def profile_completed(self, obj):
+        return obj.user.profile_completed if obj.user else "N/A"
+
+
+admin.site.register(FacilityProfile, FacilitiesAdmin)

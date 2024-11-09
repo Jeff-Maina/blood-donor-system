@@ -17,6 +17,10 @@
         </div>
 
         <form method="POST" action="{% url 'complete-facility-profile' %}" class="form w-full">
+            {% if error %}
+            <p class="error text-sm !text-red-500">{{ error }}</p>
+            {% endif %}
+    
             {% csrf_token %}
 
             <div class="form-group">

@@ -13,7 +13,10 @@ def dashboard_view(request):
     user = request.user
     if user.role == 'facility':
         if user.is_approved:
-            return render(request, 'facility/dashboard.html')
+            if user.profile_completed:
+                return render(request, 'facility/dashboard.html')
+            else:
+                return redirect("complete-facility-profile")
         else:
             return redirect('awaiting-approval')
     else:
@@ -53,21 +56,28 @@ def awaiting_approval(request):
         return redirect('user-dashboard')
 
 
-@facility_required
+@login_required
 def complete_profile(request):
-    user = request.user
 
     if request.method == 'POST':
+        print("hello world")
         form = ProfileFacilityForm(request.POST)
-
         if form.is_valid():
             profile = form.save(commit=False)
-            profile.user = user
+            print(profile)
+            profile.user = request.user
             profile.user.profile_completed = True
             request.user.save()
             profile.save()
-            return redirect("facility-dashboard")
+            print('added')
 
+            if profile:
+                return redirect("facility-dashboard")
+            else:
+                print(form.errors)
+        else:
+            print(form.errors)
     else:
         form = ProfileFacilityForm()
-    return render(request, "facility/complete-profile.html", {'form': form})
+
+    return render(request, "facility/complete-profile.html", {'form': form, 'error': form.errors})

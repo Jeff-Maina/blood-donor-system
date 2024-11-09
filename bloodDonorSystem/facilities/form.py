@@ -79,8 +79,8 @@ class ProfileFacilityForm(forms.ModelForm):
         }
 
         help_texts = {
-            'opening_time': 'Enter opening time in HH:MM AM/PM format.',
-            'closing_time': 'Enter closing time in HH:MM AM/PM format.',
+            'opening_time': 'Enter opening time in HH:MM 24-hour format.',
+            'closing_time': 'Enter closing time in HH:MM 24-hour format.',
         }
 
     def complete_profile(self):
