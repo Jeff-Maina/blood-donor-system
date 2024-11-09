@@ -21,39 +21,43 @@
 
 <body class="h-screen flex">
 
-    <div id="sidebar" class="w-64 shrink-0 h-screen border-r flex flex-col justify-between">
-        <div>
-            <div class="w-full border-b flex items-center px-4 h-14">
+    <div id="sidebar" class="w-64 shrink-0 h-screen flex flex-col p-1 justify-between">
+        <div class="bg-neutral-900 rounded-md h-full">
+            <div class="w-full border-b border-neutral-700 flex items-center px-4 h-14">
                 <div class="flex items-center gap-2 px-2">
                     <i data-lucide="heart-pulse" class="stroke-red-500 size-5"></i>
-                    <a href="{% url 'home' %}" class="font-bold ">
+                    <a href="{% url 'home' %}" class="font-bold text-white">
                         Blood donor system
                     </a>
                 </div>
             </div>
             <div class="p-4 flex flex-col gap-4">
-                <small class="text-sm font-medium text-neutral-600 px-2">Main menu</small>
-                <div class="flex flex-col gap-2">
+                <small class="text-sm font-medium text-neutral-400 px-2">main menu</small>
+                <div class="flex flex-col gap-1">
                     <div>
-                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                        <a href="{% url 'user-dashboard' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
                             <i data-lucide="home" class="size-4"></i>
                             <span class="font-medium">Dashboard</span>
                         </a>
                     </div>
                     <div>
-                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                        <a href="{% url 'user-dashboard' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
                             <i data-lucide="calendar" class="size-4"></i>
                             <span class="font-medium">Appointments</span>
                         </a>
                     </div>
                     <div>
-                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                        <a href="{% url 'user-dashboard' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
                             <i data-lucide="Syringe" class="size-4"></i>
                             <span class="font-medium">Donations</span>
                         </a>
                     </div>
                     <div>
-                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                        <a href="{% url 'user-dashboard' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
                             <i data-lucide="Mail" class="size-4"></i>
                             <span class="font-medium">Requests</span>
                         </a>
@@ -61,24 +65,61 @@
                 </div>
             </div>
         </div>
-        <div class="p-6">
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button type="submit"
-                    class="bg-red-500 w-full justify-center hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign
-                    out
-                    <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
-                </button>
-            </form>
-        </div>
     </div>
 
-    <div id="content" class="w-full h-full">
-        <nav></nav>
+    <div id="content" class="w-full h-full p-1">
+        <nav class="w-full h-14 px-4 flex items-center justify-end">
+            <div></div>
+            <div class="relative">
+                <div id="dropdown-trigger"
+                    class="flex items-center  gap-2 px-3 rounded-md hover:bg-neutral-100 py-1 cursor-pointer">
+                    <h1 class="font-semibold text-sm select-none">{{ profile.firstname }} {{ profile.lastname }}</h1>
+                    <i data-lucide="chevron-down" stroke-width="3" class="size-4"></i>
+                </div>
+                <!-- dropdown -->
+                <div id="dropdown-menu" class="absolute hidden  w-56 shadow-md  top-full right-0 border rounded-md">
+                    <div class="p-4 border-b leading-none flex flex-col gap-2">
+                        <h1 class="font-semibold tracking-tight">{{ profile.firstname }} {{ profile.lastname }}
+                        </h1>
+                        <p class="font-medium text-neutral-600 text-sm">{{ user.email }}</p>
+                    </div>
+                    <div class="p-2 w-full">
+
+                        <a href="{}"
+                            class=" transition-all p-2 text-neutral-700 font-medium hover:text-black w-full flex items-center gap-2 px-3 text-sm rounded-md py-1.5 hover:bg-neutral-100  ">
+                            <i data-lucide="user-round" class="size-3.5" stroke-width="3"></i>
+                            Profile
+                        </a>
+
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class=" transition-all p-2 text-red-500 font-medium hover:text-red-600 w-full flex items-center gap-2 px-3 text-sm rounded-md py-1.5 hover:bg-red-100  ">
+                                <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
         {% block content %}{% endblock %}
     </div>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
+
+        document.getElementById("dropdown-trigger").addEventListener("click", function () {
+
+            document.getElementById("dropdown-menu").classList.toggle("hidden");
+        });
+
+        window.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (!event.target.closest('#dropdown-trigger')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
         lucide.createIcons();
     </script>
 </body>
