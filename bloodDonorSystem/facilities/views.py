@@ -59,17 +59,14 @@ def awaiting_approval(request):
 @login_required
 def complete_profile(request):
 
+    if request.user.profile_completed:
+        return redirect('facility-dashboard')
+
     if request.method == 'POST':
         print("hello world")
         form = ProfileFacilityForm(request.POST)
         if form.is_valid():
-            profile = form.save(commit=False)
-            print(profile)
-            profile.user = request.user
-            profile.user.profile_completed = True
-            request.user.save()
-            profile.save()
-            print('added')
+            profile = form.complete_profile()
 
             if profile:
                 return redirect("facility-dashboard")

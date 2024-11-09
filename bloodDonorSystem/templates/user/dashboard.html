@@ -1,17 +1,8 @@
-{% extends "base.html" %}
+{% extends "user/dashboard-layout.html" %}
 
-{% block title %} Blood Donor System | User Signup{% endblock %}
+{% block title %} Blood Donor System | User Dashboard{% endblock %}
 
-{% block navbar%}
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit"
-        class="bg-red-500 hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign
-        out
-        <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
-    </button>
-</form>
-{% endblock %}
+
 
 {% block content %}
 <div class="w-full max-w-7xl mx-auto pt-32">

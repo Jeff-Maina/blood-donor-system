@@ -1,0 +1,86 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blood donor system{% endblock %}</title>
+    <link href="{% static 'src/styles.css' %}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+</head>
+
+
+<body class="h-screen flex">
+
+    <div id="sidebar" class="w-64 shrink-0 h-screen border-r flex flex-col justify-between">
+        <div>
+            <div class="w-full border-b flex items-center px-4 h-14">
+                <div class="flex items-center gap-2 px-2">
+                    <i data-lucide="heart-pulse" class="stroke-red-500 size-5"></i>
+                    <a href="{% url 'home' %}" class="font-bold ">
+                        Blood donor system
+                    </a>
+                </div>
+            </div>
+            <div class="p-4 flex flex-col gap-4">
+                <small class="text-sm font-medium text-neutral-600 px-2">Main menu</small>
+                <div class="flex flex-col gap-2">
+                    <div>
+                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                            <i data-lucide="home" class="size-4"></i>
+                            <span class="font-medium">Dashboard</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                            <i data-lucide="calendar" class="size-4"></i>
+                            <span class="font-medium">Appointments</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                            <i data-lucide="Syringe" class="size-4"></i>
+                            <span class="font-medium">Donations</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'user-dashboard' %}" class="flex items-center gap-3 text-neutral-700 hover:text-black p-2 rounded-md hover:bg-neutral-100">
+                            <i data-lucide="Mail" class="size-4"></i>
+                            <span class="font-medium">Requests</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                    class="bg-red-500 w-full justify-center hover:bg-red-600 transition-all p-2 flex items-center gap-2 px-3 text-sm rounded py-1.5 font-medium text-white">Sign
+                    out
+                    <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="content" class="w-full h-full">
+        <nav></nav>
+        {% block content %}{% endblock %}
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
