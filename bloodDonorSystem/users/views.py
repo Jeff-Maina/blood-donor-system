@@ -132,3 +132,16 @@ def donations_view(request):
     else:
         return redirect(request, 'facility-dashboard')
 
+@login_required
+def requests_view(request):
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+
+    if user.is_superuser:
+        return redirect('admin:index')  # Redirect to the admin index page
+
+    if user.role == 'individual':
+        return render(request, 'user/requests.html', {'user': user, 'profile': profile})
+    else:
+        return redirect(request, 'facility-dashboard')
+

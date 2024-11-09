@@ -1,0 +1,125 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% block title %} Blood Donor System | Requests{% endblock %}
+
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+    <nav class="flex items-center justify-end">
+        <button id="request-button"
+            class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
+            Make request
+            <i data-lucide="plus" class="size-4" stroke-width="3"></i>
+        </button>
+    </nav>
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests made</p>
+                <p class="text-3xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests approved</p>
+                <p class="text-3xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests rejected</p>
+                <p class="text-3xl font-semibold tracking-tight">14</p>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Requests</h1>
+        <div class="w-full">
+            <table class="w-full">
+                <thead>
+                    <tr class="">
+                        <th class="p-2 text-left font-semibold">Date</th>
+                        <th class="p-2 text-left font-semibold">Blood Group</th>
+                        <th class="p-2 text-left font-semibold">Units</th>
+                        <th class="p-2 text-left font-semibold">Status</th>
+                        <th class="p-2 text-left font-semibold">Facility</th>
+                        <th class="p-2 text-left font-semibold">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-neutral-100">
+                        <td class="p-2  truncate text-neutral-800">10-11-2024</td>
+                        <td class="p-2  truncate text-neutral-800">A+</td>
+                        <td class="p-2  truncate text-neutral-800">2</td>
+                        <td class="p-2  truncate text-neutral-800">Pending</td>
+                        <td class="p-2  truncate text-neutral-800">Aga Khan Hospital</td>
+                        <td class="p-2  truncate text-neutral-800">Awaiting approval</td>
+                    </tr>
+                    <tr class="bg-white">
+                        <td class="p-2  truncate text-neutral-800">15-10-2024</td>
+                        <td class="p-2  truncate text-neutral-800">O-</td>
+                        <td class="p-2  truncate text-neutral-800">1</td>
+                        <td class="p-2  truncate text-neutral-800">Approved</td>
+                        <td class="p-2  truncate text-neutral-800">Kenyatta National Hospital</td>
+                        <td class="p-2  truncate text-neutral-800">Ready for collection</td>
+                    </tr>
+                    <tr class="bg-neutral-100">
+                        <td class="p-2  truncate text-neutral-800">15-10-2024</td>
+                        <td class="p-2  truncate text-neutral-800">O-</td>
+                        <td class="p-2  truncate text-neutral-800">1</td>
+                        <td class="p-2  truncate text-neutral-800">Approved</td>
+                        <td class="p-2  truncate text-neutral-800">Kenyatta National Hospital</td>
+                        <td class="p-2  truncate text-neutral-800">Ready for collection</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+
+
+
+    <!-- modal  -->
+    <div id="modal" class="w-full hidden h-screen fixed top-0 left-0 z-50 ">
+        <div id="backdrop" class="absolute top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="mx-auto h-[80vh] w-[700px] relative mt-20 shadow-lg max-w-3xl bg-white rounded-md flex flex-col gap-4 p-4 z-30">
+            <button id="close-button"
+                class="absolute top-2 right-2 size-7 rounded-full  text-neutral-500 hover:text-black flex items-center justify-center">
+                <i data-lucide="x" class="size-5" stroke-width="3"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const requestButton = document.querySelector("#request-button");
+        const modal = document.querySelector("#modal");
+        const backdrop = document.querySelector("#backdrop");
+        const closeButton = document.querySelector("#close-button");
+
+        const closeModal = () => {
+            modal.classList.add("hidden");
+        }
+
+        requestButton.addEventListener("click", () => {
+            console.log('clicked')
+            modal.classList.toggle("hidden");
+        })
+
+        backdrop.addEventListener("click", closeModal)
+        closeButton.addEventListener("click", closeModal)
+
+
+    })
+
+</script>
+{% endblock %}
