@@ -1,0 +1,201 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% block title %} Blood Donor System | User Dashboard{% endblock %}
+
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+    <nav class="flex items-center justify-end">
+        <button id="donation-button"
+            class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
+            Make donation
+            <i data-lucide="plus" class="size-4" stroke-width="3"></i>
+        </button>
+    </nav>
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Donations made</p>
+                <p class="text-3xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Last donation on</p>
+                <p class="text-3xl font-semibold tracking-tight">12, November 2024</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Blood group</p>
+                <p class="text-3xl font-semibold tracking-tight">A+</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Upcoming appointments</h1>
+        <div class="w-full">
+            <table class="w-full max-h-80">
+                <thead class="">
+                    <tr class=" ">
+                        <th class="text-start p-2 font-semibold">Facility</th>
+                        <th class="text-start p-2 font-semibold">Status</th>
+                        <th class="text-start p-2 font-semibold">Reason for visit</th>
+                        <th class="text-start p-2 font-semibold">Location</th>
+                        <th class="text-start p-2 font-semibold">Date/Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">Aga Khan medical center</td>
+                        <td class="p-2 truncate text-neutral-800">Scheduled</td>
+                        <td class="p-2 truncate text-neutral-800">Checkup</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
+                    </tr>
+                    <tr class="">
+                        <td class="p-2 truncate text-neutral-800">Aga Khan medical center</td>
+                        <td class="p-2 truncate text-neutral-800">Scheduled</td>
+                        <td class="p-2 truncate text-neutral-800">Plasma donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
+                    </tr>
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">KU Level 5 hospital</td>
+                        <td class="p-2 truncate text-neutral-800">Scheduled</td>
+                        <td class="p-2 truncate text-neutral-800">Direct donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Donation History</h1>
+        <div class="w-full">
+            <table class="w-full max-h-80">
+                <thead class="border-b">
+                    <tr class=" ">
+                        <th class="text-start p-2 font-semibold">Date</th>
+                        <th class="text-start p-2 font-semibold">Facility</th>
+                        <th class="text-start p-2 font-semibold">Blood Group</th>
+                        <th class="text-start p-2 font-semibold">Amount Donated</th>
+                        <th class="text-start p-2 font-semibold">Status</th>
+                        <th class="text-start p-2 font-semibold">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">Nairobi Blood Bank</td>
+                        <td class="p-2 truncate text-neutral-800">Completed</td>
+                        <td class="p-2 truncate text-neutral-800">Blood Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">14-03-2024, 10:30am</td>
+                        <td class="p-2 truncate text-neutral-800">Successful donation</td>
+                    </tr>
+
+                    <tr class="bg-white">
+                        <td class="p-2 truncate text-neutral-800">Kenyatta National Hospital</td>
+                        <td class="p-2 truncate text-neutral-800">Rejected</td>
+                        <td class="p-2 truncate text-neutral-800">Blood Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">22-01-2024, 11:00am</td>
+                        <td class="p-2 truncate text-neutral-800">Low hemoglobin level</td>
+                    </tr>
+
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">Mombasa Medical Center</td>
+                        <td class="p-2 truncate text-neutral-800">Completed</td>
+                        <td class="p-2 truncate text-neutral-800">Platelet Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Mombasa</td>
+                        <td class="p-2 truncate text-neutral-800">05-12-2023, 9:00am</td>
+                        <td class="p-2 truncate text-neutral-800">No complications</td>
+                    </tr>
+
+                    <tr class="bg-white">
+                        <td class="p-2 truncate text-neutral-800">Aga Khan University Hospital</td>
+                        <td class="p-2 truncate text-neutral-800">Completed</td>
+                        <td class="p-2 truncate text-neutral-800">Plasma Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">10-07-2024, 2:00pm</td>
+                        <td class="p-2 truncate text-neutral-800">Smooth procedure</td>
+                    </tr>
+
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">Kisumu Blood Donation Center</td>
+                        <td class="p-2 truncate text-neutral-800">Completed</td>
+                        <td class="p-2 truncate text-neutral-800">Blood Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Kisumu</td>
+                        <td class="p-2 truncate text-neutral-800">18-08-2024, 12:30pm</td>
+                        <td class="p-2 truncate text-neutral-800">Donor felt dizzy, advised rest</td>
+                    </tr>
+
+                    <tr class="bg-white">
+                        <td class="p-2 truncate text-neutral-800">Mater Hospital</td>
+                        <td class="p-2 truncate text-neutral-800">Cancelled</td>
+                        <td class="p-2 truncate text-neutral-800">Blood Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Nairobi</td>
+                        <td class="p-2 truncate text-neutral-800">02-10-2024, 3:00pm</td>
+                        <td class="p-2 truncate text-neutral-800">Donor rescheduled</td>
+                    </tr>
+
+                    <tr class="bg-neutral-100">
+                        <td class="p-2 truncate text-neutral-800">Thika Level 5 Hospital</td>
+                        <td class="p-2 truncate text-neutral-800">Completed</td>
+                        <td class="p-2 truncate text-neutral-800">Blood Donation</td>
+                        <td class="p-2 truncate text-neutral-800">Thika</td>
+                        <td class="p-2 truncate text-neutral-800">25-11-2023, 8:45am</td>
+                        <td class="p-2 truncate text-neutral-800">First-time donor, successful</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+    <!-- modal  -->
+    <div id="modal" class="w-full hidden h-screen fixed top-0 left-0 z-50 ">
+        <div id="backdrop" class="absolute top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="mx-auto h-[80vh] w-[700px] relative mt-20 shadow-lg max-w-3xl bg-white rounded-md flex flex-col gap-4 p-4 z-30">
+            <button id="close-button"
+                class="absolute top-2 right-2 size-7 rounded-full  text-neutral-500 hover:text-black flex items-center justify-center">
+                <i data-lucide="x" class="size-5" stroke-width="3"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const donationButton = document.querySelector("#donation-button");
+        const modal = document.querySelector("#modal");
+        const backdrop = document.querySelector("#backdrop");
+        const closeButton = document.querySelector("#close-button");
+
+        const closeModal = () => {
+            modal.classList.add("hidden");
+        }
+
+        donationButton.addEventListener("click", () => {
+            console.log('clicked')
+            modal.classList.toggle("hidden");
+        })
+
+        backdrop.addEventListener("click", closeModal)
+        closeButton.addEventListener("click", closeModal)
+
+
+    })
+
+</script>
+{% endblock %}

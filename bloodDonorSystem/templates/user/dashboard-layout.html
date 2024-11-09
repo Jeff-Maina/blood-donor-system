@@ -42,17 +42,17 @@
                         </a>
                     </div>
                     <div>
-                        <a href="{% url 'user-dashboard' %}"
+                        <a href="{% url 'donations' %}"
                             class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
-                            <i data-lucide="calendar" class="size-4"></i>
-                            <span class="font-medium">Appointments</span>
+                            <i data-lucide="Syringe" class="size-4"></i>
+                            <span class="font-medium">Donations</span>
                         </a>
                     </div>
                     <div>
                         <a href="{% url 'user-dashboard' %}"
                             class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
-                            <i data-lucide="Syringe" class="size-4"></i>
-                            <span class="font-medium">Donations</span>
+                            <i data-lucide="calendar" class="size-4"></i>
+                            <span class="font-medium">Appointments</span>
                         </a>
                     </div>
                     <div>
@@ -74,7 +74,8 @@
                     class="p-3 rounded-full hover:bg-neutral-100 hover:text-black cursor-pointer text-neutral-600">
                     <i data-lucide="bell" class="size-5" stroke-width="2"></i>
                 </div>
-                <div id="notif-box" class="absolute hidden bg-white w-96 h-96 shadow-md  top-full right-0 border rounded-md">
+                <div id="notif-box"
+                    class="absolute hidden bg-white w-96 h-96 shadow-md  top-full right-0 border rounded-md">
                     <p class="p-4">No new notifications</p>
                 </div>
             </div>
@@ -146,6 +147,9 @@
 
         lucide.createIcons();
     </script>
+
+    {% block scripts %}
+    {% endblock %}
 </body>
 
 </html>
