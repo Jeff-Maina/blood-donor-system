@@ -5,8 +5,82 @@
 
 
 {% block content %}
-<div class="w-full max-w-7xl mx-auto pt-32">
+<div class="w-full p-4 flex flex-col gap-4">
 
-    dashboard
-</div>
-{% endblock %}
+    <div class="w-full grid grid-cols-4 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Donations made</p>
+                <p class="text-5xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Total requests</p>
+                <p class="text-5xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Pending requests</p>
+                <p class="text-5xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Rejected requests</p>
+                <p class="text-5xl font-semibold tracking-tight">20</p>
+            </div>
+        </div>
+    </div>
+    <div class="w-full grid grid-cols-5 gap-4">
+        <div class="w-full relative h-96 rounded-md shadow p-6 border flex flex-col gap-4 ">
+            <h1 class="font-semibold">My details</h1>
+            <div class="flex flex-col gap-6 relative">
+
+                <div class="flex flex-col gap-2 text-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Full name</p>
+                        <p class="font-medium">{{ profile.firstname }} {{ profile.lastname }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Email</p>
+                        <p class="font-medium">{{ user.email }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Gender</p>
+                        <p class="font-medium">{{ profile.gender }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Phone</p>
+                        <p class="font-medium">{{ profile.phone }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 text-sm">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">County</p>
+                        <p class="font-medium">{{ profile.county }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Date of Birth</p>
+                        <p class="font-medium">{{ profile.date_of_birth }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Blood group</p>
+                        <p class="font-medium">{{ profile.blood_group }}</p>
+                    </div>
+                </div>
+
+
+            </div>
+            <p class="text-sm absolute bottom-6 left-6">Joined on {{ user.date_joined }}</p>
+        </div>
+        <div class="w-full col-span-2 h-96 rounded-md shadow p-6 border flex flex-col gap-4 ">
+            <h1 class="font-semibold">Upcoming appointments</h1>
+            <div>
+
+            </div>
+        </div>
+    </div>
+    {% endblock %}
