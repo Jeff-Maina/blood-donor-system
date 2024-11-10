@@ -7,11 +7,13 @@
 {% block content %}
 <div class="w-full p-4 flex flex-col gap-4">
     <nav class="flex items-center justify-end">
-        <button id="donation-button"
-            class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
-            Make donation
-            <i data-lucide="plus" class="size-4" stroke-width="3"></i>
-        </button>
+        <a href="{% url 'check-eligibility' %}">
+            <button id="donation-button"
+                class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
+                Make donation
+                <i data-lucide="plus" class="size-4" stroke-width="3"></i>
+            </button>
+        </a>
     </nav>
     <div class="w-full grid grid-cols-3 gap-4">
         <div class="w-full h-36 rounded-md shadow p-6 border">
@@ -161,9 +163,9 @@
 
 
     <!-- modal  -->
- {% block eligibility %}
- 
- {% endblock %}
+    {% block eligibility %}
+
+    {% endblock %}
 </div>
 {% endblock %}
 
