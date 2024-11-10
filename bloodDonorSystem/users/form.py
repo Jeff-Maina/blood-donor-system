@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser, UserProfile
+from .models import CustomUser, UserProfile, DonationEligibity
 
 
 BLOOD_TYPES = [
@@ -19,7 +19,6 @@ GENDERS = [
     ('Female', 'Female'),
     ('Other', 'Other')
 ]
-
 
 
 class RegisterUserForm(forms.ModelForm):
@@ -81,3 +80,63 @@ class UserProfileForm(forms.ModelForm):
             profile = self.save()
 
             return profile
+
+
+class EligibilityForm(forms.ModelForm):
+    BOOLEAN_CHOICES = [
+        (True, 'Yes'),
+        (False, 'No')
+    ]
+
+    pregnancy_status = forms.ChoiceField(
+        label='Are you currently pregnant?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    recent_illness = forms.ChoiceField(
+        label='Have you had a recent illness?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    recent_travel = forms.ChoiceField(
+        label='Have you traveled outside the country in the last 6 months?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    on_medication = forms.ChoiceField(
+        label='Are you currently on any medication?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    is_in_good_health = forms.ChoiceField(
+        label='Are you in good health today?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    is_breastfeeding = forms.ChoiceField(
+        label='Are you currently breastfeeding?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+    chronic_condition = forms.ChoiceField(
+        label='Do you have any chronic medical conditions?',
+        choices=BOOLEAN_CHOICES,
+        widget=forms.RadioSelect
+    )
+
+    class Meta:
+        model = DonationEligibity
+        fields = [
+            'weight',
+            'pregnancy_status',
+            'recent_illness',
+            'recent_travel',
+            'on_medication',
+            'is_in_good_health',
+            'is_breastfeeding',
+            'chronic_condition'
+        ]
+
+        labels = {
+            'weight': 'Enter your current weight (Kgs)',
+        }

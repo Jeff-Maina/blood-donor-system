@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .form import RegisterUserForm, UserProfileForm
-from .models import CustomUser, UserProfile
+from .form import RegisterUserForm, UserProfileForm, EligibilityForm
+from .models import CustomUser, UserProfile, DonationEligibity
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
@@ -132,6 +132,7 @@ def donations_view(request):
     else:
         return redirect(request, 'facility-dashboard')
 
+
 @login_required
 def requests_view(request):
     user = request.user
@@ -145,3 +146,37 @@ def requests_view(request):
     else:
         return redirect(request, 'facility-dashboard')
 
+
+@login_required
+def check_eligibility(request):
+
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+
+    try:
+        eligibility_record = DonationEligibity.objects.get(user=request.user)
+    except DonationEligibity.DoesNotExist:
+        eligibility_record = None
+
+    if request.method == 'POST':
+        form = EligibilityForm(request.POST, instance=eligibility_record)
+
+        if form.is_valid():
+            # Save the form but don't commit to the database yet
+            eligibility = form.save(commit=False)
+            eligibility.user = request.user
+            eligibility.save()
+
+            # Check the user's eligibility
+            is_eligible = eligibility.check_eligibility()
+
+            # Show appropriate message and redirect
+            if is_eligible:
+                return redirect('donations')
+            else:
+                return redirect('eligibility-check')
+
+    else:
+        form = EligibilityForm(instance=eligibility_record)
+
+    return render(request, 'user/eligibility-form.html', {'form': form, 'profile': profile})
