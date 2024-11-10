@@ -102,3 +102,34 @@ class DonationEligibity(models.Model):
         self.eligible = True
         self.save()
         return self.eligible
+
+
+class Donation(models.Model):
+    DONATION_TYPE_CHOICES = [
+        ('whole_blood', 'Whole Blood'),
+        ('plasma', 'Plasma'),
+        ('platelets', 'Platelets'),
+    ]
+
+    DONATION_STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='donations')
+
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    donation_type = models.CharField(
+        max_length=50, choices=DONATION_TYPE_CHOICES)
+    donation_date = models.DateTimeField()
+    status = models.CharField(max_length=50, choices=DONATION_STATUS_CHOICES)
+    is_approved = models.BooleanField(default=False)
+    remarks = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
+
+
