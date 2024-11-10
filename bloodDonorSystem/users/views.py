@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .form import RegisterUserForm, UserProfileForm, EligibilityForm
+from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm
 from .models import CustomUser, UserProfile, DonationEligibity
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -180,3 +180,25 @@ def check_eligibility(request):
         form = EligibilityForm(instance=eligibility_record)
 
     return render(request, 'user/eligibility-form.html', {'form': form, 'profile': profile})
+
+
+@login_required
+def book_appointment(request):
+    user = request.user
+
+    try:
+        eligibility = DonationEligibity.objects.get(user=user)
+    except DonationEligibity.DoesNotExist:
+        return redirect('check-eligibility')
+
+    if not eligibility.is_eligible():
+        return redirect('check-eligibility')
+
+    if request.method == 'POST':
+        form = BookDonationForm(request.POST)
+
+        if form.is_valid():
+            pass
+    else:
+        form = BookDonationForm(request.POST)
+    return render(request, 'user/book-donation.html', {'form': form})

@@ -8,5 +8,6 @@ urlpatterns = [
     path("dashboard/", views.dashboard_view, name='user-dashboard'),
     path("donations/", views.donations_view, name='donations'),
     path("requests/", views.requests_view, name='requests'),
-    path("donations/check-eligibility/", views.check_eligibility, name="check-eligibility")
+    path("donations/check-eligibility/", views.check_eligibility, name="check-eligibility"),
+    path("donations/book-donation-appointment/", views.book_appointment, name="book-donation-appointment")
 ]

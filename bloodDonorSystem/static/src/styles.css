@@ -643,6 +643,10 @@ video {
   margin-top: 5rem;
 }
 
+.mt-28 {
+  margin-top: 7rem;
+}
+
 .block {
   display: block;
 }
@@ -726,11 +730,6 @@ video {
 
 .max-h-\[85vh\] {
   max-height: 85vh;
-}
-
-.max-h-fit {
-  max-height: -moz-fit-content;
-  max-height: fit-content;
 }
 
 .w-2\/4 {
@@ -1333,12 +1332,6 @@ select {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-top: 10px;
   padding-left: 5px;
-}
-
-ul,
-ol,
-li {
-  list-style-type: decimal !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {

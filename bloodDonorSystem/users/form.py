@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser, UserProfile, DonationEligibity
+from .models import CustomUser, UserProfile, DonationEligibity, Donation
 
 
 BLOOD_TYPES = [
@@ -140,3 +140,21 @@ class EligibilityForm(forms.ModelForm):
         labels = {
             'weight': 'Enter your current weight (Kgs)',
         }
+
+
+class BookDonationForm(forms.ModelForm):
+    amount = forms.DecimalField(
+        max_digits=10, decimal_places=2, label='Amount of blood'
+    )
+
+    class Meta:
+        model = Donation
+        fields = ['amount', 'donation_type', 'donation_date', 'status', 'is_approved', 'remarks']
+        
+        widgets = {
+            'donation_date': forms.DateInput(attrs={'type': 'date'}), 
+            'donation_type': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
