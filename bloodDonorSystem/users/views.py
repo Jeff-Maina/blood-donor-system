@@ -158,28 +158,32 @@ def check_eligibility(request):
     except DonationEligibity.DoesNotExist:
         eligibility_record = None
 
+    is_eligible = None
+    reasons = []
+
     if request.method == 'POST':
         form = EligibilityForm(request.POST, instance=eligibility_record)
 
         if form.is_valid():
-            # Save the form but don't commit to the database yet
             eligibility = form.save(commit=False)
             eligibility.user = request.user
             eligibility.save()
 
-            # Check the user's eligibility
-            is_eligible = eligibility.check_eligibility()
+            is_eligible, reasons = eligibility.check_eligibility()
 
-            # Show appropriate message and redirect
             if is_eligible:
-                return redirect('donations')
+                return redirect('book-donation-appointment')
             else:
-                return redirect('eligibility-check')
-
+                return render(request, 'user/not-eligible.html', {'reasons': reasons})
     else:
         form = EligibilityForm(instance=eligibility_record)
 
-    return render(request, 'user/eligibility-form.html', {'form': form, 'profile': profile})
+    return render(request, 'user/eligibility-form.html', {
+        'form': form,
+        'profile': profile,
+        'is_eligible': is_eligible,
+        'reasons': reasons,
+    })
 
 
 @login_required
@@ -191,14 +195,21 @@ def book_appointment(request):
     except DonationEligibity.DoesNotExist:
         return redirect('check-eligibility')
 
-    if not eligibility.is_eligible():
+    if not eligibility.eligible:
         return redirect('check-eligibility')
 
     if request.method == 'POST':
         form = BookDonationForm(request.POST)
 
         if form.is_valid():
-            pass
+            print(form.cleaned_data)
+            donation = form.save(commit=False)
+            donation.user = user
+            donation.save()
+
+            return redirect('donations')
+        else:
+            return render(request, 'user/book-donation.html', {'form': form})
     else:
-        form = BookDonationForm(request.POST)
+        form = BookDonationForm()
     return render(request, 'user/book-donation.html', {'form': form})

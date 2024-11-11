@@ -1,6 +1,8 @@
 from django import forms
 from .models import CustomUser, UserProfile, DonationEligibity, Donation
-
+from django.core.exceptions import ValidationError
+from datetime import datetime, time
+from django.utils import timezone
 
 BLOOD_TYPES = [
     ('A+', 'A+'),
@@ -124,10 +126,16 @@ class EligibilityForm(forms.ModelForm):
         widget=forms.RadioSelect
     )
 
+    last_donation_date = forms.DateField(
+        label='When was your last blood donation?',
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+
     class Meta:
         model = DonationEligibity
         fields = [
             'weight',
+            'last_donation_date',
             'pregnancy_status',
             'recent_illness',
             'recent_travel',
@@ -143,18 +151,29 @@ class EligibilityForm(forms.ModelForm):
 
 
 class BookDonationForm(forms.ModelForm):
-    amount = forms.DecimalField(
-        max_digits=10, decimal_places=2, label='Amount of blood'
-    )
 
     class Meta:
         model = Donation
-        fields = ['amount', 'donation_type', 'donation_date', 'status', 'is_approved', 'remarks']
-        
+        fields = ['amount', 'donation_type', 'donation_date', 'remarks']
+
         widgets = {
-            'donation_date': forms.DateInput(attrs={'type': 'date'}), 
+            'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
             'donation_type': forms.Select(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
-            'remarks': forms.Textarea(attrs={'class': 'form-control'}),
+            'donation_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Any additional information? e.g special considerations, preferred staff.'}),
         }
+
+    def clean_donation_date(self):
+        donation_date = self.cleaned_data.get('donation_date')
+
+        if donation_date and timezone.is_naive(donation_date):
+            donation_date = timezone.make_aware(donation_date, timezone.get_current_timezone())
+
+        if donation_date <= timezone.now():
+            raise ValidationError("The donation date must be in the future.")
+        
+        if not (time(9, 0) <= donation_date.time() <= time(18, 0)):
+            raise ValidationError("The donation time must be between 9:00 AM and 6:00 PM.")
+        
+        return donation_date
 

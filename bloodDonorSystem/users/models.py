@@ -57,7 +57,7 @@ class DonationEligibity(models.Model):
     is_in_good_health = models.BooleanField(default=False)
     is_breastfeeding = models.BooleanField(default=False)
     chronic_condition = models.BooleanField(default=False)
-    eligible = models.BooleanField()
+    eligible = models.BooleanField(default=False)
     remarks = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -67,48 +67,39 @@ class DonationEligibity(models.Model):
     def check_eligibility(self):
         min_donation_interval = timedelta(days=90)
         current_date = timezone.now().date()
+        reasons = []
 
         if self.last_donation_date and (current_date - self.last_donation_date) < min_donation_interval:
-            self.remarks = "Last donation was too recent."
-            self.eligible = False
-            self.save()
-            return self.eligible
+            reasons.append("Last donation was too recent.")
 
         if self.weight < 50:
-            self.remarks = "Weight is below the required minimum of 50 kg."
-            self.eligible = False
-            self.save()
-            return self.eligible
+            reasons.append("Weight is below the required minimum of 50 kg.")
 
         if self.pregnancy_status == "pregnant" or self.is_breastfeeding:
-            self.remarks = "Pregnant or breastfeeding individuals cannot donate."
-            self.eligible = False
-            self.save()
-            return self.eligible
+            reasons.append(
+                "Pregnant or breastfeeding individuals cannot donate.")
 
         if self.recent_illness or self.recent_travel or self.on_medication or self.chronic_condition:
-            self.remarks = "Recent illness, travel, medication use, or chronic condition detected."
-            self.eligible = False
-            self.save()
-            return self.eligible
+            reasons.append(
+                "Recent illness, travel, medication use, or chronic condition detected.")
 
         if not self.is_in_good_health:
-            self.remarks = "User is not in good health."
-            self.eligible = False
-            self.save()
-            return self.eligible
+            reasons.append("You are not in good health.")
 
-        self.remarks = "User meets all criteria for donation."
-        self.eligible = True
+        self.remarks = "User meets all criteria for donation." if self.eligible else "User does not meet all criteria"
+        self.eligible = len(reasons) == 0
+
         self.save()
-        return self.eligible
+
+        return self.eligible, reasons
 
 
 class Donation(models.Model):
     DONATION_TYPE_CHOICES = [
-        ('whole_blood', 'Whole Blood'),
-        ('plasma', 'Plasma'),
-        ('platelets', 'Platelets'),
+        ('whole_blood', 'Whole Blood Donation'),
+        ('plasma', 'Plasma Donation'),
+        ('platelets', 'Platelet Donation'),
+        ("double red cells", "Double Red Cell Donation"),
     ]
 
     DONATION_STATUS_CHOICES = [
@@ -120,16 +111,15 @@ class Donation(models.Model):
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='donations')
 
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=5, decimal_places=2)
     donation_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
     donation_date = models.DateTimeField()
-    status = models.CharField(max_length=50, choices=DONATION_STATUS_CHOICES)
+    status = models.CharField(max_length=50, default='scheduled')
     is_approved = models.BooleanField(default=False)
     remarks = models.TextField(null=True, blank=True)
+    approval_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
-
-

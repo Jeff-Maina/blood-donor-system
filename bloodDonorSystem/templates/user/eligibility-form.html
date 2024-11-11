@@ -18,69 +18,83 @@
         <div class=" flex flex-col gap-2 z-30">
             <a href="{% url 'donations' %}"
                 class="absolute top-2 right-2 size-7 rounded-full  text-neutral-500 hover:text-black flex items-center justify-center">
-                
+
                 <button id="close-button">
                     <i data-lucide="x" class="size-5" stroke-width="3"></i>
                 </button>
             </a>
+            {% if not is_eligible %}
             <form method="POST" action="{% url 'check-eligibility' %}" class="flex flex-col gap-2 ">
                 {% csrf_token %}
-
                 <ul class="flex flex-col divide-y divide-neutral-200">
-
                     <li class="form-group px-4 py-3 !list-decimal">
                         {{ form.weight.label_tag }}
                         {{ form.weight }}
                     </li>
-
-                    <!-- <hr /> -->
+                    <li class="form-group px-4 py-3 !list-decimal">
+                        {{ form.last_donation_date.label_tag }}
+                        {{ form.last_donation_date }}
+                    </li>
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.is_in_good_health.label_tag }}
                         {{ form.is_in_good_health }}
                     </li>
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.chronic_condition.label_tag }}
                         {{ form.chronic_condition }}
                     </li>
-
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.recent_illness.label_tag }}
                         {{ form.recent_illness }}
                     </li>
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.on_medication.label_tag }}
                         {{ form.on_medication }}
                     </li>
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.recent_travel.label_tag }}
                         {{ form.recent_travel }}
                     </li>
                     {% if profile.gender == "Female" %}
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.pregnancy_status.label_tag }}
                         {{ form.pregnancy_status }}
                     </li>
-                    <!-- <hr /> -->
                     <li class="form-group px-4 py-3 list-disc">
                         {{ form.is_breastfeeding.label_tag }}
                         {{ form.is_breastfeeding }}
                     </li>
                     {% endif %}
                 </ul>
-
                 <div class="px-4 py-3 w-full border-t border-neutral-300">
                     <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 rounded py-2 justify-center font-medium text-white w-2/4">Submit
-                        <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
+                        class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 rounded py-2 justify-center font-medium text-white w-2/4">
+                        Submit <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
                     </button>
                 </div>
-
             </form>
+
+            {% else %}
+            <div class="p-4 flex flex-col gap-4">
+                {% if reasons %}
+                <p class="font-medium text-red-500">You are not eligible for donation at this time. Please review the
+                    following reasons:</p>
+                <ul class="list-disc pl-5">
+                    {% for reason in reasons %}
+                    <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'donations' %}"
+                    class="flex items-center hover:underline text-blue-500 gap-2 font-medium">
+                    <i data-lucide="arrow-left" class="size-3.5" stroke-width="3"></i>
+                    Back to donations
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+
+
         </div>
     </div>
 

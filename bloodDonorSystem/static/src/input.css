@@ -101,3 +101,13 @@ select {
   background: #a2a2a2;
   border-radius: 10px;
 }
+
+
+.list{
+  list-style-type: decimal !important;
+  list-style-position: inside !important;
+}
+
+textarea{
+  @apply border border-neutral-200 rounded-md px-3 py-1.5 placeholder:text-neutral-400 placeholder:text-sm outline-none focus:border-neutral-500 h-20;
+}

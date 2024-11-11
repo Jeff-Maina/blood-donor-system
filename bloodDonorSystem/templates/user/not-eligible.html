@@ -1,0 +1,50 @@
+{% extends "user/donations.html" %}
+
+{% block title %} Blood Donor System | Eligibility {% endblock %}
+
+
+
+{% block eligibility %}
+<div id="modal" class="w-full h-screen fixed top-0 left-0 z-50">
+    <div id="backdrop" class="absolute top-0 left-0 w-full h-full bg-black/60"></div>
+    <div
+        class="mx-auto max-h-[85vh] custom-scrollbar overflow-y-auto w-[500px]   shadow-lg  rounded-md max-w-fit  z-20 relative p-1 bg-white mt-14">
+        <div class="flex flex-col gap-2 p-4">
+            <h1 class="text-2xl font-bold tracking-tight text-neutral-800">Check failed</h1>
+            <p class=" text-neutral-600 text-sm ">
+                You are not eligible to donate at this time. </p>
+        </div>
+        <div class=" flex flex-col gap-2 z-30">
+            <a href="{% url 'donations' %}"
+                class="absolute top-2 right-2 size-7 rounded-full  text-neutral-500 hover:text-black flex items-center justify-center">
+
+                <button id="close-button">
+                    <i data-lucide="x" class="size-5" stroke-width="3"></i>
+                </button>
+            </a>
+
+
+            <div class="p-4 flex flex-col gap-4">
+                {% if reasons %}
+                <p class="font-medium text-red-500">You are not eligible for donation at this time. Please review the
+                    following reasons:</p>
+                <ul class="list-disc pl-5">
+                    {% for reason in reasons %}
+                    <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'donations' %}"
+                    class="flex items-center hover:underline text-blue-500 gap-2 font-medium">
+                    <i data-lucide="arrow-left" class="size-3.5" stroke-width="3"></i>
+                    Back to donations
+                </a>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
