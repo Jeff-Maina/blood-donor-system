@@ -84,27 +84,115 @@
                             <button
                                 class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
                                 <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
+                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
                                     Edit
                                 </div>
                                 <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
                             </button>
-                            <button
-                                class="h-full group/button relative  aspect-square rounded hover:bg-red-100 text-red-500 hover:text-red-600  p-2">
+                            <button data-id="{{ donation.id }}" data-modal-target="#detailsModal{{ donation.id }}"
+                                class="h-full more-details-btn group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
                                 <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
+                                    class="absolute !min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
+                                    <p class="min-w-fit w-[85px]">More details</p>
+                                </div>
+                                <i data-lucide="info" class="size-3" stroke-width="3"></i>
+                            </button>
+                            <button data-id="{{ donation.id }}"
+                                class="h-full delete-btn group/button relative  aspect-square rounded hover:bg-red-100 text-red-500 hover:text-red-600  p-2">
+                                <div
+                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
                                     Delete
                                 </div>
                                 <i data-lucide="trash" class="size-3" stroke-width="3"></i>
                             </button>
-                            <button
-                                class="h-full group/button relative  aspect-square rounded hover:bg-blue-100 text-blue-500 hover:text-blue-600  p-2">
+
+                            <!-- modal -->
+                            <div id="detailsModal{{ donation.id }}"
+                                class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+                                <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
                                 <div
-                                    class="absolute !min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
-                                   <p class="min-w-fit w-[85px]">More details</p>
+                                    class="w-[450px] max-h-[70vh] p-4 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-6 mt-20">
+                                    <h1 class="font-semibold">Donation details</h1>
+                                    <div class="flex flex-col gap-6 relative">
+
+                                        <div class="flex flex-col gap-2 ">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Facility</p>
+                                                <p class="font-medium">Aga Khan Hospital, Nairobi</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Donation Date</p>
+                                                <p class="font-medium">{{ donation.donation_date|date:"F j, Y"}}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Appointment Time</p>
+                                                <p class="font-medium">{{ donation.donation_date|date:"g:i a"}}</p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="flex flex-col gap-2 ">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Blood Amount</p>
+                                                <p class="font-medium">{{ donation.amount }} ml</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Donation Type</p>
+                                                <p class="font-medium">{{ donation.donation_type }}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Donation status</p>
+                                                <p class="font-medium">{{ donation.status }}</p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="flex flex-col gap-2 ">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Approval Status</p>
+                                                <p class="font-medium">{{ donation.approval_status }}</p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-neutral-500 font-medium">Approval Date</p>
+                                                <p class="font-medium">
+                                                    {% if donation.approval_date %}
+                                                    {{ donation.approval_date }}
+                                                    {% else %}
+                                                    Pending
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="flex  flex-col gap-2">
+                                            <p class="text-neutral-500 font-medium">Your Remarks</p>
+                                            <p class="font-medium">{{ donation.remarks }}</p>
+                                        </div>
+                                        <hr>
+                                        <div class="flex  flex-col gap-2">
+                                            <p class="text-neutral-500 font-medium">Reason for rejection</p>
+                                            <p class="font-medium">We have done extensive tests and come to the
+                                                conclusion that your blood does indeed suck quite alot and will
+                                                therefore not be able to proceed with you sample yo</p>
+                                        </div>
+
+
+                                    </div>
                                 </div>
-                                <i data-lucide="info" class="size-3" stroke-width="3"></i>
-                            </button>
+                            </div>
+
+                            <!-- delete modal -->
+                            <div id="deleteModal{{ donation.id }}"
+                                class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+                                <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+                                <div
+                                    class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
+                                    <h1 class="font-semibold text-xl">Delete Donation</h1>
+                                    <p class="text-neutral-600">Are you sure you want to delete this donation. This action cannot be undone.</p>
+
+                                    <button class="w-full h-9 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium">Delete</button>
+                                </div>
+                            </div>
+
+
                         </td>
                     </tr>
                     {% endfor %}
@@ -117,34 +205,59 @@
     </div>
 
 
-    <!-- modal  -->
-    {% block eligibility %} {% endblock %}
-    {% block book-donation %} {% endblock%}
+
 </div>
 {% endblock %}
 
 {% block scripts %}
-<!-- <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const donationButton = document.querySelector("#donation-button");
-        const modal = document.querySelector("#modal");
-        const backdrop = document.querySelector("#backdrop");
-        const closeButton = document.querySelector("#close-button");
+<script>
 
-        const closeModal = () => {
-            modal.classList.add("hidden");
+    document.addEventListener("DOMContentLoaded", () => {
+
+        function closeModalOnBackdropClick(modalId) {
+            const modal = document.getElementById(modalId);
+            const backdrop = modal.querySelector('.backdrop');
+
+            backdrop.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
         }
 
-        donationButton.addEventListener("click", () => {
-            console.log('clicked')
-            modal.classList.toggle("hidden");
+        const modals = document.querySelectorAll('[id^="detailsModal"]');
+        modals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const deleteModals = document.querySelectorAll('[id^="deleteModal"]');
+        deleteModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const buttons = document.querySelectorAll(".more-details-btn")
+        buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
         })
 
-        backdrop.addEventListener("click", closeModal)
-        closeButton.addEventListener("click", closeModal)
+
+        const delete_buttons = document.querySelectorAll(".delete-btn")
+        delete_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#deleteModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+
 
 
     })
 
-</script> -->
+</script>
 {% endblock %}

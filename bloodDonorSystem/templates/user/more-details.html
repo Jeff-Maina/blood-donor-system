@@ -1,0 +1,22 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% block title %} Blood Donor System | User Dashboard{% endblock %}
+
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+    <nav class="flex items-center justify-end">
+        <a href="{% url 'check-eligibility' %}">
+            <button id="donation-button"
+                class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
+                Make donation
+                <i data-lucide="plus" class="size-4" stroke-width="3"></i>
+            </button>
+        </a>
+    </nav>
+
+
+
+</div>
+{% endblock %}

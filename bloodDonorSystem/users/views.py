@@ -125,12 +125,14 @@ def donations_view(request):
     profile = UserProfile.objects.filter(user=user).first()
     donations = user.donations.all()
     total_donations = donations.count()
-    last_donation = donations.filter(status='completed').order_by('donation_date').last()
+    last_donation = donations.filter(
+        status='completed').order_by('donation_date').last()
 
-    if  last_donation:
-        last_donation_date = last_donation.donation_date.strftime("%B %d, %Y at  %I:%M %p")
+    if last_donation:
+        last_donation_date = last_donation.donation_date.strftime(
+            "%B %d, %Y at  %I:%M %p")
     else:
-        last_donation_date = '-' 
+        last_donation_date = '-'
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
@@ -160,6 +162,8 @@ def check_eligibility(request):
 
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
+    donations = user.donations.all()
+    total_donations = donations.count()
 
     try:
         eligibility_record = DonationEligibity.objects.get(user=request.user)
@@ -182,7 +186,7 @@ def check_eligibility(request):
             if is_eligible:
                 return redirect('book-donation-appointment')
             else:
-                return render(request, 'user/not-eligible.html', {'reasons': reasons})
+                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
     else:
         form = EligibilityForm(instance=eligibility_record)
 
@@ -191,12 +195,15 @@ def check_eligibility(request):
         'profile': profile,
         'is_eligible': is_eligible,
         'reasons': reasons,
+        'donations': donations, 'total_donations': total_donations
     })
 
 
 @login_required
 def book_appointment(request):
     user = request.user
+    donations = user.donations.all()
+    total_donations = donations.count()
 
     try:
         eligibility = DonationEligibity.objects.get(user=user)
@@ -217,7 +224,7 @@ def book_appointment(request):
 
             return redirect('donations')
         else:
-            return render(request, 'user/book-donation.html', {'form': form})
+            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
     else:
         form = BookDonationForm()
-    return render(request, 'user/book-donation.html', {'form': form})
+    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
