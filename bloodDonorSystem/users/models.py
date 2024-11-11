@@ -108,6 +108,12 @@ class Donation(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
+    APPROVAL_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
     user = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE, related_name='donations')
 
@@ -116,10 +122,13 @@ class Donation(models.Model):
         max_length=50, choices=DONATION_TYPE_CHOICES)
     donation_date = models.DateTimeField()
     status = models.CharField(max_length=50, default='scheduled')
-    is_approved = models.BooleanField(default=False)
+    approval_status = models.CharField(
+        default="pending", max_length=50, choices=APPROVAL_STATUS_CHOICES)
     remarks = models.TextField(null=True, blank=True)
     approval_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
+    
+   

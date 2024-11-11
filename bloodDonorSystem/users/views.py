@@ -123,12 +123,20 @@ def dashboard_view(request):
 def donations_view(request):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
+    donations = user.donations.all()
+    total_donations = donations.count()
+    last_donation = donations.filter(status='scheduled').order_by('donation_date').first()
+
+    if  last_donation:
+        last_donation_date = last_donation.donation_date.strftime("%B %d, %Y at  %I:%M %p")
+    else:
+        last_donation_date = '-' 
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
 
     if user.role == 'individual':
-        return render(request, 'user/donations.html', {'user': user, 'profile': profile})
+        return render(request, 'user/donations.html', {'user': user, 'profile': profile, 'donations': donations, 'total_donations': total_donations, "last_donation_date": last_donation_date})
     else:
         return redirect(request, 'facility-dashboard')
 

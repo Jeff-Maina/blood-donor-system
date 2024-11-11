@@ -154,7 +154,8 @@ class BookDonationForm(forms.ModelForm):
 
     class Meta:
         model = Donation
-        fields = ['amount', 'donation_type', 'donation_date', 'remarks']
+        fields = ['amount', 'donation_type',
+                  'donation_date', 'remarks', 'approval_status']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
@@ -167,13 +168,14 @@ class BookDonationForm(forms.ModelForm):
         donation_date = self.cleaned_data.get('donation_date')
 
         if donation_date and timezone.is_naive(donation_date):
-            donation_date = timezone.make_aware(donation_date, timezone.get_current_timezone())
+            donation_date = timezone.make_aware(
+                donation_date, timezone.get_current_timezone())
 
         if donation_date <= timezone.now():
             raise ValidationError("The donation date must be in the future.")
-        
-        if not (time(9, 0) <= donation_date.time() <= time(18, 0)):
-            raise ValidationError("The donation time must be between 9:00 AM and 6:00 PM.")
-        
-        return donation_date
 
+        if not (time(9, 0) <= donation_date.time() <= time(18, 0)):
+            raise ValidationError(
+                "The donation time must be between 9:00 AM and 6:00 PM.")
+
+        return donation_date
