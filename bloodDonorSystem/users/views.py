@@ -125,7 +125,7 @@ def donations_view(request):
     profile = UserProfile.objects.filter(user=user).first()
     donations = user.donations.all()
     total_donations = donations.count()
-    last_donation = donations.filter(status='scheduled').order_by('donation_date').first()
+    last_donation = donations.filter(status='completed').order_by('donation_date').last()
 
     if  last_donation:
         last_donation_date = last_donation.donation_date.strftime("%B %d, %Y at  %I:%M %p")

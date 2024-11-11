@@ -155,7 +155,7 @@ class BookDonationForm(forms.ModelForm):
     class Meta:
         model = Donation
         fields = ['amount', 'donation_type',
-                  'donation_date', 'remarks', 'approval_status']
+                  'donation_date', 'remarks', 'approval_status','status']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),

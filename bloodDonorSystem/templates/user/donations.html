@@ -45,11 +45,11 @@
                     <tr class=" ">
                         <th class="text-start p-2 font-semibold">Date</th>
                         <!-- <th class="text-start p-2 font-semibold">Facility</th> -->
-                        <th class="text-start p-2 font-semibold">Blood Group</th>
+                        <th class="text-start p-2 font-semibold">Donation Type</th>
                         <th class="text-start p-2 font-semibold">Amount Donated</th>
                         <th class="text-start p-2 font-semibold">Status</th>
                         <th class="text-start p-2 font-semibold">Approval status</th>
-                        <th class="text-start p-2 font-semibold">Remarks</th>
+                        <th class="text-start p-2 font-semibold">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -57,13 +57,14 @@
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
                         <!-- <td class="p-2 truncate text-neutral-800">Nairobi Blood Bank</td> -->
                         <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"F j, Y, g:i a" }}</td>
-                        <td class="p-2 truncate text-neutral-800 !capitalize">{{ profile.blood_group }}</td>
-                        <td class="p-2 truncate text-neutral-800"><span class="text-black font-medium">{{donation.amount }}</span> ml</td>
+                        <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.donation_type }}</td>
+                        <td class="p-2 truncate text-neutral-800"><span
+                                class="text-black font-medium">{{donation.amount}}</span> ml</td>
                         <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.status }}</td>
-                        <td class="p-2 truncate text-neutral-800  !capitalize flex items-center gap-2">
-                            
+                        <td class="p-2 truncate text-neutral-800 text-sm  !capitalize flex items-center gap-2">
+
                             {% if donation.approval_status == 'pending' %}
-                            <div class="text-blue-600 flex items-center gap-2 font-medium">
+                            <div class="text-purple-600 flex items-center gap-2 font-medium">
                                 <i data-lucide="clock" class=" size-4" stroke-width="3"></i>
                                 <span>Pending</span>
                             </div>
@@ -79,7 +80,32 @@
                             </div>
                             {% endif %}
                         </td>
-                        <td class="p-2 truncate text-neutral-800 ">{{ donation.remarks }}</td>
+                        <td class="p-2  gap-2">
+                            <button
+                                class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
+                                <div
+                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
+                                    Edit
+                                </div>
+                                <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
+                            </button>
+                            <button
+                                class="h-full group/button relative  aspect-square rounded hover:bg-red-100 text-red-500 hover:text-red-600  p-2">
+                                <div
+                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
+                                    Delete
+                                </div>
+                                <i data-lucide="trash" class="size-3" stroke-width="3"></i>
+                            </button>
+                            <button
+                                class="h-full group/button relative  aspect-square rounded hover:bg-blue-100 text-blue-500 hover:text-blue-600  p-2">
+                                <div
+                                    class="absolute !min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-black text-white rounded-md">
+                                   <p class="min-w-fit w-[85px]">More details</p>
+                                </div>
+                                <i data-lucide="info" class="size-3" stroke-width="3"></i>
+                            </button>
+                        </td>
                     </tr>
                     {% endfor %}
 

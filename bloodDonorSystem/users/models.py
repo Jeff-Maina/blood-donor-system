@@ -121,7 +121,7 @@ class Donation(models.Model):
     donation_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
     donation_date = models.DateTimeField()
-    status = models.CharField(max_length=50, default='scheduled')
+    status = models.CharField(max_length=50, default='scheduled',choices=DONATION_STATUS_CHOICES)
     approval_status = models.CharField(
         default="pending", max_length=50, choices=APPROVAL_STATUS_CHOICES)
     remarks = models.TextField(null=True, blank=True)
