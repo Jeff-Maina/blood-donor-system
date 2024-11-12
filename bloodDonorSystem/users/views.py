@@ -3,7 +3,7 @@ from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonati
 from .models import CustomUser, UserProfile, DonationEligibity, Donation
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-
+from datetime import datetime
 # Create your views here.
 
 
@@ -109,12 +109,25 @@ def dashboard_view(request):
     user = request.user
 
     profile = UserProfile.objects.filter(user=user).first()
+    donations = user.donations.all()
+    total_donations = donations.count()
+    upcoming_donations = donations.filter(
+        status='scheduled',
+        approval_status='pending',
+        donation_date__gte=datetime.now()
+    ).order_by('donation_date')
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
 
     if user.role == 'individual':
-        return render(request, 'user/dashboard.html', {'user': user, 'profile': profile})
+        context = {
+            'user': user,
+            'profile': profile,
+            'upcoming_donations': upcoming_donations,
+            'total_donations': total_donations
+        }
+        return render(request, 'user/dashboard.html', context)
     else:
         return redirect(request, 'facility-dashboard')
 
@@ -255,4 +268,18 @@ def updateDonation(request, id):
             return redirect("donations")
     else:
         form = BookDonationForm(instance=donation)
-    return render(request, "user/update-donation.html", {"form": form, 'user': user, 'profile': profile,})
+    return render(request, "user/update-donation.html", {"form": form, 'user': user, 'profile': profile, })
+
+
+@login_required
+def cancel_appointment(request, id):
+    donation = get_object_or_404(Donation, id=id)
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+    if donation.user != request.user:
+        return redirect("home")
+
+    donation.status = 'cancelled'
+    donation.save()
+
+    return redirect('donations')

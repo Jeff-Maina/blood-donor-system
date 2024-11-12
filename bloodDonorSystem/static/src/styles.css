@@ -1237,6 +1237,10 @@ video {
   text-transform: capitalize !important;
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
 .leading-none {
   line-height: 1;
 }
@@ -1317,6 +1321,14 @@ video {
 .\!text-neutral-500 {
   --tw-text-opacity: 1 !important;
   color: rgb(115 115 115 / var(--tw-text-opacity)) !important;
+}
+
+.underline {
+  text-decoration-line: underline;
+}
+
+.\!underline {
+  text-decoration-line: underline !important;
 }
 
 .opacity-0 {

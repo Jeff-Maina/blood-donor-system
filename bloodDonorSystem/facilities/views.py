@@ -11,10 +11,13 @@ from .decorators import facility_required
 @login_required
 def dashboard_view(request):
     user = request.user
+    donations = user.donations.all()
+    total_donations = donations.count()
+
     if user.role == 'facility':
         if user.is_approved:
             if user.profile_completed:
-                return render(request, 'facility/dashboard.html')
+                return render(request, 'facility/dashboard.html',)
             else:
                 return redirect("complete-facility-profile")
         else:

@@ -18,7 +18,7 @@
     <div class="w-full grid grid-cols-3 gap-4">
         <div class="w-full h-36 rounded-md shadow p-6 border">
             <div class="flex flex-col gap-4">
-                <p class="font-medium">Donations made</p>
+                <p class="font-medium">Total Donations</p>
                 <p class="text-3xl font-semibold tracking-tight">{{ total_donations }}</p>
             </div>
         </div>
@@ -56,7 +56,7 @@
                     {% for donation in donations %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
                         <!-- <td class="p-2 truncate text-neutral-800">Nairobi Blood Bank</td> -->
-                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"F j, Y, g:i a" }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"d-m-Y, g:i a" }}</td>
                         <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.donation_type }}</td>
                         <td class="p-2 truncate text-neutral-800"><span
                                 class="text-black font-medium">{{donation.amount}}</span> ml</td>
@@ -82,7 +82,7 @@
                         </td>
                         <td class="p-2  gap-2">
                             <button data-id="{{ donation.id }}"
-                                class="h-full delete-btn group/button relative  aspect-square rounded    p-2 {% if donation.status == 'completed' %} disabled !text-neutral-500 !cursor-not-allowed {% else %} text-red-500 hover:text-red-600 hover:bg-red-100 {% endif %} ">
+                                class="h-full cancel-btn group/button relative  aspect-square rounded    p-2 {% if donation.status == 'completed' or donation.status == 'cancelled' %} disabled !text-neutral-500 !cursor-not-allowed pointer-events-none {% else %} text-red-500 hover:text-red-600 hover:bg-red-100 {% endif %} ">
                                 <div
                                     class="absolute w-[170px] min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
                                     Cancel appointment
@@ -218,25 +218,25 @@
                             </div>
 
                             <!-- cancel appointment modal -->
-                            <div id="deleteModal{{ donation.id }}"
+                            <div id="cancelModal{{ donation.id }}"
                                 class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
                                 <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
                                 <div
                                     class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
-                                    <h1 class="font-semibold text-xl">Confirm Deletion</h1>
+                                    <h1 class="font-semibold text-xl">Cancel Appointment</h1>
                                     <p class="text-neutral-600">
-                                        Are you sure you want to delete this <span class="font-medium text-black">
+                                        Are you sure you want to cancle this <span class="font-medium text-black">
                                             {{ donation.donation_type }}
-                                        </span> donation scheduled on <span class="font-medium text-black">
+                                        </span> donation appointment scheduled on <span class="font-medium text-black">
                                             {{donation.donation_date|date:"F j, Y"}}</span> at <span
                                             class="font-medium text-black">{{donation.donation_date|date:"g:ia"}}</span>
                                         ? This action is
-                                        irreversible, and all related data will be permanently removed.
+                                        irreversible.
                                     </p>
-                                    <a href="{% url 'delete-donation' donation.id %}">
+                                    <a href="{% url 'cancel-appointment' donation.id %}">
 
                                         <button
-                                            class="w-full h-9 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium">Delete</button>
+                                            class="w-full h-9 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium">Confirm</button>
                                     </a>
                                 </div>
                             </div>
@@ -287,6 +287,13 @@
             closeModalOnBackdropClick(modal.id);
         });
 
+        const cancelModals = document.querySelectorAll('[id^="cancelModal"]');
+        cancelModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+
+
         const buttons = document.querySelectorAll(".more-details-btn")
         buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
@@ -307,6 +314,17 @@
                 modal.classList.remove("hidden")
             })
         })
+
+        const cancel_buttons = document.querySelectorAll(".cancel-btn")
+        cancel_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#cancelModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
 
 
 

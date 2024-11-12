@@ -11,5 +11,6 @@ urlpatterns = [
     path("donations/check-eligibility/", views.check_eligibility, name="check-eligibility"),
     path("donations/book-donation-appointment/", views.book_appointment, name="book-donation-appointment"),
     path("donations/delete-donation/<int:id>/", views.deleteDonation, name='delete-donation'),
-    path("donations/edit/<int:id>/", views.updateDonation, name='update-donation')
+    path("donations/edit/<int:id>/", views.updateDonation, name='update-donation'),
+    path("donations/cancel-appointment/<int:id>/", views.cancel_appointment, name='cancel-appointment')
 ]

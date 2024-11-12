@@ -11,7 +11,7 @@
         <div class="w-full h-36 rounded-md shadow p-6 border">
             <div class="flex flex-col gap-4">
                 <p class="font-medium">Donations made</p>
-                <p class="text-5xl font-semibold tracking-tight">20</p>
+                <p class="text-5xl font-semibold tracking-tight">{{ total_donations }}</p>
             </div>
         </div>
         <div class="w-full h-36 rounded-md shadow p-6 border">
@@ -78,40 +78,34 @@
         </div>
 
         <div class="w-full col-span-2 h-96 rounded-md shadow p-6 border flex flex-col gap-4 ">
-            <h1 class="font-semibold">Upcoming appointments</h1>
+            <div class="flex w-full  items-center justify-between">
+
+                <h1 class="font-semibold">Upcoming Donation Appointments</h1>
+                <a href="{% url 'donations' %}" class="text-blue-500  font-medium flex items-center gap-1 text-sm">View all donations<i data-lucide="arrow-up-right" class="size-4" stroke-width="2"></i></a>
+            </div>
             <div class="w-full">
                 <table class="w-full max-h-80">
                     <thead class="">
                         <tr class=" ">
                             <th class="text-start p-2 font-semibold">Facility</th>
-                            <th class="text-start p-2 font-semibold">Status</th>
-                            <th class="text-start p-2 font-semibold">Reason for visit</th>
                             <th class="text-start p-2 font-semibold">Location</th>
+                            <th class="text-start p-2 font-semibold">Donation Type</th>
+                            <th class="text-start p-2 font-semibold">Approval Status</th>
+
                             <th class="text-start p-2 font-semibold">Date/Time</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for donation in upcoming_donations %}
                         <tr class="bg-neutral-100">
                             <td class="p-2 truncate text-neutral-800">Aga Khan medical center</td>
-                            <td class="p-2 truncate text-neutral-800">Scheduled</td>
-                            <td class="p-2 truncate text-neutral-800">Checkup</td>
                             <td class="p-2 truncate text-neutral-800">Nairobi</td>
-                            <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
+                            <td class="p-2 truncate text-neutral-800 capitalize">{{ donation.donation_type }}</td>
+                            <td class="p-2 truncate text-neutral-800">{{ donation.approval_status }}</td>
+                            <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:'d-m-Y, g:i a' }}</td>
                         </tr>
-                        <tr class="">
-                            <td class="p-2 truncate text-neutral-800">Aga Khan medical center</td>
-                            <td class="p-2 truncate text-neutral-800">Scheduled</td>
-                            <td class="p-2 truncate text-neutral-800">Plasma donation</td>
-                            <td class="p-2 truncate text-neutral-800">Nairobi</td>
-                            <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
-                        </tr>
-                        <tr class="bg-neutral-100">
-                            <td class="p-2 truncate text-neutral-800">KU Level 5 hospital</td>
-                            <td class="p-2 truncate text-neutral-800">Scheduled</td>
-                            <td class="p-2 truncate text-neutral-800">Direct donation</td>
-                            <td class="p-2 truncate text-neutral-800">Nairobi</td>
-                            <td class="p-2 truncate text-neutral-800">12-05-2023, 8:00am</td>
-                        </tr>
+                        {% endfor %}
+
                     </tbody>
                 </table>
 
