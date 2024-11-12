@@ -155,13 +155,17 @@ class BookDonationForm(forms.ModelForm):
     class Meta:
         model = Donation
         fields = ['amount', 'donation_type',
-                  'donation_date', 'remarks', 'approval_status','status']
+                  'donation_date', 'remarks']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
             'donation_type': forms.Select(attrs={'class': 'form-control'}),
             'donation_date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'remarks': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Any additional information? e.g special considerations, preferred staff.'}),
+        }
+
+        labels = {
+            'donation_date' : "Appointment Date and Time",
         }
 
     def clean_donation_date(self):

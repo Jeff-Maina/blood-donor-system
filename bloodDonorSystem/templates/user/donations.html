@@ -81,14 +81,17 @@
                             {% endif %}
                         </td>
                         <td class="p-2  gap-2">
-                            <button
-                                class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
-                                <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Edit
-                                </div>
-                                <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
-                            </button>
+                            <a href="{% url 'update-donation' donation.id %}">
+
+                                <button
+                                    class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
+                                    <div
+                                        class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
+                                        Edit
+                                    </div>
+                                    <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
+                                </button>
+                            </a>
                             <button data-id="{{ donation.id }}" data-modal-target="#detailsModal{{ donation.id }}"
                                 class="h-full more-details-btn group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
                                 <div

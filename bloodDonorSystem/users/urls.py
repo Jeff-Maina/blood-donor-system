@@ -10,5 +10,6 @@ urlpatterns = [
     path("requests/", views.requests_view, name='requests'),
     path("donations/check-eligibility/", views.check_eligibility, name="check-eligibility"),
     path("donations/book-donation-appointment/", views.book_appointment, name="book-donation-appointment"),
-    path("donations/delete-donation/<int:id>/", views.deleteTask, name='delete-donation'),
+    path("donations/delete-donation/<int:id>/", views.deleteDonation, name='delete-donation'),
+    path("donations/edit/<int:id>/", views.updateDonation, name='update-donation')
 ]

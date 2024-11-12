@@ -96,7 +96,7 @@ class DonationEligibity(models.Model):
 
 class Donation(models.Model):
     DONATION_TYPE_CHOICES = [
-        ('whole_blood', 'Whole Blood Donation'),
+        ('whole blood', 'Whole Blood Donation'),
         ('plasma', 'Plasma Donation'),
         ('platelets', 'Platelet Donation'),
         ("double red cells", "Double Red Cell Donation"),

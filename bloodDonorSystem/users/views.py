@@ -229,8 +229,9 @@ def book_appointment(request):
         form = BookDonationForm()
     return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
 
+
 @login_required
-def deleteTask(request, id):
+def deleteDonation(request, id):
 
     donation = get_object_or_404(Donation, id=id)
     if donation.user != request.user:
@@ -238,3 +239,20 @@ def deleteTask(request, id):
     donation.delete()
     return redirect("donations")
 
+
+@login_required
+def updateDonation(request, id):
+    donation = get_object_or_404(Donation, id=id)
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+    if donation.user != request.user:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = BookDonationForm(request.POST, instance=donation)
+        if form.is_valid():
+            form.save()
+            return redirect("donations")
+    else:
+        form = BookDonationForm(instance=donation)
+    return render(request, "user/update-donation.html", {"form": form, 'user': user, 'profile': profile,})

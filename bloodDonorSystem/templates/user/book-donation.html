@@ -23,7 +23,6 @@
                     <i data-lucide="x" class="size-5" stroke-width="3"></i>
                 </button>
             </a>
-            {{ eligible }}
             <form method="POST" action="{% url 'book-donation-appointment' %}" class="flex flex-col gap-2 ">
                 {% csrf_token %}
 
@@ -56,14 +55,7 @@
                         {{ form.remarks.label_tag }}
                         {{ form.remarks }}
                     </li>
-                    <li class="form-group px-4 py-3 list-disc">
-                        {{ form.approval_status.label_tag }}
-                        {{ form.approval_status }}
-                    </li>
-                    <li class="form-group px-4 py-3 list-disc">
-                        {{ form.status.label_tag }}
-                        {{ form.status }}
-                    </li>
+
                 </ul>
 
                 <div class="px-4 py-3 w-full border-t border-neutral-300">
