@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm
-from .models import CustomUser, UserProfile, DonationEligibity
+from .models import CustomUser, UserProfile, DonationEligibity, Donation
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 
@@ -228,3 +228,13 @@ def book_appointment(request):
     else:
         form = BookDonationForm()
     return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
+
+@login_required
+def deleteTask(request, id):
+
+    donation = get_object_or_404(Donation, id=id)
+    if donation.user != request.user:
+        return redirect("home")
+    donation.delete()
+    return redirect("donations")
+
