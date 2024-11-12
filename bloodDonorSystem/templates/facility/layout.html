@@ -1,0 +1,164 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Blood donor system{% endblock %}</title>
+    <link href="{% static 'src/styles.css' %}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+</head>
+
+
+<body class=" flex">
+
+    <div id="sidebar" class="w-64 sticky top-0 shrink-0 h-screen flex flex-col p-1 justify-between">
+        <div class="bg-neutral-900 rounded-md h-full">
+            <div class="w-full border-b border-neutral-700 flex items-center px-4 h-14">
+                <div class="flex items-center gap-2 px-2">
+                    <i data-lucide="heart-pulse" class="stroke-red-500 size-5"></i>
+                    <a href="{% url 'home' %}" class="font-bold text-white">
+                        Blood donor system
+                    </a>
+                </div>
+            </div>
+            <div class="p-4 flex flex-col gap-4">
+                <small class="text-sm font-medium text-neutral-400 px-2">main menu</small>
+                <div class="flex flex-col gap-1">
+                    <div>
+                        <a href="{% url 'user-dashboard' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
+                            <i data-lucide="home" class="size-4"></i>
+                            <span class="font-medium">Dashboard</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'donations' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
+                            <i data-lucide="Syringe" class="size-4"></i>
+                            <span class="font-medium">Donation Management</span>
+                        </a>
+                    </div>
+
+                    <div>
+                        <a href="{% url 'requests' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
+                            <i data-lucide="Mail" class="size-4"></i>
+                            <span class="font-medium">Blood Requests</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'requests' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
+                            <i data-lucide="droplet" class="size-4"></i>
+                            <span class="font-medium">Blood Inventory</span>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'requests' %}"
+                            class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
+                            <i data-lucide="user-round" class="size-4"></i>
+                            <span class="font-medium">Donors Management</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="w-full h-full p-1">
+        <nav class="w-full sticky top-0 z-20 shrink-0 h-14 px-4 flex items-center gap-4 border-b justify-end">
+            <div class="relative">
+                <div id="notif-button"
+                    class="p-3 rounded-full hover:bg-neutral-100 hover:text-black cursor-pointer text-neutral-600">
+                    <i data-lucide="bell" class="size-5" stroke-width="2"></i>
+                </div>
+                <div id="notif-box"
+                    class="absolute hidden bg-white w-96 h-96 shadow-md  top-full right-0 border rounded-md">
+                    <p class="p-4">No new notifications</p>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div id="dropdown-trigger"
+                    class="flex items-center  gap-2 px-3 rounded-md hover:bg-neutral-100 py-1 cursor-pointer">
+                    <h1 class="font-semibold text-sm select-none">{{ profile.name }}</h1>
+                    <i data-lucide="chevron-down" stroke-width="3" class="size-4"></i>
+                </div>
+                <!-- dropdown -->
+                <div id="dropdown-menu"
+                    class="absolute hidden  w-56 shadow-md  top-full right-0 border bg-white rounded-md">
+                    <div class="p-4 border-b leading-none flex flex-col gap-2">
+                        <h1 class="font-semibold tracking-tight">{{ profile.name }}
+                        </h1>
+                        <p class="font-medium text-neutral-600 text-sm">{{ user.email }}</p>
+                    </div>
+                    <div class="p-2 w-full">
+
+                        <a href="{}"
+                            class=" transition-all p-2 text-neutral-700 font-medium hover:text-black w-full flex items-center gap-2 px-3 text-sm rounded-md py-1.5 hover:bg-neutral-100  ">
+                            <i data-lucide="user-round" class="size-3.5" stroke-width="3"></i>
+                            Profile
+                        </a>
+
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class=" transition-all p-2 text-red-500 font-medium hover:text-red-600 w-full flex items-center gap-2 px-3 text-sm rounded-md py-1.5 hover:bg-red-100  ">
+                                <i data-lucide="log-out" class="size-3.5" stroke-width="3"></i>
+                                Sign out
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.getElementById("dropdown-trigger").addEventListener("click", function (event) {
+            event.stopPropagation();
+            document.getElementById("dropdown-menu").classList.toggle("hidden");
+            document.getElementById("notif-box").classList.add("hidden");
+        });
+
+        document.getElementById("notif-button").addEventListener("click", function (event) {
+            event.stopPropagation();
+            document.getElementById("notif-box").classList.toggle("hidden");
+            document.getElementById("dropdown-menu").classList.add("hidden");
+
+        });
+
+        window.addEventListener('click', function (event) {
+            const dropdown = document.getElementById('dropdown-menu');
+            const notifBox = document.getElementById('notif-box');
+
+            if (!event.target.closest('#notif-button') && !event.target.closest('#notif-box')) {
+                notifBox.classList.add('hidden');
+            }
+
+            if (!event.target.closest('#dropdown-trigger')) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        lucide.createIcons();
+    </script>
+
+    {% block scripts %}
+    {% endblock %}
+</body>
+
+</html>

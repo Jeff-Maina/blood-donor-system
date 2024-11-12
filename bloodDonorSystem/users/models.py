@@ -121,7 +121,8 @@ class Donation(models.Model):
     donation_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
     donation_date = models.DateTimeField()
-    status = models.CharField(max_length=50, default='scheduled',choices=DONATION_STATUS_CHOICES)
+    status = models.CharField(
+        max_length=50, default='scheduled', choices=DONATION_STATUS_CHOICES)
     approval_status = models.CharField(
         default="pending", max_length=50, choices=APPROVAL_STATUS_CHOICES)
     remarks = models.TextField(null=True, blank=True)
@@ -130,5 +131,26 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
-    
-   
+
+
+class Request(models.Model):
+    URGENCY_LEVEL_CHOICES = [
+        ('normal', 'normal'),
+        ('urgent', 'urgent'),
+        ('critical', 'critical'),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    request_type = models.CharField(max_length=50)
+    request_date = models.DateField()
+    needed_by = models.DateTimeField()
+    request_amount = models.DecimalField(max_digits=5, decimal_places=2)
+    status = models.CharField(max_length=50)
+    rejection_reason = models.TextField(blank=True, null=True)
+    urgency_level = models.CharField(
+        max_length=50, choices=URGENCY_LEVEL_CHOICES)
+    remarks = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Request by {self.user} for {self.blood_type} ({self.amount} ml)"

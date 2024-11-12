@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
 from users.models import CustomUser
+from .models import FacilityProfile
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
 
@@ -11,13 +12,13 @@ from .decorators import facility_required
 @login_required
 def dashboard_view(request):
     user = request.user
-    donations = user.donations.all()
-    total_donations = donations.count()
+    profile = user.facilityprofile
 
     if user.role == 'facility':
         if user.is_approved:
             if user.profile_completed:
-                return render(request, 'facility/dashboard.html',)
+                context = {'user': user, 'profile': profile}
+                return render(request, 'facility/dashboard.html',context)
             else:
                 return redirect("complete-facility-profile")
         else:
@@ -61,14 +62,20 @@ def awaiting_approval(request):
 
 @login_required
 def complete_profile(request):
+    try:
+        facility_profile = FacilityProfile.objects.get(user=request.user)
+    except FacilityProfile.DoesNotExist:
+        facility_profile = None
 
     if request.user.profile_completed:
         return redirect('facility-dashboard')
 
     if request.method == 'POST':
         print("hello world")
-        form = ProfileFacilityForm(request.POST)
+        form = ProfileFacilityForm(request.POST, instance=facility_profile)
         if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
             profile = form.complete_profile()
 
             if profile:
@@ -78,6 +85,6 @@ def complete_profile(request):
         else:
             print(form.errors)
     else:
-        form = ProfileFacilityForm()
+        form = ProfileFacilityForm( instance=facility_profile)
 
     return render(request, "facility/complete-profile.html", {'form': form, 'error': form.errors})

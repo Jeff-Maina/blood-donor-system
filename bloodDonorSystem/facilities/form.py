@@ -18,6 +18,7 @@ DAY_CHOICES = [
     ('sun', 'Sunday'),
 ]
 
+
 class RegisterFacilityForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={"placeholder": "Password"}))
@@ -63,12 +64,13 @@ class ProfileFacilityForm(forms.ModelForm):
     class Meta:
         model = FacilityProfile
         fields = [
-                  'facility_type',
-                  'contact_number',
-                  'county',
-                  'open_days',
-                  'opening_time',
-                  'closing_time']
+            'name',
+            'facility_type',
+            'contact_number',
+            'county',
+            'open_days',
+            'opening_time',
+            'closing_time']
 
         widgets = {
             'facility_type': forms.Select(choices=FACILITY_TYPES),
@@ -76,6 +78,10 @@ class ProfileFacilityForm(forms.ModelForm):
             'county': forms.TextInput(attrs={'placeholder': 'Enter the county of the facility'}),
             'opening_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
             'closing_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
+        }
+
+        labels = {
+            'name': "Facility Name"
         }
 
         help_texts = {
@@ -86,7 +92,6 @@ class ProfileFacilityForm(forms.ModelForm):
     def complete_profile(self):
         if self.is_valid():
             profile = self.save(commit=False)
-            profile.user = self.instance.user
             profile.open_days = ','.join(self.cleaned_data['open_days'])
             profile.save()
             self.instance.user.profile_completed = True
