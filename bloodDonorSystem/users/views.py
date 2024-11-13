@@ -220,6 +220,7 @@ def check_eligibility(request):
             eligibility.save()
 
             is_eligible, reasons = eligibility.check_eligibility()
+            print('is-eligible')
 
             if is_eligible:
                 return redirect('book-donation-appointment')
@@ -227,13 +228,13 @@ def check_eligibility(request):
                 return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
     else:
         form = EligibilityForm(instance=eligibility_record)
-
     return render(request, 'user/eligibility-form.html', {
         'form': form,
         'profile': profile,
         'is_eligible': is_eligible,
         'reasons': reasons,
-        'donations': donations, 'total_donations': total_donations
+        'donations': donations, 
+        'total_donations': total_donations
     })
 
 

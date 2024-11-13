@@ -299,7 +299,6 @@
         const buttons = document.querySelectorAll(".more-details-btn")
         buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
-                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
                 modal.classList.remove("hidden")
@@ -310,7 +309,6 @@
         const delete_buttons = document.querySelectorAll(".delete-btn")
         delete_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
-                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#deleteModal${button.dataset.id}`)
                 modal.classList.remove("hidden")
@@ -320,7 +318,6 @@
         const cancel_buttons = document.querySelectorAll(".cancel-btn")
         cancel_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
-                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#cancelModal${button.dataset.id}`)
                 modal.classList.remove("hidden")

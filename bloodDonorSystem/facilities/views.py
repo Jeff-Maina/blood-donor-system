@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
-from users.models import CustomUser, Request
+from users.models import CustomUser, Request, Donation
 from .models import FacilityProfile
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
@@ -28,13 +28,21 @@ def dashboard_view(request):
                     approval_status='pending').count()
                 total_requests = requests.count()
 
+                completed_donations = donations.filter(
+                    status='completed',
+                )
+
+                total_blood_donated = sum(
+                    donation.amount for donation in completed_donations)
+
                 context = {
                     'user': user,
                     'profile': profile,
                     'donations': donations,
                     'total_donations': total_donations,
                     'pending_requests_count': pending_requests_count,
-                    'total_requests': total_requests
+                    'total_requests': total_requests,
+                    'total_blood_donated': total_blood_donated/1000
 
                 }
 
@@ -117,6 +125,7 @@ def requests_view(request):
     user = request.user
     profile = user.facilityprofile
     requests = profile.requests.all()
+    donations = profile.donations.all()
 
     total_requests = requests.count()
     approved_requests_count = requests.filter(
@@ -125,13 +134,16 @@ def requests_view(request):
         approval_status='rejected').count()
     pending_requests_count = requests.filter(
         approval_status='pending').count()
+    
 
     context = {
         'requests': requests,
         'total_requests': total_requests,
         'approved_requests_count': approved_requests_count,
         'rejected_requests_count': rejected_requests_count,
-        'pending_requests_count': pending_requests_count
+        'pending_requests_count': pending_requests_count,
+        'profile': profile,
+        'user': user
     }
 
     return render(request, "facility/blood-requests.html", context)
@@ -155,3 +167,59 @@ def reject_request(request, id):
     request.save()
 
     return redirect('facility-requests')
+
+
+# ! DONATIONS
+
+@login_required
+def donations_view(request):
+    user = request.user
+    profile = user.facilityprofile
+    donations = profile.donations.all()
+
+    total_donations = donations.count()
+
+    completed_donations = donations.filter(
+        status='completed',
+    )
+
+    total_blood_donated = sum(
+        donation.amount for donation in completed_donations)
+
+    context = {
+        'donations': donations,
+        'total_donations': total_donations,
+        'completed_donations_count': completed_donations.count(),
+        'total_blood_donated': total_blood_donated/1000,
+        'profile': profile,
+        'user': user
+    }
+
+    return render(request, "facility/facility-donations.html", context)
+
+
+@login_required
+def approve_donation(request, id):
+    donation = get_object_or_404(Donation, id=id)
+    donation.approval_status = 'approved'
+    donation.save()
+
+    return redirect('facility-donations')
+
+
+@login_required
+def reject_donation(request, id):
+    donation = get_object_or_404(Donation, id=id)
+    donation.approval_status = 'rejected'
+    donation.save()
+
+    return redirect('facility-donations')
+
+
+@login_required
+def mark_donation_complete(request, id):
+    donation = get_object_or_404(Donation, id=id)
+    donation.status = 'completed'
+    donation.save()
+
+    return redirect('facility-donations')
