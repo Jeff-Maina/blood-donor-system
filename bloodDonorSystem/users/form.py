@@ -1,5 +1,5 @@
 from django import forms
-from .models import CustomUser, UserProfile, DonationEligibity, Donation
+from .models import CustomUser, UserProfile, DonationEligibity, Donation, Request
 from django.core.exceptions import ValidationError
 from datetime import datetime, time
 from django.utils import timezone
@@ -189,3 +189,42 @@ class BookDonationForm(forms.ModelForm):
                 "The donation time must be between 9:00 AM and 6:00 PM.")
 
         return donation_date
+
+
+class RequestBloodForm(forms.ModelForm):
+
+    FACILITIES = FacilityProfile.objects.all().filter(is_approved=True)
+
+    facility = forms.ModelChoiceField(
+        queryset=FACILITIES, required=True, to_field_name='name')
+
+    class Meta:
+        model = Request
+        fields = ['request_type', 'needed_by',
+                  'request_amount', 'urgency_level', 'remarks','facility']
+
+        widgets = {
+            'request_amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
+            'request_type': forms.Select(attrs={'class': 'form-control'}),
+            'urgency_level': forms.Select(attrs={'class': 'form-control'}),
+            'needed_by': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'remarks': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Any additional information? e.g special considerations, preferred staff.'}),
+        }
+
+        labels = {
+            'request_amount': "Amount (mls)",
+            'request_type': "Donation Type",
+        }
+
+  
+
+        def clean_needed_by(self):
+            needed_by = self.cleaned_data.get('needed_by')
+
+            if needed_by and timezone.is_naive(needed_by):
+                needed_by = timezone.make_aware(
+                    needed_by, timezone.get_current_timezone())
+
+            if needed_by <= timezone.now():
+                raise ValidationError("The date must be in the future.")
+            return needed_by

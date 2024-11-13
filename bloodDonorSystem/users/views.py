@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm
+from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm, RequestBloodForm
 from .models import CustomUser, UserProfile, DonationEligibity, Donation
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -110,7 +110,7 @@ def dashboard_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
-    
+
     profile = UserProfile.objects.filter(user=user).first()
     donations = profile.donations.all()
     total_donations = donations.count()
@@ -231,9 +231,8 @@ def book_appointment(request):
         form = BookDonationForm(request.POST)
 
         if form.is_valid():
-            print(form.cleaned_data)
             donation = form.save(commit=False)
-            donation.user_id = user.id
+            donation.user = profile
             donation.save()
 
             return redirect('donations')
@@ -285,3 +284,24 @@ def cancel_appointment(request, id):
     donation.save()
 
     return redirect('donations')
+
+
+@login_required
+def make_request(request):
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+
+    if request.method == 'POST':
+        form = RequestBloodForm(request.POST)
+
+        if form.is_valid():
+            request = form.save(commit=False)
+            request.user = profile
+            request.save()
+            return redirect('requests')
+        else:
+
+            return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile})
+    else:
+        form = RequestBloodForm()
+    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile})

@@ -22,7 +22,15 @@ def dashboard_view(request):
         if user.is_approved:
             if user.profile_completed:
                 profile = user.facilityprofile
-                context = {'user': user, 'profile': profile}
+                donations = profile.donations.all()
+                total_donations = donations.count()
+
+                context = {
+                    'user': user,
+                    'profile': profile,
+                    'donations': donations,
+                    'total_donations': total_donations
+                }
                 return render(request, 'facility/dashboard.html',context)
             else:
                 return redirect("complete-facility-profile")

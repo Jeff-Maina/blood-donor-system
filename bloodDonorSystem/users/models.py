@@ -116,6 +116,7 @@ class Donation(models.Model):
     user = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name='donations')
     facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
+
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     donation_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
@@ -132,17 +133,31 @@ class Donation(models.Model):
         return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
 
 class Request(models.Model):
+    from facilities.models import FacilityProfile
+
+
+    DONATION_TYPE_CHOICES = [
+        ('whole blood', 'Whole Blood Donation'),
+        ('plasma', 'Plasma Donation'),
+        ('platelets', 'Platelet Donation'),
+        ("double red cells", "Double Red Cell Donation"),
+    ]
+
     URGENCY_LEVEL_CHOICES = [
         ('normal', 'normal'),
         ('urgent', 'urgent'),
         ('critical', 'critical'),
     ]
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    request_type = models.CharField(max_length=50)
-    request_date = models.DateField()
+    
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='requests')
+    facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
+
+    request_type = models.CharField(
+        max_length=50, choices=DONATION_TYPE_CHOICES)
+    
     needed_by = models.DateTimeField()
     request_amount = models.DecimalField(max_digits=5, decimal_places=2)
-    status = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, default='pending')
     rejection_reason = models.TextField(blank=True, null=True)
     urgency_level = models.CharField(
         max_length=50, choices=URGENCY_LEVEL_CHOICES)
