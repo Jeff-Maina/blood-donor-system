@@ -43,25 +43,26 @@
             <table class="w-full max-h-80">
                 <thead class="border-b">
                     <tr class=" ">
-                        <th class="text-start p-2 font-semibold">Date</th>
-                        <!-- <th class="text-start p-2 font-semibold">Facility</th> -->
+                        <th class="text-start p-2 font-semibold">Facility</th>
                         <th class="text-start p-2 font-semibold">Donation Type</th>
                         <th class="text-start p-2 font-semibold">Amount Donated</th>
                         <th class="text-start p-2 font-semibold">Status</th>
                         <th class="text-start p-2 font-semibold">Approval status</th>
+                        <th class="text-start p-2 font-semibold">Date</th>
                         <th class="text-start p-2 font-semibold">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for donation in donations %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <!-- <td class="p-2 truncate text-neutral-800">Nairobi Blood Bank</td> -->
-                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"d-m-Y, g:i a" }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ donation.facility.name }},
+                            {{donation.facility.county}}</td>
                         <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.donation_type }}</td>
                         <td class="p-2 truncate text-neutral-800"><span
                                 class="text-black font-medium">{{donation.amount}}</span> ml</td>
                         <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.status }}</td>
-                        <td class="p-2.5 truncate h-full  text-neutral-800 text-sm  !capitalize flex  !items-center gap-2">
+                        <td
+                            class="p-2.5 truncate h-full  text-neutral-800 text-sm  !capitalize flex  !items-center gap-2">
 
                             {% if donation.approval_status == 'pending' %}
                             <div class="text-purple-600 flex items-center  gap-2 font-medium">
@@ -80,6 +81,7 @@
                             </div>
                             {% endif %}
                         </td>
+                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"d-m-Y, g:i a" }}</td>
                         <td class="p-2  gap-2">
                             <button data-id="{{ donation.id }}"
                                 class="h-full cancel-btn group/button relative  aspect-square rounded    p-2 {% if donation.status == 'completed' or donation.status == 'cancelled' %} disabled !text-neutral-500 !cursor-not-allowed pointer-events-none {% else %} text-red-500 hover:text-red-600 hover:bg-red-100 {% endif %} ">
@@ -129,7 +131,7 @@
                                         <div class="flex flex-col gap-2 ">
                                             <div class="flex items-center justify-between">
                                                 <p class="text-neutral-500 font-medium">Facility</p>
-                                                <p class="font-medium">Aga Khan Hospital, Nairobi</p>
+                                                <p class="font-medium">{{ donation.facility.name }}</p>
                                             </div>
                                             <div class="flex items-center justify-between">
                                                 <p class="text-neutral-500 font-medium">Donation Date</p>

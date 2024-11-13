@@ -108,17 +108,17 @@ def complete_profile(request):
 def dashboard_view(request):
     user = request.user
 
+    if user.is_superuser:
+        return redirect('admin:index')  # Redirect to the admin index page
+    
     profile = UserProfile.objects.filter(user=user).first()
-    donations = user.donations.all()
+    donations = profile.donations.all()
     total_donations = donations.count()
     upcoming_donations = donations.filter(
         status='scheduled',
         approval_status='pending',
         donation_date__gte=datetime.now()
     ).order_by('donation_date')
-
-    if user.is_superuser:
-        return redirect('admin:index')  # Redirect to the admin index page
 
     if user.role == 'individual':
         context = {
@@ -136,7 +136,7 @@ def dashboard_view(request):
 def donations_view(request):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
-    donations = user.donations.all()
+    donations = profile.donations.all()
     total_donations = donations.count()
     last_donation = donations.filter(
         status='completed').order_by('donation_date').last()
@@ -175,7 +175,7 @@ def check_eligibility(request):
 
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
-    donations = user.donations.all()
+    donations = profile.donations.all()
     total_donations = donations.count()
 
     try:
@@ -215,7 +215,8 @@ def check_eligibility(request):
 @login_required
 def book_appointment(request):
     user = request.user
-    donations = user.donations.all()
+    profile = UserProfile.objects.filter(user=user).first()
+    donations = profile.donations.all()
     total_donations = donations.count()
 
     try:
@@ -232,7 +233,7 @@ def book_appointment(request):
         if form.is_valid():
             print(form.cleaned_data)
             donation = form.save(commit=False)
-            donation.user = user
+            donation.user_id = user.id
             donation.save()
 
             return redirect('donations')
@@ -247,7 +248,8 @@ def book_appointment(request):
 def deleteDonation(request, id):
 
     donation = get_object_or_404(Donation, id=id)
-    if donation.user != request.user:
+    profile = UserProfile.objects.filter(user=request.user).first()
+    if donation.user != profile:
         return redirect("home")
     donation.delete()
     return redirect("donations")
@@ -258,7 +260,7 @@ def updateDonation(request, id):
     donation = get_object_or_404(Donation, id=id)
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
-    if donation.user != request.user:
+    if donation.user != profile:
         return redirect("home")
 
     if request.method == "POST":

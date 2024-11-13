@@ -26,7 +26,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     firstname = models.CharField(max_length=15, null=True)
@@ -44,7 +43,6 @@ class UserProfile(models.Model):
     @property
     def age_display(self):
         return self.age()
-
 
 class DonationEligibity(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -93,8 +91,9 @@ class DonationEligibity(models.Model):
 
         return self.eligible, reasons
 
-
 class Donation(models.Model):
+    from facilities.models import FacilityProfile
+
     DONATION_TYPE_CHOICES = [
         ('whole blood', 'Whole Blood Donation'),
         ('plasma', 'Plasma Donation'),
@@ -115,8 +114,8 @@ class Donation(models.Model):
     ]
 
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='donations')
-
+        UserProfile, on_delete=models.CASCADE, related_name='donations')
+    facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     donation_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
@@ -131,7 +130,6 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
-
 
 class Request(models.Model):
     URGENCY_LEVEL_CHOICES = [

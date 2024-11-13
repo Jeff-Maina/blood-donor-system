@@ -3,6 +3,7 @@ from .models import CustomUser, UserProfile, DonationEligibity, Donation
 from django.core.exceptions import ValidationError
 from datetime import datetime, time
 from django.utils import timezone
+from facilities.models import FacilityProfile
 
 BLOOD_TYPES = [
     ('A+', 'A+'),
@@ -152,10 +153,15 @@ class EligibilityForm(forms.ModelForm):
 
 class BookDonationForm(forms.ModelForm):
 
+    FACILITIES = FacilityProfile.objects.all().filter(is_approved=True)
+
+    facility = forms.ModelChoiceField(
+        queryset=FACILITIES, required=True, to_field_name='name')
+
     class Meta:
         model = Donation
         fields = ['amount', 'donation_type',
-                  'donation_date', 'remarks']
+                  'donation_date', 'remarks', 'facility']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
@@ -165,7 +171,7 @@ class BookDonationForm(forms.ModelForm):
         }
 
         labels = {
-            'donation_date' : "Appointment Date and Time",
+            'donation_date': "Appointment Date and Time",
         }
 
     def clean_donation_date(self):

@@ -12,11 +12,16 @@ from .decorators import facility_required
 @login_required
 def dashboard_view(request):
     user = request.user
-    profile = user.facilityprofile
+
+    
+    if user.is_superuser:
+        return redirect('admin:index') 
+
 
     if user.role == 'facility':
         if user.is_approved:
             if user.profile_completed:
+                profile = user.facilityprofile
                 context = {'user': user, 'profile': profile}
                 return render(request, 'facility/dashboard.html',context)
             else:
@@ -67,8 +72,8 @@ def complete_profile(request):
     except FacilityProfile.DoesNotExist:
         facility_profile = None
 
-    if request.user.profile_completed:
-        return redirect('facility-dashboard')
+    # if request.user.profile_completed:
+    #     return redirect('facility-dashboard')
 
     if request.method == 'POST':
         print("hello world")

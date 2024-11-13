@@ -76,8 +76,8 @@ class ProfileFacilityForm(forms.ModelForm):
             'facility_type': forms.Select(choices=FACILITY_TYPES),
             'contact_number': forms.TextInput(attrs={'placeholder': 'Enter the contact name of the facility'}),
             'county': forms.TextInput(attrs={'placeholder': 'Enter the county of the facility'}),
-            'opening_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
-            'closing_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM AM/PM'}),
+            'opening_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM'}),
+            'closing_time': forms.TimeInput(format='%I:%M %p', attrs={'placeholder': 'HH:MM'}),
         }
 
         labels = {

@@ -29,11 +29,13 @@ class FacilityProfile(models.Model):
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     registration_number = models.CharField(max_length=50)
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def operating_hours(self):
         return f"{self.opening_time.strftime('%H:%M')} - {self.closing_time.strftime('%H:%M')}"
+    def __str__(self) -> str:
+        return f"{self.name}, {self.county} county"
 
     
