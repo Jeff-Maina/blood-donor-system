@@ -148,6 +148,19 @@ class Request(models.Model):
         ('urgent', 'urgent'),
         ('critical', 'critical'),
     ]
+
+    APPROVAL_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
+    REQUEST_STATUS_CHOICES = [
+        ('scheduled', 'Scheduled'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+
     
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='requests')
     facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
@@ -157,7 +170,8 @@ class Request(models.Model):
     
     needed_by = models.DateTimeField()
     request_amount = models.DecimalField(max_digits=5, decimal_places=2)
-    status = models.CharField(max_length=50, default='pending')
+    approval_status = models.CharField(max_length=50, default='pending',choices=APPROVAL_STATUS_CHOICES)
+    request_status = models.CharField(max_length=50, default='scheduled',choices=REQUEST_STATUS_CHOICES)
     rejection_reason = models.TextField(blank=True, null=True)
     urgency_level = models.CharField(
         max_length=50, choices=URGENCY_LEVEL_CHOICES)

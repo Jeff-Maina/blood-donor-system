@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm, RequestBloodForm
-from .models import CustomUser, UserProfile, DonationEligibity, Donation
+from .models import CustomUser, UserProfile, DonationEligibity, Donation, Request
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
@@ -166,9 +166,9 @@ def requests_view(request):
     profile = UserProfile.objects.filter(user=user).first()
     requests = profile.requests.all()
     approved_requests_count = requests.filter(
-        status='approved').count()
+        approval_status='approved').count()
     rejected_requests_count = requests.filter(
-        status='rejected').count()
+        approval_status='rejected').count()
     total_requests = requests.count()
 
     if user.role == 'individual':
@@ -307,9 +307,9 @@ def make_request(request):
     profile = UserProfile.objects.filter(user=user).first()
     requests = profile.requests.all()
     approved_requests_count = requests.filter(
-        status='approved').count()
+        approval_status='approved').count()
     rejected_requests_count = requests.filter(
-        status='rejected').count()
+        approval_status='rejected').count()
     total_requests = requests.count()
 
     if request.method == 'POST':
@@ -327,3 +327,11 @@ def make_request(request):
     else:
         form = RequestBloodForm()
     return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests})
+
+
+@login_required
+def deleteRequest(request, id):
+    request = get_object_or_404(Request, id=id)
+
+    request.delete()
+    return redirect("requests")
