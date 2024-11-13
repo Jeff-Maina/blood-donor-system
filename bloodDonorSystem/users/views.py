@@ -159,13 +159,28 @@ def donations_view(request):
 @login_required
 def requests_view(request):
     user = request.user
-    profile = UserProfile.objects.filter(user=user).first()
 
     if user.is_superuser:
         return redirect('admin:index')  # Redirect to the admin index page
 
+    profile = UserProfile.objects.filter(user=user).first()
+    requests = profile.requests.all()
+    approved_requests_count = requests.filter(
+        status='approved').count()
+    rejected_requests_count = requests.filter(
+        status='rejected').count()
+    total_requests = requests.count()
+
     if user.role == 'individual':
-        return render(request, 'user/requests.html', {'user': user, 'profile': profile})
+        context = {
+            'user': user,
+            'profile': profile,
+            'requests': requests,
+            'approved_requests_count': approved_requests_count,
+            'rejected_requests_count': rejected_requests_count,
+            'total_requests': total_requests
+        }
+        return render(request, 'user/requests.html', context)
     else:
         return redirect(request, 'facility-dashboard')
 
@@ -290,6 +305,12 @@ def cancel_appointment(request, id):
 def make_request(request):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
+    requests = profile.requests.all()
+    approved_requests_count = requests.filter(
+        status='approved').count()
+    rejected_requests_count = requests.filter(
+        status='rejected').count()
+    total_requests = requests.count()
 
     if request.method == 'POST':
         form = RequestBloodForm(request.POST)
@@ -301,7 +322,8 @@ def make_request(request):
             return redirect('requests')
         else:
 
-            return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile})
+            return render(request, 'user/make-request.html',
+                          {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests})
     else:
         form = RequestBloodForm()
-    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile})
+    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests})
