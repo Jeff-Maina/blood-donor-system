@@ -335,3 +335,12 @@ def deleteRequest(request, id):
 
     request.delete()
     return redirect("requests")
+
+@login_required
+def cancel_request(request, id):
+    request = get_object_or_404(Request, id=id)
+ 
+    request.request_status = 'cancelled'
+    request.save()
+
+    return redirect('requests')
