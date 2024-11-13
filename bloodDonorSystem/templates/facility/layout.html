@@ -50,7 +50,7 @@
                     </div>
 
                     <div>
-                        <a href="{% url 'requests' %}"
+                        <a href="{% url 'facility-requests' %}"
                             class="flex items-center gap-3 text-white text-sm p-2 rounded-md hover:bg-blue-600 hover:font-medium">
                             <i data-lucide="Mail" class="size-4"></i>
                             <span class="font-medium">Blood Requests</span>
@@ -128,6 +128,9 @@
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
+        lucide.createIcons();
+
+
         document.getElementById("dropdown-trigger").addEventListener("click", function (event) {
             event.stopPropagation();
             document.getElementById("dropdown-menu").classList.toggle("hidden");
@@ -154,7 +157,6 @@
             }
         });
 
-        lucide.createIcons();
     </script>
 
     {% block scripts %}

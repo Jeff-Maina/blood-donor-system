@@ -606,6 +606,10 @@ video {
   right: 0.5rem;
 }
 
+.right-full {
+  right: 100%;
+}
+
 .top-0 {
   top: 0px;
 }
@@ -717,6 +721,15 @@ video {
   height: 1.75rem;
 }
 
+.size-8 {
+  width: 2rem;
+  height: 2rem;
+}
+
+.h-10 {
+  height: 2.5rem;
+}
+
 .h-14 {
   height: 3.5rem;
 }
@@ -741,10 +754,6 @@ video {
   height: 24rem;
 }
 
-.h-\[80vh\] {
-  height: 80vh;
-}
-
 .h-full {
   height: 100%;
 }
@@ -763,6 +772,10 @@ video {
 
 .max-h-\[85vh\] {
   max-height: 85vh;
+}
+
+.w-16 {
+  width: 4rem;
 }
 
 .w-2\/4 {
@@ -793,16 +806,20 @@ video {
   width: 500px;
 }
 
-.w-\[700px\] {
-  width: 700px;
-}
-
 .w-\[85px\] {
   width: 85px;
 }
 
 .w-full {
   width: 100%;
+}
+
+.w-44 {
+  width: 11rem;
+}
+
+.w-36 {
+  width: 9rem;
 }
 
 .\!min-w-fit {
@@ -878,6 +895,10 @@ video {
 
 .grid-cols-4 {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -983,6 +1004,11 @@ video {
 
 .border-t {
   border-top-width: 1px;
+}
+
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .border-neutral-200 {
@@ -1512,6 +1538,11 @@ textarea:focus {
 .hover\:bg-blue-600:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-green-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 252 231 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-neutral-100:hover {

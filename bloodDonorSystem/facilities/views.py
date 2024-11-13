@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
-from users.models import CustomUser
+from users.models import CustomUser, Request
 from .models import FacilityProfile
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
@@ -13,10 +13,8 @@ from .decorators import facility_required
 def dashboard_view(request):
     user = request.user
 
-    
     if user.is_superuser:
-        return redirect('admin:index') 
-
+        return redirect('admin:index')
 
     if user.role == 'facility':
         if user.is_approved:
@@ -24,14 +22,23 @@ def dashboard_view(request):
                 profile = user.facilityprofile
                 donations = profile.donations.all()
                 total_donations = donations.count()
+                requests = profile.requests.all()
+
+                pending_requests_count = requests.filter(
+                    approval_status='pending').count()
+                total_requests = requests.count()
 
                 context = {
                     'user': user,
                     'profile': profile,
                     'donations': donations,
-                    'total_donations': total_donations
+                    'total_donations': total_donations,
+                    'pending_requests_count': pending_requests_count,
+                    'total_requests': total_requests
+
                 }
-                return render(request, 'facility/dashboard.html',context)
+
+                return render(request, 'facility/dashboard.html', context)
             else:
                 return redirect("complete-facility-profile")
         else:
@@ -98,6 +105,53 @@ def complete_profile(request):
         else:
             print(form.errors)
     else:
-        form = ProfileFacilityForm( instance=facility_profile)
+        form = ProfileFacilityForm(instance=facility_profile)
 
     return render(request, "facility/complete-profile.html", {'form': form, 'error': form.errors})
+
+
+# ! REQUESTS
+
+@login_required
+def requests_view(request):
+    user = request.user
+    profile = user.facilityprofile
+    requests = profile.requests.all()
+
+    total_requests = requests.count()
+    approved_requests_count = requests.filter(
+        approval_status='approved').count()
+    rejected_requests_count = requests.filter(
+        approval_status='rejected').count()
+    pending_requests_count = requests.filter(
+        approval_status='pending').count()
+
+    context = {
+        'requests': requests,
+        'total_requests': total_requests,
+        'approved_requests_count': approved_requests_count,
+        'rejected_requests_count': rejected_requests_count,
+        'pending_requests_count': pending_requests_count
+    }
+
+    return render(request, "facility/blood-requests.html", context)
+
+
+@login_required
+def approve_request(request, id):
+    request = get_object_or_404(Request, id=id)
+
+    request.approval_status = 'approved'
+    request.save()
+
+    return redirect('facility-requests')
+
+
+@login_required
+def reject_request(request, id):
+    request = get_object_or_404(Request, id=id)
+
+    request.approval_status = 'rejected'
+    request.save()
+
+    return redirect('facility-requests')

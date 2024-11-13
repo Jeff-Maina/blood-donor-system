@@ -180,4 +180,4 @@ class Request(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Request by {self.user} for {self.blood_type} ({self.amount} ml)"
+        return f"Request by {self.user} on {self.created_at.date()} ({self.request_amount} ml)"

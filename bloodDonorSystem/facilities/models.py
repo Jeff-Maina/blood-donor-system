@@ -18,6 +18,18 @@ DAY_CHOICES = [
     (7, 'Sunday'),
 ]
 
+BLOOD_TYPES = [
+    ('A+', 'A+'),
+    ('A-', 'A-'),
+    ('B+', 'B+'),
+    ('B-', 'B-'),
+    ('O+', 'O+'),
+    ('O-', 'O-'),
+    ('AB+', 'AB+'),
+    ('AB-', 'AB-'),
+]
+
+
 
 class FacilityProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -39,3 +51,10 @@ class FacilityProfile(models.Model):
         return f"{self.name}, {self.county} county"
 
     
+class Inventory(models.Model):
+    facility = models.ForeignKey(FacilityProfile, on_delete=models.CASCADE)
+    blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
+    quantity = models.DecimalField(max_digits=5, decimal_places=2)
+
+    class Meta:
+        unique_together = ('facility', 'blood_type')

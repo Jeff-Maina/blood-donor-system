@@ -119,13 +119,23 @@ def dashboard_view(request):
         approval_status='pending',
         donation_date__gte=datetime.now()
     ).order_by('donation_date')
+    requests = profile.requests.all()
+    total_requests = requests.count()
+    pending_requests_count = requests.filter(
+        approval_status='pending').count()
+    rejected_requests_count = requests.filter(
+        approval_status='rejected').count()
 
     if user.role == 'individual':
         context = {
             'user': user,
             'profile': profile,
             'upcoming_donations': upcoming_donations,
-            'total_donations': total_donations
+            'total_donations': total_donations,
+            'total_requests': total_requests,
+            'pending_requests_count': pending_requests_count,
+            'rejected_requests_count': rejected_requests_count
+
         }
         return render(request, 'user/dashboard.html', context)
     else:
@@ -292,7 +302,7 @@ def cancel_appointment(request, id):
     donation = get_object_or_404(Donation, id=id)
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
-    if donation.user != request.user:
+    if donation.user != profile:
         return redirect("home")
 
     donation.status = 'cancelled'
@@ -336,10 +346,11 @@ def deleteRequest(request, id):
     request.delete()
     return redirect("requests")
 
+
 @login_required
 def cancel_request(request, id):
     request = get_object_or_404(Request, id=id)
- 
+
     request.request_status = 'cancelled'
     request.save()
 
