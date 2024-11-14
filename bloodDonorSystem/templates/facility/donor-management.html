@@ -1,0 +1,97 @@
+{% extends "facility/layout.html" %}
+
+{% block title %} Blood Donor System | Donor Management {% endblock %}
+
+
+{% block content %}
+
+<div class="w-full p-4 flex flex-col gap-4">
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Total Donors</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ total_donors }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Male Donors</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ male_donors_count }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Female Donors</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ female_donors_count }}</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="my-4 p-6 shadow border max-w-fit rounded-md flex flex-col gap-3">
+        <h1 class="font-semibold">Table key</h1>
+
+        <div class="flex items-center gap-5">
+            <div class="flex items-center gap-1">
+                <div class="size-4 rounded bg-purple-600"></div>
+                - <span>Pending</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="size-4 rounded bg-green-600"></div>
+                - <span>Approved</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="size-4 rounded bg-red-600"></div>
+                - <span>Rejected</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <div class="size-4 rounded bg-black"></div>
+                - <span>Totals</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Requests</h1>
+        <div class="w-full">
+            <table class="w-full">
+                <thead>
+                    <tr class="">
+                        <th class="p-2 text-left font-semibold">Fullname</th>
+                        <th class="p-2 text-left font-semibold">Email</th>
+                        <th class="p-2 text-left font-semibold">Phone</th>
+                        <th class="p-2 text-left font-semibold">County</th>
+                        <th class="p-2 text-left font-semibold">Blood Type</th>
+                        <th class="p-2 text-left font-semibold">Completed Donations</th>
+                        <th class="p-2 text-left font-semibold">Blood Donated</th>
+                        <th class="p-2 text-left font-semibold text-sm flex">Requests</th>
+                        <th class="p-2 text-left font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donor in donors %}
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
+                        <td class="p-2  truncate text-neutral-800">{{donor.profile.firstname}}
+                            {{donor.profile.lastname}}</td>
+                        <td class="p-2  truncate text-neutral-800">{{donor.profile.user.email}} </td>
+                        <td class="p-2  truncate text-neutral-800">{{donor.profile.phone}} </td>
+                        <td class="p-2  truncate text-neutral-800">{{donor.profile.county}} </td>
+                        <td class="p-2  truncate text-neutral-800">{{donor.profile.blood_group}} </td>
+                        <td class="p-2  truncate text-neutral-800 ">{{donor.completed_donations}} </td>
+                        <td class="p-2  truncate text-neutral-600"><span class="font-medium text-neutral-800">
+                                {{donor.total_blood_donated }}</span> Litres</td>
+                        <td class="p-2  truncate font-semibold text-neutral-600 flex items-center gap-1 !text-xs"> <span
+                                class="text-purple-600 text-lg">{{donor.pending_requests}}</span> - <span
+                                class="text-green-600 text-lg">{{donor.approved_requests}}</span> - <span
+                                class="text-red-600 text-lg">{{donor.rejected_requests}}</span> - <span
+                                class="text-black text-lg">{{donor.total_requests}}</span> </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+{% endblock %}

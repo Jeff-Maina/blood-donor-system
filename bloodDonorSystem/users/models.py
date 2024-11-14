@@ -130,7 +130,7 @@ class Donation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Donation for {self.user.email} on {self.created_at.date()} with status {self.status}"
+        return f"Donation for {self.user} on {self.created_at.date()} with status {self.status}"
 
 class Request(models.Model):
     from facilities.models import FacilityProfile

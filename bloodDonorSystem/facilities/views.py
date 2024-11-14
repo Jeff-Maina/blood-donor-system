@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
-from users.models import CustomUser, Request, Donation
+from users.models import CustomUser, Request, Donation, UserProfile
 from .models import FacilityProfile, Inventory, BloodUnit
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
@@ -279,3 +279,36 @@ def update_inventory_on_completion(sender, instance, **kwargs):
         inventory.quantity += amount
         inventory.units_received += 1
         inventory.save()
+
+
+# ! DONOR MANAGEMENT
+
+@login_required
+def donor_management_view(request):
+    profile = request.user.facilityprofile
+    donations = Donation.objects.filter(facility=profile)
+    user_profiles = UserProfile.objects.filter(id__in=donations.values_list('user', flat=True).distinct())
+
+    donors_info = []
+
+    for user_profile in user_profiles:
+        user_requests = Request.objects.filter(user=user_profile)
+         
+
+        profile_info = {
+            'profile': user_profile,
+            'donations': donations.filter(user=user_profile),
+            'total_donations': donations.filter(user=user_profile).count(),
+            'completed_donations': donations.filter(user=user_profile, status='completed').count(),
+            'total_blood_donated': sum(donation.amount for donation in donations.filter(user=user_profile, status='completed'))/1000,
+            'total_requests': user_requests.count(),
+            'pending_requests': user_requests.filter(approval_status='pending').count(),
+            'approved_requests': user_requests.filter(approval_status='approved').count(),
+            'rejected_requests': user_requests.filter(approval_status='rejected').count()
+        }
+
+        donors_info.append(profile_info)
+    
+    print(donors_info)
+
+    return render(request, 'facility/donor-management.html', {'donors': donors_info})
