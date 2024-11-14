@@ -138,8 +138,8 @@ def dashboard_view(request):
 
         }
         return render(request, 'user/dashboard.html', context)
-    else:
-        return redirect(request, 'facility-dashboard')
+    # else:
+    #     return redirect(request, 'facility-dashboard')
 
 
 @login_required

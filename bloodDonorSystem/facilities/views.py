@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
 from users.models import CustomUser, Request, Donation
-from .models import FacilityProfile
+from .models import FacilityProfile, Inventory
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from decimal import Decimal
 # Create your views here.
 
 
@@ -134,7 +136,6 @@ def requests_view(request):
         approval_status='rejected').count()
     pending_requests_count = requests.filter(
         approval_status='pending').count()
-    
 
     context = {
         'requests': requests,
@@ -219,7 +220,34 @@ def reject_donation(request, id):
 @login_required
 def mark_donation_complete(request, id):
     donation = get_object_or_404(Donation, id=id)
+
     donation.status = 'completed'
     donation.save()
 
     return redirect('facility-donations')
+
+
+# ! INVENTORY
+@login_required
+def inventory_view(request):
+    return render(request, 'facility/inventory.html')
+
+
+@receiver(post_save, sender=Donation)
+def update_inventory_on_completion(sender, instance, **kwargs):
+    if instance.status == 'completed':
+        facility = instance.facility
+        blood_type = instance.user.blood_group
+        amount = Decimal(instance.amount)
+
+
+
+        inventory, created = Inventory.objects.get_or_create(
+            facility=facility,
+            blood_type=blood_type,
+            defaults={'quantity': Decimal(0)})
+        
+        
+
+        inventory.quantity += amount
+        inventory.save()

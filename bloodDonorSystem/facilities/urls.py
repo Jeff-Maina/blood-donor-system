@@ -14,4 +14,5 @@ urlpatterns = [
     path('donations/approve-donation/<int:id>/',view = views.approve_donation, name='approve-donation'),
     path('donations/reject-donation/<int:id>/',view = views.reject_donation, name='reject-donation'),
     path('donations/mark-donation-complete/<int:id>/',view = views.mark_donation_complete, name='mark_donation_complete'),
+    path("inventory", view=views.inventory_view, name='facility-inventory'),
 ]

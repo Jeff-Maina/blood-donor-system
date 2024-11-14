@@ -54,7 +54,6 @@ class FacilityProfile(models.Model):
 class Inventory(models.Model):
     facility = models.ForeignKey(FacilityProfile, on_delete=models.CASCADE)
     blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
-    quantity = models.DecimalField(max_digits=5, decimal_places=2)
-
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
     class Meta:
         unique_together = ('facility', 'blood_type')
