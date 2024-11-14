@@ -93,7 +93,8 @@ class BloodUnit(models.Model):
     blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
     quantity = models.DecimalField(
         max_digits=10, decimal_places=2, default=0.0)
-    donation_type = models.CharField(max_length=50,choices=DONATION_TYPE_CHOICES)
+    donation_type = models.CharField(
+        max_length=50, choices=DONATION_TYPE_CHOICES)
     collection_date = models.DateField()
     expiration_date = models.DateField()
     status = models.CharField(
@@ -117,3 +118,5 @@ class BloodUnit(models.Model):
                 self.expiration_date = self.collection_date + \
                     timedelta(days=42)
         super().save(*args, **kwargs)
+
+

@@ -18,6 +18,8 @@ def dashboard_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')
+    
+    notifications = user.notifications.all()
 
     if user.role == 'facility':
         if user.is_approved:
@@ -45,7 +47,8 @@ def dashboard_view(request):
                     'total_donations': total_donations,
                     'pending_requests_count': pending_requests_count,
                     'total_requests': total_requests,
-                    'total_blood_donated': total_blood_donated/1000
+                    'total_blood_donated': total_blood_donated/1000,
+                    'notifications' : notifications
 
                 }
 
@@ -288,6 +291,7 @@ def donor_management_view(request):
     profile = request.user.facilityprofile
     donations = Donation.objects.filter(facility=profile)
     user_profiles = UserProfile.objects.filter(id__in=donations.values_list('user', flat=True).distinct())
+    notifications = request.user.notifications.all()
 
     donors_info = []
 
@@ -309,6 +313,12 @@ def donor_management_view(request):
 
         donors_info.append(profile_info)
     
-    print(donors_info)
+    context = {
+        'donors': donors_info,
+        'profile': profile,
+        'user': request.user,
+        'notifications': notifications
+    }
 
-    return render(request, 'facility/donor-management.html', {'donors': donors_info})
+    print(notifications)
+    return render(request, 'facility/donor-management.html', context)

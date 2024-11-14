@@ -26,6 +26,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     firstname = models.CharField(max_length=15, null=True)
@@ -43,6 +44,7 @@ class UserProfile(models.Model):
     @property
     def age_display(self):
         return self.age()
+
 
 class DonationEligibity(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -91,6 +93,7 @@ class DonationEligibity(models.Model):
 
         return self.eligible, reasons
 
+
 class Donation(models.Model):
     from facilities.models import FacilityProfile
 
@@ -115,7 +118,8 @@ class Donation(models.Model):
 
     user = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name='donations')
-    facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
+    facility = models.ForeignKey(
+        FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='donations')
 
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     donation_type = models.CharField(
@@ -132,9 +136,9 @@ class Donation(models.Model):
     def __str__(self):
         return f"Donation for {self.user} on {self.created_at.date()} with status {self.status}"
 
+
 class Request(models.Model):
     from facilities.models import FacilityProfile
-
 
     DONATION_TYPE_CHOICES = [
         ('whole blood', 'Whole Blood Donation'),
@@ -161,17 +165,20 @@ class Request(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='requests')
-    facility = models.ForeignKey(FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name='requests')
+    facility = models.ForeignKey(
+        FacilityProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='requests')
 
     request_type = models.CharField(
         max_length=50, choices=DONATION_TYPE_CHOICES)
-    
+
     needed_by = models.DateTimeField()
     request_amount = models.DecimalField(max_digits=5, decimal_places=2)
-    approval_status = models.CharField(max_length=50, default='pending',choices=APPROVAL_STATUS_CHOICES)
-    request_status = models.CharField(max_length=50, default='scheduled',choices=REQUEST_STATUS_CHOICES)
+    approval_status = models.CharField(
+        max_length=50, default='pending', choices=APPROVAL_STATUS_CHOICES)
+    request_status = models.CharField(
+        max_length=50, default='scheduled', choices=REQUEST_STATUS_CHOICES)
     rejection_reason = models.TextField(blank=True, null=True)
     urgency_level = models.CharField(
         max_length=50, choices=URGENCY_LEVEL_CHOICES)
@@ -181,3 +188,19 @@ class Request(models.Model):
 
     def __str__(self):
         return f"Request by {self.user} on {self.created_at.date()} ({self.request_amount} ml)"
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    doer = models.CharField(max_length=60, null=True)
+    action = models.CharField(max_length=50, default="", null=True)
+    message = models.TextField(max_length=50, default="")
+    read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.message}"
+
+

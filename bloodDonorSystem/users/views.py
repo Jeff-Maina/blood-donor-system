@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonationForm, RequestBloodForm
-from .models import CustomUser, UserProfile, DonationEligibity, Donation, Request
+from .models import CustomUser, UserProfile, DonationEligibity, Donation, Request, Notification
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from facilities.models import FacilityProfile
@@ -285,7 +285,6 @@ def book_appointment(request, facility_id):
     if not eligibility or not eligibility.eligible:
         request.session['facility_id'] = facility_id
         return redirect('check-eligibility')
-    
 
     facility = FacilityProfile.objects.get(id=facility_id)
 
@@ -296,6 +295,15 @@ def book_appointment(request, facility_id):
             donation = form.save(commit=False)
             donation.facility = facility
             donation.user = profile
+
+            notification = Notification.objects.create(
+                doer=f'{donation.user.firstname} {donation.user.lastname}',
+                action=f'has made an appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black; font-weight: 600"> {donation.donation_date.date()} </span>',
+                message=f"{donation.user.firstname} {donation.user.lastname} has made an appointment for {donation.donation_type} donation on {donation.donation_date.date()} ",
+                user=facility.user
+            )
+
+            notification.save()
             donation.save()
 
             return redirect('donations')

@@ -83,8 +83,26 @@
                     <i data-lucide="bell" class="size-5" stroke-width="2"></i>
                 </div>
                 <div id="notif-box"
-                    class="absolute hidden bg-white w-96 h-96 shadow-md  top-full right-0 border rounded-md">
-                    <p class="p-4">No new notifications</p>
+                    class="absolute hidden bg-white w-96 min-h-10 shadow-md  top-full right-0 border rounded-md">
+                    {% if notifications %}
+                    <ul class=" ">
+                        {% for notification in notifications %}
+                        <li class="p-3 border-t text-neutral-600 flex ">
+
+                            <p class="">
+                                <span class="text-black font-semibold shrink-0 min-w-fit">{{notification.doer}}</span>
+                                {{notification.action|safe}}
+                            </p>
+                            <div class="shrink-0 min-w-8 flex items-center justify-center">
+                                <div class="size-2 bg-blue-500 rounded-full"></div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    No notifications
+                    {% endif %}
+
                 </div>
             </div>
 
