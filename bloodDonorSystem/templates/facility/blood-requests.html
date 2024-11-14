@@ -61,7 +61,7 @@
                 </thead>
                 <tbody>
                     {% for request in requests %}
-                    <tr>
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
                         <td class="p-2  truncate text-neutral-800">{{ request.user.firstname }}
                             {{request.user.lastname}}</td>
                         <td class="p-2  truncate text-neutral-800">{{ request.user.user.email }}</td>

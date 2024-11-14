@@ -30,14 +30,13 @@ BLOOD_TYPES = [
 ]
 
 
-
 class FacilityProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     contact_number = models.CharField(max_length=50)
     facility_type = models.CharField(max_length=50, choices=FACILITY_TYPES)
     county = models.CharField(max_length=50)
-    open_days = models.CharField(max_length=100) 
+    open_days = models.CharField(max_length=100)
     opening_time = models.TimeField()
     closing_time = models.TimeField()
     registration_number = models.CharField(max_length=50)
@@ -47,13 +46,23 @@ class FacilityProfile(models.Model):
 
     def operating_hours(self):
         return f"{self.opening_time.strftime('%H:%M')} - {self.closing_time.strftime('%H:%M')}"
+
     def __str__(self) -> str:
         return f"{self.name}, {self.county} county"
 
-    
+
 class Inventory(models.Model):
-    facility = models.ForeignKey(FacilityProfile, on_delete=models.CASCADE)
+    facility = models.ForeignKey(
+        FacilityProfile, on_delete=models.CASCADE, related_name='inventory')
     blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0.0) 
+    quantity = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.0)
+    units_received = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
     class Meta:
         unique_together = ('facility', 'blood_type')
+
+    def __str__(self) -> str:
+        return super().__str__()

@@ -230,7 +230,21 @@ def mark_donation_complete(request, id):
 # ! INVENTORY
 @login_required
 def inventory_view(request):
-    return render(request, 'facility/inventory.html')
+    user = request.user
+    profile = user.facilityprofile
+
+    inventory = profile.inventory.all()
+
+    for item in inventory:
+        item.quantity = round(item.quantity / 1000,3)
+
+    context = {
+        'inventories': inventory,
+        'profile': profile,
+        'user': user
+    }
+
+    return render(request, 'facility/inventory.html', context)
 
 
 @receiver(post_save, sender=Donation)
@@ -240,14 +254,11 @@ def update_inventory_on_completion(sender, instance, **kwargs):
         blood_type = instance.user.blood_group
         amount = Decimal(instance.amount)
 
-
-
         inventory, created = Inventory.objects.get_or_create(
             facility=facility,
             blood_type=blood_type,
             defaults={'quantity': Decimal(0)})
-        
-        
 
         inventory.quantity += amount
+        inventory.units_received += 1
         inventory.save()
