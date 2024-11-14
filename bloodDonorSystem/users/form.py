@@ -152,11 +152,15 @@ class EligibilityForm(forms.ModelForm):
 
 
 class BookDonationForm(forms.ModelForm):
+    FACILITIES = FacilityProfile.objects.all().filter(is_approved=True)
+
+    facility = forms.ModelChoiceField(
+        queryset=FACILITIES, required=True, to_field_name='name')
 
     class Meta:
         model = Donation
         fields = ['amount', 'donation_type',
-                  'donation_date', 'remarks']
+                  'donation_date', 'remarks', 'facility']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
@@ -188,15 +192,10 @@ class BookDonationForm(forms.ModelForm):
 
 class RequestBloodForm(forms.ModelForm):
 
-    FACILITIES = FacilityProfile.objects.all().filter(is_approved=True)
-
-    facility = forms.ModelChoiceField(
-        queryset=FACILITIES, required=True, to_field_name='name')
-
     class Meta:
         model = Request
         fields = ['request_type', 'needed_by',
-                  'request_amount', 'urgency_level', 'remarks', 'facility']
+                  'request_amount', 'urgency_level', 'remarks']
 
         widgets = {
             'request_amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),

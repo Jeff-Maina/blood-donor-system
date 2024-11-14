@@ -195,7 +195,7 @@ class Notification(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name='notifications')
     doer = models.CharField(max_length=60, null=True)
     action = models.CharField(max_length=50, default="", null=True)
-    message = models.TextField(max_length=50, default="")
+    type=models.CharField(max_length=50, default="", null=True)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)

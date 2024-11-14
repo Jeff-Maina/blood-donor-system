@@ -202,13 +202,18 @@ def requests_view(request):
     total_requests = requests.count()
 
     if user.role == 'individual':
+        facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
+            total_blood=Sum('inventory__quantity', filter=Q(
+                inventory__blood_type=user.userprofile.blood_group))
+        )
         context = {
             'user': user,
             'profile': profile,
             'requests': requests,
             'approved_requests_count': approved_requests_count,
             'rejected_requests_count': rejected_requests_count,
-            'total_requests': total_requests
+            'total_requests': total_requests,
+            'facilities': facilities
         }
         return render(request, 'user/requests.html', context)
     else:
@@ -231,17 +236,11 @@ def check_eligibility(request):
     is_eligible = None
     reasons = []
 
-    facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
-        total_blood=Sum('inventory__quantity', filter=Q(
-            inventory__blood_type=user.userprofile.blood_group))
-    )
-
     if request.method == 'POST':
 
         form = EligibilityForm(request.POST, instance=eligibility_record)
 
         if form.is_valid():
-            facility_id = request.session.get('facility_id')
             eligibility = form.save(commit=False)
             eligibility.user = request.user
             eligibility.save()
@@ -249,10 +248,9 @@ def check_eligibility(request):
             is_eligible, reasons = eligibility.check_eligibility()
 
             if is_eligible:
-                if facility_id:
-                    return redirect('book-donation-appointment', facility_id=facility_id)
+                return redirect('book-donation-appointment')
             else:
-                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations, 'facilities': facilities})
+                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
     else:
         form = EligibilityForm(instance=eligibility_record)
     return render(request, 'user/eligibility-form.html', {
@@ -261,46 +259,34 @@ def check_eligibility(request):
         'is_eligible': is_eligible,
         'reasons': reasons,
         'donations': donations,
-        'facilities': facilities,
         'total_donations': total_donations
     })
 
 
 @login_required
-def book_appointment(request, facility_id):
+def book_appointment(request):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
     donations = profile.donations.all()
     total_donations = donations.count()
-    facility = get_object_or_404(FacilityProfile, id=facility_id)
 
     try:
         eligibility = DonationEligibity.objects.get(user=user)
-        three_days_ago = timezone.now() - timedelta(days=1)
-        if eligibility.created_at < three_days_ago:
-            eligibility = None
     except DonationEligibity.DoesNotExist:
         return redirect('check-eligibility')
 
-    if not eligibility or not eligibility.eligible:
-        request.session['facility_id'] = facility_id
-        return redirect('check-eligibility')
-
-    facility = FacilityProfile.objects.get(id=facility_id)
 
     if request.method == 'POST':
         form = BookDonationForm(request.POST)
 
         if form.is_valid():
             donation = form.save(commit=False)
-            donation.facility = facility
             donation.user = profile
 
             notification = Notification.objects.create(
                 doer=f'{donation.user.firstname} {donation.user.lastname}',
                 action=f'has made an appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black; font-weight: 600"> {donation.donation_date.date()} </span>',
-                message=f"{donation.user.firstname} {donation.user.lastname} has made an appointment for {donation.donation_type} donation on {donation.donation_date.date()} ",
-                user=facility.user
+                user=donation.facility.user
             )
 
             notification.save()
@@ -308,10 +294,10 @@ def book_appointment(request, facility_id):
 
             return redirect('donations')
         else:
-            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations, 'facility': facility})
+            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
     else:
         form = BookDonationForm()
-    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations, 'facility': facility})
+    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
 
 
 @login_required
@@ -351,6 +337,14 @@ def cancel_appointment(request, id):
     if donation.user != profile:
         return redirect("home")
 
+    notification = Notification.objects.create(
+        doer=f'{donation.user.firstname} {donation.user.lastname}',
+        action=f'has cancelled their appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black; font-weight: 600"> {donation.donation_date.date()} </span>',
+        user=donation.facility.user,
+        type='appointment-cancellation'
+    )
+
+    notification.save()
     donation.status = 'cancelled'
     donation.save()
 
@@ -358,7 +352,7 @@ def cancel_appointment(request, id):
 
 
 @login_required
-def make_request(request):
+def make_request(request, facility_id):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
     requests = profile.requests.all()
@@ -368,21 +362,36 @@ def make_request(request):
         approval_status='rejected').count()
     total_requests = requests.count()
 
+    facility = FacilityProfile.objects.get(id=facility_id)
+    facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
+        total_blood=Sum('inventory__quantity', filter=Q(
+            inventory__blood_type=user.userprofile.blood_group))
+    )
+
     if request.method == 'POST':
         form = RequestBloodForm(request.POST)
 
         if form.is_valid():
             request = form.save(commit=False)
             request.user = profile
+            request.facility = facility
+
+            notification = Notification.objects.create(
+                doer=f'{request.user.firstname} {request.user.lastname}',
+                action=f'has made an requested for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
+                user=request.facility.user
+            )
+
+            notification.save()
             request.save()
             return redirect('requests')
         else:
 
             return render(request, 'user/make-request.html',
-                          {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests})
+                          {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
     else:
         form = RequestBloodForm()
-    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests})
+    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
 
 
 @login_required

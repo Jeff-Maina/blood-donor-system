@@ -83,11 +83,11 @@
                     <i data-lucide="bell" class="size-5" stroke-width="2"></i>
                 </div>
                 <div id="notif-box"
-                    class="absolute hidden bg-white w-96 min-h-10 shadow-md  top-full right-0 border rounded-md">
+                    class="absolute hidden bg-white w-96 min-h-10 max-h-[32rem] custom-scrollbar overflow-y-auto shadow-md  top-full right-0 border rounded-md">
                     {% if notifications %}
-                    <ul class=" ">
+                    <ul class="">
                         {% for notification in notifications %}
-                        <li class="p-3 border-t text-neutral-600 flex ">
+                        <li class="p-3 border-t text-neutral-700 flex ">
 
                             <p class="">
                                 <span class="text-black font-semibold shrink-0 min-w-fit">{{notification.doer}}</span>
