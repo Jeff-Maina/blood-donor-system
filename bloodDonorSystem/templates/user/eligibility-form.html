@@ -32,6 +32,7 @@
                     {% endfor %}
                 </ul>
                 {% endif %}
+                <input type="hidden" name="facility_id" value="{{ facility.id }}">
 
                 {% csrf_token %}
                 <ul class="flex flex-col divide-y divide-neutral-200">

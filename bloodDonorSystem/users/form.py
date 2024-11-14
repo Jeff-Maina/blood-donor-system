@@ -153,15 +153,10 @@ class EligibilityForm(forms.ModelForm):
 
 class BookDonationForm(forms.ModelForm):
 
-    FACILITIES = FacilityProfile.objects.all().filter(is_approved=True)
-
-    facility = forms.ModelChoiceField(
-        queryset=FACILITIES, required=True, to_field_name='name')
-
     class Meta:
         model = Donation
         fields = ['amount', 'donation_type',
-                  'donation_date', 'remarks', 'facility']
+                  'donation_date', 'remarks']
 
         widgets = {
             'amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
@@ -201,7 +196,7 @@ class RequestBloodForm(forms.ModelForm):
     class Meta:
         model = Request
         fields = ['request_type', 'needed_by',
-                  'request_amount', 'urgency_level', 'remarks','facility']
+                  'request_amount', 'urgency_level', 'remarks', 'facility']
 
         widgets = {
             'request_amount': forms.NumberInput(attrs={'min': '100', 'max': '800', 'step': '1'}),
@@ -215,8 +210,6 @@ class RequestBloodForm(forms.ModelForm):
             'request_amount': "Amount (mls)",
             'request_type': "Donation Type",
         }
-
-  
 
         def clean_needed_by(self):
             needed_by = self.cleaned_data.get('needed_by')

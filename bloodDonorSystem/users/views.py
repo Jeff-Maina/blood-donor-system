@@ -3,7 +3,11 @@ from .form import RegisterUserForm, UserProfileForm, EligibilityForm, BookDonati
 from .models import CustomUser, UserProfile, DonationEligibity, Donation, Request
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from datetime import datetime
+from facilities.models import FacilityProfile
+from datetime import datetime, timedelta
+from django.utils import timezone
+from django.db.models import Sum, Q
+from decimal import Decimal
 # Create your views here.
 
 
@@ -138,18 +142,27 @@ def dashboard_view(request):
 
         }
         return render(request, 'user/dashboard.html', context)
-    # else:
-    #     return redirect(request, 'facility-dashboard')
+    else:
+        return redirect(request, 'facility-dashboard')
 
 
 @login_required
 def donations_view(request):
     user = request.user
+
+    if user.is_superuser:
+        return redirect('admin:index')
+
     profile = UserProfile.objects.filter(user=user).first()
     donations = profile.donations.all()
     total_donations = donations.count()
     last_donation = donations.filter(
         status='completed').order_by('donation_date').last()
+
+    facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
+        total_blood=Sum('inventory__quantity', filter=Q(
+            inventory__blood_type=user.userprofile.blood_group))
+    )
 
     if last_donation:
         last_donation_date = last_donation.donation_date.strftime(
@@ -157,11 +170,18 @@ def donations_view(request):
     else:
         last_donation_date = '-'
 
-    if user.is_superuser:
-        return redirect('admin:index')  # Redirect to the admin index page
+    context = {
+        'user': user,
+        'profile': profile,
+        'donations': donations,
+        'total_donations': total_donations,
+        'last_donation_date': last_donation_date,
+        'facilities': facilities,
+
+    }
 
     if user.role == 'individual':
-        return render(request, 'user/donations.html', {'user': user, 'profile': profile, 'donations': donations, 'total_donations': total_donations, "last_donation_date": last_donation_date})
+        return render(request, 'user/donations.html', context)
     else:
         return redirect(request, 'facility-dashboard')
 
@@ -211,21 +231,28 @@ def check_eligibility(request):
     is_eligible = None
     reasons = []
 
+    facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
+        total_blood=Sum('inventory__quantity', filter=Q(
+            inventory__blood_type=user.userprofile.blood_group))
+    )
+
     if request.method == 'POST':
+
         form = EligibilityForm(request.POST, instance=eligibility_record)
 
         if form.is_valid():
+            facility_id = request.session.get('facility_id')
             eligibility = form.save(commit=False)
             eligibility.user = request.user
             eligibility.save()
 
             is_eligible, reasons = eligibility.check_eligibility()
-            print('is-eligible')
 
             if is_eligible:
-                return redirect('book-donation-appointment')
+                if facility_id:
+                    return redirect('book-donation-appointment', facility_id=facility_id)
             else:
-                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
+                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations, 'facilities': facilities})
     else:
         form = EligibilityForm(instance=eligibility_record)
     return render(request, 'user/eligibility-form.html', {
@@ -233,40 +260,50 @@ def check_eligibility(request):
         'profile': profile,
         'is_eligible': is_eligible,
         'reasons': reasons,
-        'donations': donations, 
+        'donations': donations,
+        'facilities': facilities,
         'total_donations': total_donations
     })
 
 
 @login_required
-def book_appointment(request):
+def book_appointment(request, facility_id):
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
     donations = profile.donations.all()
     total_donations = donations.count()
+    facility = get_object_or_404(FacilityProfile, id=facility_id)
 
     try:
         eligibility = DonationEligibity.objects.get(user=user)
+        three_days_ago = timezone.now() - timedelta(days=1)
+        if eligibility.created_at < three_days_ago:
+            eligibility = None
     except DonationEligibity.DoesNotExist:
         return redirect('check-eligibility')
 
-    if not eligibility.eligible:
+    if not eligibility or not eligibility.eligible:
+        request.session['facility_id'] = facility_id
         return redirect('check-eligibility')
+    
+
+    facility = FacilityProfile.objects.get(id=facility_id)
 
     if request.method == 'POST':
         form = BookDonationForm(request.POST)
 
         if form.is_valid():
             donation = form.save(commit=False)
+            donation.facility = facility
             donation.user = profile
             donation.save()
 
             return redirect('donations')
         else:
-            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
+            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations, 'facility': facility})
     else:
         form = BookDonationForm()
-    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
+    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations, 'facility': facility})
 
 
 @login_required
