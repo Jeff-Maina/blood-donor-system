@@ -35,20 +35,35 @@
     </div>
 
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
-        <h1 class="font-semibold">Inventory</h1>
+        <h1 class="font-semibold">Blood units</h1>
         <div class="w-full">
             <table class="w-full">
                 <thead class="border-b">
                     <tr class="">
-                        <th class="p-2 text-left font-semibold">Blood Group</th>
-                        <th class="p-2 text-left font-semibold">Quantity (liters)</th>
-                        <th class="p-2 text-left font-semibold">Total Units Received</th>
-                        <th class="p-2 text-left font-semibold">Total Units Issued</th>
-                        <th class="p-2 text-left font-semibold">Last Updated</th>
+                        <th class="p-2 text-left font-semibold">Unit ID</th>
+                        <th class="p-2 text-left font-semibold">Donor</th>
+                        <th class="p-2 text-left font-semibold">Blood Type</th>
+                        <th class="p-2 text-left font-semibold">Quantity</th>
+                        <th class="p-2 text-left font-semibold">Donation Type</th>
+                        <th class="p-2 text-left font-semibold">Collection Date</th>
+                        <th class="p-2 text-left font-semibold">Expiry Date</th>
+                        <th class="p-2 text-left font-semibold">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for inventory in inventories %}
+                    {% for unit in bloodunits %}
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
+                        <td class="p-2 truncate text-neutral-800">{{ unit.unit_id }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.donor.firstname }} {{ unit.donor.lastname }}
+                        </td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.blood_type }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.quantity }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.donation_type }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.collection_date }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.expiration_date }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ unit.status }}</td>
+                    </tr>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

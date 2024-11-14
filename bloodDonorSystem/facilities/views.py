@@ -227,6 +227,7 @@ def mark_donation_complete(request, id):
         unit_id=unit_id,
         blood_type=donation.user.blood_group,
         donation_type=donation.donation_type,
+        quantity=donation.amount,
         donor=donation.user,
         facility=donation.facility,
         collection_date=donation.donation_date,
@@ -248,6 +249,7 @@ def inventory_view(request):
     profile = user.facilityprofile
 
     inventory = profile.inventory.all()
+    bloodunits = profile.bloodunits.all()
 
     for item in inventory:
         item.quantity = round(item.quantity / 1000, 3)
@@ -255,7 +257,8 @@ def inventory_view(request):
     context = {
         'inventories': inventory,
         'profile': profile,
-        'user': user
+        'user': user,
+        'bloodunits': bloodunits
     }
 
     return render(request, 'facility/inventory.html', context)
