@@ -7,7 +7,7 @@
 
 <div class="w-full p-4 flex flex-col gap-4">
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
-        <h1 class="font-semibold">Requests</h1>
+        <h1 class="font-semibold">Inventory</h1>
         <div class="w-full">
             <table class="w-full">
                 <thead class="border-b">
@@ -22,17 +22,39 @@
                 <tbody>
                     {% for inventory in inventories %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                         <td class="p-2  truncate text-neutral-800">{{ inventory.blood_type }}</td>
-                         <td class="p-2  truncate text-neutral-800">{{ inventory.quantity }} </td>
-                         <td class="p-2  truncate text-neutral-800">{{ inventory.units_received }}</td>
-                         <td class="p-2  truncate text-neutral-800"></td>
-                         <td class="p-2  truncate text-neutral-800">{{ inventory.updated_at|date:"Y-m-d, g:i a" }}</td>
+                        <td class="p-2  truncate text-neutral-800">{{ inventory.blood_type }}</td>
+                        <td class="p-2  truncate text-neutral-800">{{ inventory.quantity }} </td>
+                        <td class="p-2  truncate text-neutral-800">{{ inventory.units_received }}</td>
+                        <td class="p-2  truncate text-neutral-800"></td>
+                        <td class="p-2  truncate text-neutral-800">{{ inventory.updated_at|date:"Y-m-d, g:i a" }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Inventory</h1>
+        <div class="w-full">
+            <table class="w-full">
+                <thead class="border-b">
+                    <tr class="">
+                        <th class="p-2 text-left font-semibold">Blood Group</th>
+                        <th class="p-2 text-left font-semibold">Quantity (liters)</th>
+                        <th class="p-2 text-left font-semibold">Total Units Received</th>
+                        <th class="p-2 text-left font-semibold">Total Units Issued</th>
+                        <th class="p-2 text-left font-semibold">Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inventory in inventories %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </div>
 </div>
 

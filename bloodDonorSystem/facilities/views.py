@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
 from users.models import CustomUser, Request, Donation
-from .models import FacilityProfile, Inventory
+from .models import FacilityProfile, Inventory, BloodUnit
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from decimal import Decimal
+from datetime import datetime
 # Create your views here.
 
 
@@ -220,9 +221,22 @@ def reject_donation(request, id):
 @login_required
 def mark_donation_complete(request, id):
     donation = get_object_or_404(Donation, id=id)
+    unit_id = f"{donation.id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+
+    blood_unit = BloodUnit.objects.create(
+        unit_id=unit_id,
+        blood_type=donation.user.blood_group,
+        donation_type=donation.donation_type,
+        donor=donation.user,
+        facility=donation.facility,
+        collection_date=donation.donation_date,
+        status='available',
+    )
 
     donation.status = 'completed'
     donation.save()
+
+    blood_unit.save()
 
     return redirect('facility-donations')
 
@@ -236,7 +250,7 @@ def inventory_view(request):
     inventory = profile.inventory.all()
 
     for item in inventory:
-        item.quantity = round(item.quantity / 1000,3)
+        item.quantity = round(item.quantity / 1000, 3)
 
     context = {
         'inventories': inventory,

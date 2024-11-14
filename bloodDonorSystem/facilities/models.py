@@ -1,5 +1,6 @@
 from django.db import models
-from users.models import CustomUser
+from users.models import CustomUser, UserProfile
+from datetime import timedelta, datetime
 
 # Create your models here.
 FACILITY_TYPES = [
@@ -60,9 +61,59 @@ class Inventory(models.Model):
     units_received = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
 
-
     class Meta:
         unique_together = ('facility', 'blood_type')
 
     def __str__(self) -> str:
         return super().__str__()
+
+
+UNIT_STATUS_CHOICES = [
+    ('available', 'Available'),
+    ('issued', 'Issued'),
+    ('quarantined', 'Quarantined'),
+    ('expired', 'Expired'),
+]
+
+
+DONATION_TYPE_CHOICES = [
+    ('whole blood', 'Whole Blood Donation'),
+    ('plasma', 'Plasma Donation'),
+    ('platelets', 'Platelet Donation'),
+    ("double red cells", "Double Red Cell Donation"),
+]
+
+
+class BloodUnit(models.Model):
+    unit_id = models.CharField(max_length=50, unique=True)
+    facility = models.ForeignKey(
+        FacilityProfile, on_delete=models.CASCADE, related_name='bloodunits')
+    donor = models.ForeignKey(UserProfile, on_delete=models.SET_NULL,
+                              null=True, blank=True, related_name='bloodunits')
+    blood_type = models.CharField(max_length=3, choices=BLOOD_TYPES)
+    quantity = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.0)
+    donation_type = models.CharField(max_length=50,choices=DONATION_TYPE_CHOICES)
+    collection_date = models.DateField()
+    expiration_date = models.DateField()
+    status = models.CharField(
+        max_length=20, choices=UNIT_STATUS_CHOICES, default='available')
+    remarks = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Unit {self.unit_id} - {self.blood_type} ({self.donation_type})"
+
+    def save(self, *args, **kwargs):
+        if not self.expiration_date:
+            if self.donation_type == 'whole blood':
+                self.expiration_date = self.collection_date + \
+                    timedelta(days=42)
+            elif self.donation_type == 'plasma':
+                self.expiration_date = self.collection_date + \
+                    timedelta(days=365)
+            elif self.donation_type == 'platelets':
+                self.expiration_date = self.collection_date + timedelta(days=7)
+            elif self.donation_type == 'double red cells':
+                self.expiration_date = self.collection_date + \
+                    timedelta(days=42)
+        super().save(*args, **kwargs)
