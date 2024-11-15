@@ -78,22 +78,25 @@
     <div id="content" class="w-full h-full p-1">
         <nav class="w-full sticky bg-white top-0 z-20 shrink-0 h-14 px-4 flex items-center gap-4 border-b justify-end">
             <div class="relative">
-                <div id="notif-button"
-                    class="p-3 rounded-full relative hover:bg-neutral-100 hover:text-black cursor-pointer text-neutral-600">
+                <div id="notif-button" class=" relative p-3 rounded-full hover:bg-neutral-100 hover:text-black cursor-pointer
+                    text-neutral-600">
                     <i data-lucide="bell" class="size-5" stroke-width="2"></i>
-
-
+                    {% if unread_notifications > 0 %}
+                    <div
+                        class="size-2.5 pointer-events-none absolute rounded-full border-2 border-white top-3 right-3 bg-blue-500">
+                    </div>
+                    {% endif %}
                 </div>
                 <div id="notif-box"
-                    class="absolute  p-1 bg-white w-[28rem] min-h-10  shadow-md  top-full right-0 border rounded-md">
+                    class="absolute hidden p-1 bg-white w-[28rem] min-h-10  shadow-md  top-full right-0 border rounded-md">
                     <div class="p-4 py-2 flex items-center gap-3">
                         <h1 class="font-semibold text-lg">Notifications</h1>
-                        <div class="py-0.5 rounded-md px-2 text-sm font-semibold  bg-blue-100 text-blue-600">{{ unread_notifications }}</div>
+                        <div class="py-0.5 rounded-md px-2 text-sm font-semibold  bg-blue-100 text-blue-600">{{unread_notifications}}</div>
                     </div>
                     {% if notifications %}
                     <ul class="max-h-[36rem] custom-scrollbar overflow-y-auto w-full">
                         {% for notification in notifications %}
-                        <li class="p-3 border-t text-neutral-700 text-sm flex ">
+                        <li class="p-3 border-t text-neutral-700 text-sm flex justify-between ">
 
                             <p class="">
                                 <span class="text-black  font-semibold shrink-0 min-w-fit">{{notification.doer}}</span>
@@ -106,7 +109,8 @@
                         {% endfor %}
                     </ul>
                     <div class="p-3  border-t w-full">
-                        <button class="bg-blue-600 w-2/4 rounded py-1.5 text-white font-medium text-sm">mark all as read</button>
+                        <button class="bg-blue-600 w-2/4 rounded py-1.5 text-white font-medium text-sm">mark all as
+                            read</button>
                     </div>
                     {% else %}
                     No notifications
