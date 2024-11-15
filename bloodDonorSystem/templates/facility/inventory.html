@@ -15,18 +15,30 @@
                         <th class="p-2 text-left font-semibold">Blood Group</th>
                         <th class="p-2 text-left font-semibold">Quantity (liters)</th>
                         <th class="p-2 text-left font-semibold">Total Units Received</th>
-                        <th class="p-2 text-left font-semibold">Total Units Issued</th>
+                        <th class="p-2 text-left font-semibold">Total Units Available</th>
+                        <th class="p-2 text-left font-semibold">Restock Status</th>
                         <th class="p-2 text-left font-semibold">Last Updated</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for inventory in inventories %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <td class="p-2  truncate text-neutral-800">{{ inventory.blood_type }}</td>
-                        <td class="p-2  truncate text-neutral-800">{{ inventory.quantity }} </td>
-                        <td class="p-2  truncate text-neutral-800">{{ inventory.units_received }}</td>
-                        <td class="p-2  truncate text-neutral-800"></td>
-                        <td class="p-2  truncate text-neutral-800">{{ inventory.updated_at|date:"Y-m-d, g:i a" }}</td>
+                        <td class="p-2  truncate text-neutral-800">{{inventory.blood_type}}</td>
+                        <td class="p-2  truncate text-neutral-800">{{inventory.total_quantity}}</td>
+                        <td class="p-2  truncate text-neutral-800">{{inventory.units_received}}</td>
+                        <td class="p-2  truncate text-neutral-800">{{inventory.available_units}}</td>
+                        <td class="p-2  truncate text-neutral-800">
+                            <p class="px-2 w-20 text-center py-1 rounded text-sm font-semibold 
+                            {% if inventory.restock_status == 'Critical' %} bg-red-500 text-white
+                            {% elif inventory.restock_status == 'Low' %} bg-yellow-500 text-white
+                            {% elif inventory.restock_status == 'Adequate' %} bg-blue-500 text-white
+                            {% elif inventory.restock_status == 'Surplus' %} bg-green-500 text-white
+                            {% endif %}
+                        ">
+                                {{inventory.restock_status}}
+                            </p>
+                        </td>
+                        <td class="p-2  truncate text-neutral-800">{{inventory.updated_at|date:"Y-m-d, g:i a"}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -53,15 +65,19 @@
                 <tbody>
                     {% for unit in bloodunits %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <td class="p-2 truncate text-neutral-800">{{ unit.unit_id }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.donor.firstname }} {{ unit.donor.lastname }}
+                        <td class="p-2 truncate text-neutral-800">{{unit.unit_id}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{unit.donor.firstname}} {{unit.donor.lastname}}
                         </td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.blood_type }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.quantity }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.donation_type }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.collection_date }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.expiration_date }}</td>
-                        <td class="p-2 truncate text-neutral-800">{{ unit.status }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{unit.blood_type}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{unit.quantity}}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">{{unit.donation_type}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{unit.collection_date}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{unit.expiration_date}}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">
+                            <p class=" rounded font-medium 
+                            {% if unit.status == 'available' %} text-green-600 
+                            {% elif unit.status == 'unavailable' %} bg-red-600 {% endif %}">{{unit.status}}</p>
+                        </td>
                     </tr>
                     </tr>
                     {% endfor %}

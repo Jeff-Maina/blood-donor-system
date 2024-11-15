@@ -418,3 +418,12 @@ def cancel_request(request, id):
     request.save()
 
     return redirect('requests')
+
+# ! NOTIFICATIONS
+
+def mark_all_read(request):
+    user = request.user
+    notifications = user.notifications.all()
+    notifications.update(read=True)
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))

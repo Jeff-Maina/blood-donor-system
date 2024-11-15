@@ -8,6 +8,7 @@ from .decorators import facility_required
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from decimal import Decimal
+from django.db.models import Sum, Count
 from datetime import datetime
 # Create your views here.
 
@@ -305,13 +306,43 @@ def inventory_view(request):
     profile = user.facilityprofile
 
     inventory = profile.inventory.all()
+
     bloodunits = profile.bloodunits.all()
+
+    available_blood_units = profile.bloodunits.filter(status='available').values('blood_type').annotate(
+        available_units=Count('unit_id')
+    )
+
+    available_units_map = {
+        unit['blood_type']: unit['available_units'] for unit in available_blood_units}
 
     for item in inventory:
         item.quantity = round(item.quantity / 1000, 3)
 
+    def get_restock_label(quantity):
+        if quantity < 1.0:
+            return "Critical"
+        elif 1.0 <= quantity < 3.0:
+            return "Low"
+        elif 3.0 <= quantity < 5.0:
+            return "Adequate"
+        else:
+            return "Surplus"
+
+    inventory_data = [
+        {
+            "blood_type": item.blood_type,
+            "total_quantity": item.quantity,
+            "units_received": item.units_received,
+            "updated_at": item.updated_at,
+            "restock_status": get_restock_label(item.quantity),
+            "available_units": available_units_map.get(item.blood_type, 0),
+        }
+        for item in inventory
+    ]
+
     context = {
-        'inventories': inventory,
+        'inventories': inventory_data,
         'profile': profile,
         'user': user,
         'bloodunits': bloodunits
@@ -345,12 +376,12 @@ def donor_management_view(request):
     donations = Donation.objects.filter(facility=profile)
     user_profiles = UserProfile.objects.filter(
         id__in=donations.values_list('user', flat=True).distinct())
-    notifications = request.user.notifications.all()
 
     donors_info = []
 
     for user_profile in user_profiles:
-        user_requests = Request.objects.filter(user=user_profile)
+        user_requests = Request.objects.filter(
+            user=user_profile, facility=profile)
 
         profile_info = {
             'profile': user_profile,
@@ -370,8 +401,6 @@ def donor_management_view(request):
         'donors': donors_info,
         'profile': profile,
         'user': request.user,
-        'notifications': notifications
     }
 
-    print(notifications)
     return render(request, 'facility/donor-management.html', context)

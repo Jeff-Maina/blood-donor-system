@@ -102,15 +102,19 @@
                                 <span class="text-black  font-semibold shrink-0 min-w-fit">{{notification.doer}}</span>
                                 {{notification.action|safe}}
                             </p>
+                            {% if notification.read == False %}
                             <div class="shrink-0 min-w-8 flex items-center justify-center">
                                 <div class="size-2 bg-blue-500 rounded-full"></div>
                             </div>
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>
                     <div class="p-3  border-t w-full">
-                        <button class="bg-blue-600 w-2/4 rounded py-1.5 text-white font-medium text-sm">mark all as
-                            read</button>
+                        <a href="{% url 'mark-all-read' %}">
+                            <button class="bg-blue-600 w-2/4 rounded py-1.5 text-white font-medium text-sm">mark all as
+                                read</button>
+                        </a>
                     </div>
                     {% else %}
                     No notifications
