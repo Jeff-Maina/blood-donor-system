@@ -808,6 +808,10 @@ video {
   max-height: 32rem;
 }
 
+.max-h-\[36rem\] {
+  max-height: 36rem;
+}
+
 .min-h-10 {
   min-height: 2.5rem;
 }
@@ -862,6 +866,10 @@ video {
 
 .w-10 {
   width: 2.5rem;
+}
+
+.w-\[28rem\] {
+  width: 28rem;
 }
 
 .\!min-w-fit {
@@ -1261,6 +1269,14 @@ video {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
+.pr-1 {
+  padding-right: 0.25rem;
 }
 
 .text-left {

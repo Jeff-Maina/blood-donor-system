@@ -130,6 +130,7 @@ class Donation(models.Model):
     approval_status = models.CharField(
         default="pending", max_length=50, choices=APPROVAL_STATUS_CHOICES)
     remarks = models.TextField(null=True, blank=True)
+    rejection_reason = models.TextField(null=True, blank=True, default='')
     approval_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -195,12 +196,10 @@ class Notification(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name='notifications')
     doer = models.CharField(max_length=60, null=True)
     action = models.CharField(max_length=50, default="", null=True)
-    type=models.CharField(max_length=50, default="", null=True)
+    type = models.CharField(max_length=50, default="", null=True)
     read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.message}"
-
-

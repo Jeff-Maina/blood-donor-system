@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .form import RegisterFacilityForm, ProfileFacilityForm
-from users.models import CustomUser, Request, Donation, UserProfile
+from users.models import CustomUser, Request, Donation, UserProfile, Notification
 from .models import FacilityProfile, Inventory, BloodUnit
 from django.contrib.auth import authenticate, login, logout
 from .decorators import facility_required
@@ -18,7 +18,7 @@ def dashboard_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')
-    
+
     notifications = user.notifications.all()
 
     if user.role == 'facility':
@@ -48,7 +48,7 @@ def dashboard_view(request):
                     'pending_requests_count': pending_requests_count,
                     'total_requests': total_requests,
                     'total_blood_donated': total_blood_donated/1000,
-                    'notifications' : notifications
+                    'notifications': notifications
 
                 }
 
@@ -207,7 +207,16 @@ def donations_view(request):
 def approve_donation(request, id):
     donation = get_object_or_404(Donation, id=id)
     donation.approval_status = 'approved'
+
+    notification = Notification.objects.create(
+        doer=f'{donation.facility.name}',
+        action=f'approved your appointment for <span style="color: black; font-weight: 600">{donation.donation_type}</span> donation on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span>',
+        user=donation.user.user,
+        type='appointment-approval'
+    )
+
     donation.save()
+    notification.save()
 
     return redirect('facility-donations')
 
@@ -215,11 +224,25 @@ def approve_donation(request, id):
 @login_required
 def reject_donation(request, id):
     donation = get_object_or_404(Donation, id=id)
-    donation.approval_status = 'rejected'
-    donation.save()
 
+    if request.method == 'POST':
+        rejection_reason = request.POST.get('reason')
+        donation.approval_status = 'rejected'
+        donation.rejection_reason = rejection_reason
+
+        notification = Notification.objects.create(
+            doer=f'{donation.facility.name}',
+            action=f'rejected your appointment for <span style="color: black; font-weight: 600">{donation.donation_type}</span> on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span> due to <span style="color: red; font-weight: 600">{donation.rejection_reason}</span>',
+            user=donation.user.user,
+            type='appointment-approval'
+        )
+
+        donation.save()
+        notification.save()
+
+        return redirect('facility-donations')
+    
     return redirect('facility-donations')
-
 
 @login_required
 def mark_donation_complete(request, id):
@@ -290,14 +313,14 @@ def update_inventory_on_completion(sender, instance, **kwargs):
 def donor_management_view(request):
     profile = request.user.facilityprofile
     donations = Donation.objects.filter(facility=profile)
-    user_profiles = UserProfile.objects.filter(id__in=donations.values_list('user', flat=True).distinct())
+    user_profiles = UserProfile.objects.filter(
+        id__in=donations.values_list('user', flat=True).distinct())
     notifications = request.user.notifications.all()
 
     donors_info = []
 
     for user_profile in user_profiles:
         user_requests = Request.objects.filter(user=user_profile)
-         
 
         profile_info = {
             'profile': user_profile,
@@ -312,7 +335,7 @@ def donor_management_view(request):
         }
 
         donors_info.append(profile_info)
-    
+
     context = {
         'donors': donors_info,
         'profile': profile,

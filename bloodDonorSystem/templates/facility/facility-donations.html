@@ -76,7 +76,8 @@
                             </div>
                             {% endif %}
                         </td>
-                        <td class="p-2  truncate text-neutral-800 capitalize">{{ donation.donation_date|date:'Y-m-d, g:i a' }}
+                        <td class="p-2  truncate text-neutral-800 capitalize">
+                            {{donation.donation_date|date:'Y-m-d,g:ia'}}
                         </td>
                         <td class=" w-16 flex items-center justify-center h-10">
 
@@ -97,13 +98,11 @@
                                             Approve donation
                                         </button>
                                     </a>
-                                    <a href="{% url 'reject-donation' donation.id %}">
-                                        <button
-                                            class="flex rounded-md font-medium items-center gap-2 px-2 py-1 hover:bg-neutral-100 text-neutral-700 hover:text-black">
-                                            <i data-lucide="x" class="size-4 shrink-0"></i>
-                                            Reject donation
-                                        </button>
-                                    </a>
+                                    <button data-id="{{ donation.id }}" class="flex rounded-md reject-btn font-medium items-center gap-2 px-2 py-1
+                                        hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                        <i data-lucide="x" class="size-4 shrink-0"></i>
+                                        Reject donation
+                                    </button>
                                     <a href="{% url 'mark_donation_complete' donation.id %}">
                                         <button
                                             class="flex rounded-md font-medium items-center gap-2 px-2 py-1 hover:bg-neutral-100 text-neutral-700 hover:text-black">
@@ -112,6 +111,25 @@
                                             Mark as complete
                                         </button>
                                     </a>
+                                </div>
+                            </div>
+
+                            <div id="rejectModal{{ donation.id }}"
+                                class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+                                <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+                                <div
+                                    class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
+                                    <h1 class="font-semibold text-xl">Reject Donation</h1>
+                                    <form action="{% url 'reject-donation' donation.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="form-group !list-decimal">
+                                            <label for="reason">Reason for rejection</label>
+                                            <input type="text" name="reason" id="reason" class="form-control w-full border rounded p-2" required>
+                                        </div>
+                                        <button type="submit" class="w-full h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-medium mt-4">
+                                            Confirm
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
 
@@ -129,7 +147,17 @@
 {% block scripts %}
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        function closeModalOnBackdropClick(modalId) {
+            const modal = document.getElementById(modalId);
+            const backdrop = modal.querySelector('.backdrop');
+
+            backdrop.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        }
+
         const action_buttons = document.querySelectorAll(".actions-btn")
+
         action_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
                 e.preventDefault()
@@ -151,6 +179,22 @@
                 backdrop.classList.add("hidden")
             })
         })
+
+        const rejectModels = document.querySelectorAll('[id^="rejectModal"]');
+        rejectModels.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+
+        const reject_buttons = document.querySelectorAll(".reject-btn")
+        reject_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const modal = document.querySelector(`#rejectModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
 
 
     }

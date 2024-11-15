@@ -406,6 +406,14 @@ def deleteRequest(request, id):
 def cancel_request(request, id):
     request = get_object_or_404(Request, id=id)
 
+    notification = Notification.objects.create(
+        doer=f'{request.user.firstname} {request.user.lastname}',
+        action=f'has made an requested for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
+        user=request.facility.user
+    )
+
+    notification.save()
+
     request.request_status = 'cancelled'
     request.save()
 
