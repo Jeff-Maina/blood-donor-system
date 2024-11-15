@@ -158,18 +158,39 @@ def requests_view(request):
 def approve_request(request, id):
     request = get_object_or_404(Request, id=id)
 
+    notification = Notification.objects.create(
+        doer=f'{request.facility.name}',
+        action=f'approved your request for <span style="color: black; font-weight: 600">{request.request_amount} ml , {request.request_type}</span>',
+        user=request.user.user,
+        type='request-approval'
+    )
+
     request.approval_status = 'approved'
     request.save()
+    notification.save()
 
     return redirect('facility-requests')
 
 
 @login_required
 def reject_request(request, id):
-    request = get_object_or_404(Request, id=id)
+    user_request = get_object_or_404(Request, id=id)
 
-    request.approval_status = 'rejected'
-    request.save()
+    if request.method == 'POST':
+        rejection_reason = request.POST.get('reason')
+        user_request.approval_status = 'rejected'
+        user_request.rejection_reason = rejection_reason
+
+        notification = Notification.objects.create(
+            doer=f'{user_request.facility.name}',
+            action=f'rejected your request for <span style="color: black; font-weight: 600">{user_request.request_amount} ml , {user_request.request_type}</span> due to <span style="color: red; font-weight: 600">{user_request.rejection_reason}</span>',
+            user=user_request.user.user,
+            type='request-rejection'
+        )
+
+        user_request.save()
+        notification.save()
+        return redirect('facility-requests')
 
     return redirect('facility-requests')
 
@@ -234,15 +255,16 @@ def reject_donation(request, id):
             doer=f'{donation.facility.name}',
             action=f'rejected your appointment for <span style="color: black; font-weight: 600">{donation.donation_type}</span> on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span> due to <span style="color: red; font-weight: 600">{donation.rejection_reason}</span>',
             user=donation.user.user,
-            type='appointment-approval'
+            type='appointment-rejection'
         )
 
         donation.save()
         notification.save()
 
         return redirect('facility-donations')
-    
+
     return redirect('facility-donations')
+
 
 @login_required
 def mark_donation_complete(request, id):
@@ -260,8 +282,16 @@ def mark_donation_complete(request, id):
         status='available',
     )
 
+    notification = Notification.objects.create(
+        doer=f'{donation.facility.name}',
+        action=f'confirmed completion of your <span style="color: black; font-weight: 600">{donation.donation_type}</span> donation on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span>',
+        user=donation.user.user,
+        type='donation-completion'
+    )
+
     donation.status = 'completed'
     donation.save()
+    notification.save()
 
     blood_unit.save()
 
