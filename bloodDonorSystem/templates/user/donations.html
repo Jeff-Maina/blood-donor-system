@@ -60,64 +60,82 @@
                         <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.donation_type }}</td>
                         <td class="p-2 truncate text-neutral-800"><span
                                 class="text-black font-medium">{{donation.amount}}</span> ml</td>
-                        <td class="p-2 truncate text-neutral-800 !capitalize">{{ donation.status }}</td>
-                        <td
-                            class="p-2.5 truncate h-full  text-neutral-800 text-sm  !capitalize flex  !items-center gap-2">
+                        <td class="p-2 truncate text-neutral-800 !capitalize">
+                            {% if donation.status == 'scheduled' %}
+                            <div class="text-purple-600 flex items-center  gap-2">
+                                <i data-lucide="clock" class=" size-4" stroke-width="2"></i>
+                                <span>Scheduled</span>
+                            </div>
+                            {% elif donation.status == 'cancelled' %}
+                            <div class="text-red-600 flex items-center  gap-2">
+                                <i data-lucide="x" class=" size-4" stroke-width="2"></i>
+                                <span>Cancelled</span>
+                            </div>
+                            {% elif donation.status == 'completed' %}
+                            <div class="text-green-600 flex items-center  gap-2">
+                                <i data-lucide="check" class=" size-4" stroke-width="2"></i>
+                                <span>Completed</span>
+                            </div>
+                            {% endif %}
+
+                        </td>
+                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"d-m-Y, g:i a" }}</td>
+                        <td class="p-2.5 truncate h-full  text-neutral-800   !capitalize flex  !items-center gap-2">
 
                             {% if donation.approval_status == 'pending' %}
-                            <div class="text-purple-600 flex items-center  gap-2 font-medium">
-                                <i data-lucide="clock" class=" size-4" stroke-width="3"></i>
+                            <div class="text-purple-600 flex items-center  gap-2">
+                                <i data-lucide="hourglass" class=" size-4" stroke-width="2"></i>
                                 <span>Pending</span>
                             </div>
                             {% elif donation.approval_status == 'approved' %}
-                            <div class="text-green-600 flex items-center  gap-2 font-medium">
-                                <i data-lucide="circle-check" class="size-4" stroke-width="3"></i>
+                            <div class="text-green-600 flex items-center  gap-2">
+                                <i data-lucide="circle-check" class="size-4" stroke-width="2"></i>
                                 <span>Approved</span>
                             </div>
                             {% elif donation.approval_status == 'rejected' %}
-                            <div class="text-red-600 flex items-center  gap-2 font-medium">
-                                <i data-lucide="circle-check" class=" size-4" stroke-width="3"></i>
+                            <div class="text-red-600 flex items-center  gap-2">
+                                <i data-lucide="circle-x" class=" size-4" stroke-width="2"></i>
                                 <span>Rejected</span>
                             </div>
                             {% endif %}
                         </td>
-                        <td class="p-2 truncate text-neutral-800">{{ donation.donation_date|date:"d-m-Y, g:i a" }}</td>
                         <td class="p-2  gap-2">
-                            <button data-id="{{ donation.id }}"
-                                class="h-full cancel-btn group/button relative  aspect-square rounded    p-2 {% if donation.status == 'completed' or donation.status == 'cancelled' %} disabled !text-neutral-500 !cursor-not-allowed pointer-events-none {% else %} text-red-500 hover:text-red-600 hover:bg-red-100 {% endif %} ">
-                                <div
-                                    class="absolute w-[170px] min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Cancel appointment
-                                </div>
-                                <i data-lucide="x" class="size-3" stroke-width="3"></i>
-                            </button>
-                            <a href="{% url 'update-donation' donation.id %}">
 
-                                <button
-                                    class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
-                                    <div
-                                        class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                        Edit
-                                    </div>
-                                    <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
+
+                            <div class="relative">
+                                <button data-id="{{ donation.id }}"
+                                    class="size-8 actions-btn group/button relative  aspect-square rounded  hover:bg-neutral-100 text-neutral-600 flex items-center justify-center   p-2 ">
+                                    <i data-lucide="ellipsis" class="size-5" stroke-width="3"></i>
                                 </button>
-                            </a>
-                            <button data-id="{{ donation.id }}" data-modal-target="#detailsModal{{ donation.id }}"
-                                class="h-full more-details-btn group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
-                                <div
-                                    class="absolute !min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    <p class="min-w-fit w-[85px]">More details</p>
+
+                                <div data-id="{{ donation.id }}" id="actionsMenuBackdrop{{ donation.id }}"
+                                    class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
+                                <div id="actionsMenu{{ donation.id }}"
+                                    class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
+                                    <a href="{% url 'update-donation' donation.id %}">
+                                        <button
+                                            class="dropdown-item">
+                                            <i data-lucide="pencil" class="shrink-0 size-3"></i>
+                                            Edit
+                                        </button>
+                                    </a>
+                                    <button data-id="{{ donation.id }}" class="more-details-btn dropdown-item">
+                                        <i data-lucide="info" class="size-3 shrink-0"></i>
+                                        More details
+                                    </button>
+                                    <button data-id="{{ donation.id }}" class="cancel-btn dropdown-item">
+                                        <i data-lucide="x" class="size-3 shrink-0"></i>
+                                        Cancel appointment
+                                    </button>
+                                    <hr class="my-2">
+                                    <button data-id="{{ donation.id }}" class="flex rounded-md delete-btn font-medium items-center gap-2 p-2
+                                    hover:bg-red-50 w-full text-red-600 hover:text-red-700">
+                                        <i data-lucide="trash" class="size-3 shrink-0"></i>
+                                        Delete appointment
+                                    </button>
                                 </div>
-                                <i data-lucide="info" class="size-3" stroke-width="3"></i>
-                            </button>
-                            <button data-id="{{ donation.id }}"
-                                class="h-full delete-btn group/button relative  aspect-square rounded hover:bg-red-100 text-red-500 hover:text-red-600  p-2">
-                                <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Delete
-                                </div>
-                                <i data-lucide="trash" class="size-3" stroke-width="3"></i>
-                            </button>
+
+                            </div>
 
                             <!--details modal -->
                             <div id="detailsModal{{ donation.id }}"
@@ -174,18 +192,18 @@
                                                 </p>
                                             </div>
                                         </div>
+                                        {% if donation.remarks %}
                                         <hr>
-                                        <div class="flex  flex-col gap-2">
+                                        <div class="flex flex-col gap-2">
                                             <p class="text-neutral-500 font-medium">Your Remarks</p>
                                             <p class="font-medium">{{ donation.remarks }}</p>
                                         </div>
+                                        {% endif %}
                                         {% if donation.approval_status == 'rejected' %}
                                         <hr>
                                         <div class="flex  flex-col gap-2">
                                             <p class="text-neutral-500 font-medium">Reason for rejection</p>
-                                            <p class="font-medium">We have done extensive tests and come to the
-                                                conclusion that your blood does indeed suck quite alot and will
-                                                therefore not be able to proceed with you sample yo</p>
+                                            <p class="font-medium">{{donations.rejection_reason}}</p>
                                         </div>
 
                                         {% endif %}
@@ -320,7 +338,29 @@
             })
         })
 
+        const action_buttons = document.querySelectorAll(".actions-btn")
 
+        action_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${button.dataset.id}`)
+                const backdrop = document.querySelector(`#actionsMenuBackdrop${button.dataset.id}`)
+                menu.classList.remove("hidden")
+                backdrop.classList.remove("hidden")
+            })
+        })
+
+        const backdrops = document.querySelectorAll(".backdrop")
+
+        backdrops.forEach((backdrop) => {
+            backdrop.addEventListener("click", (e) => {
+                console.log("clicked")
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${backdrop.dataset.id}`)
+                menu.classList.add("hidden")
+                backdrop.classList.add("hidden")
+            })
+        })
 
 
 

@@ -20,7 +20,6 @@ def dashboard_view(request):
     if user.is_superuser:
         return redirect('admin:index')
 
-    notifications = user.notifications.all()
 
     if user.role == 'facility':
         if user.is_approved:
@@ -49,7 +48,6 @@ def dashboard_view(request):
                     'pending_requests_count': pending_requests_count,
                     'total_requests': total_requests,
                     'total_blood_donated': total_blood_donated/1000,
-                    'notifications': notifications
 
                 }
 

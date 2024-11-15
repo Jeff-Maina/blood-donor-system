@@ -91,7 +91,6 @@ select {
   padding-left: 5px;
 }
 
-
 .custom-scrollbar::-webkit-scrollbar {
   background-color: transparent;
   width: 5px;
@@ -102,12 +101,15 @@ select {
   border-radius: 10px;
 }
 
-
-.list{
+.list {
   list-style-type: decimal !important;
   list-style-position: inside !important;
 }
 
-textarea{
+textarea {
   @apply border border-neutral-200 rounded-md px-3 py-1.5 placeholder:text-neutral-400 placeholder:text-sm outline-none focus:border-neutral-500 h-20;
+}
+
+.dropdown-item {
+  @apply flex w-full rounded-md font-medium items-center gap-2 p-2 hover:bg-neutral-100 text-neutral-700 hover:text-black;
 }

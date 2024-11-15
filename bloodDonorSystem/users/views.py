@@ -275,7 +275,6 @@ def book_appointment(request):
     except DonationEligibity.DoesNotExist:
         return redirect('check-eligibility')
 
-
     if request.method == 'POST':
         form = BookDonationForm(request.POST)
 
@@ -286,7 +285,8 @@ def book_appointment(request):
             notification = Notification.objects.create(
                 doer=f'{donation.user.firstname} {donation.user.lastname}',
                 action=f'has made an appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black; font-weight: 600"> {donation.donation_date.date()} </span>',
-                user=donation.facility.user
+                user=donation.facility.user,
+                type='appointment-booking'
             )
 
             notification.save()
@@ -378,8 +378,9 @@ def make_request(request, facility_id):
 
             notification = Notification.objects.create(
                 doer=f'{request.user.firstname} {request.user.lastname}',
-                action=f'has made an requested for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
-                user=request.facility.user
+                action=f'has made a request for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
+                user=request.facility.user,
+                type='request-made'
             )
 
             notification.save()
@@ -408,18 +409,19 @@ def cancel_request(request, id):
 
     notification = Notification.objects.create(
         doer=f'{request.user.firstname} {request.user.lastname}',
-        action=f'has made an requested for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
-        user=request.facility.user
+        action=f'has cancelled request for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
+        user=request.facility.user,
+        type='request-cancellation'
     )
-
-    notification.save()
 
     request.request_status = 'cancelled'
     request.save()
+    notification.save()
 
     return redirect('requests')
 
 # ! NOTIFICATIONS
+
 
 def mark_all_read(request):
     user = request.user

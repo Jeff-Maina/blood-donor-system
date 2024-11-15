@@ -49,7 +49,7 @@
                 </thead>
                 <tbody>
                     {% for donation in donations %}
-                    <tr>
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
                         <td class="p-2  truncate text-neutral-800">{{donation.user.firstname}}
                             {{donation.user.lastname}}</td>
                         <td class="p-2  truncate text-neutral-800">{{donation.user.user.email}}</td>
@@ -60,17 +60,17 @@
                         <td class="p-2  truncate text-neutral-800 capitalize">
                             {% if donation.status == 'scheduled' %}
                             <div class="text-purple-600 flex items-center  gap-2">
-                                <i data-lucide="clock" class=" size-4" stroke-width="3"></i>
+                                <i data-lucide="clock" class=" size-4" stroke-width="2"></i>
                                 <span>Scheduled</span>
                             </div>
                             {% elif donation.status == 'cancelled' %}
                             <div class="text-red-600 flex items-center  gap-2">
-                                <i data-lucide="x" class=" size-4" stroke-width="3"></i>
+                                <i data-lucide="x" class=" size-4" stroke-width="2"></i>
                                 <span>Cancelled</span>
                             </div>
                             {% elif donation.status == 'completed' %}
                             <div class="text-green-600 flex items-center  gap-2">
-                                <i data-lucide="check" class=" size-4" stroke-width="3"></i>
+                                <i data-lucide="check" class=" size-4" stroke-width="2"></i>
                                 <span>Completed</span>
                             </div>
                             {% endif %}
@@ -81,17 +81,17 @@
                         <td class="p-2  truncate text-neutral-800">
                             {% if donation.approval_status == 'pending' %}
                             <div class="text-purple-600 flex items-center  gap-2">
-                                <i data-lucide="hourglass" class=" size-4" stroke-width="3"></i>
+                                <i data-lucide="hourglass" class=" size-4" stroke-width="2"></i>
                                 <span>Pending</span>
                             </div>
                             {% elif donation.approval_status == 'approved' %}
                             <div class="text-green-600 flex items-center  gap-2">
-                                <i data-lucide="circle-check" class="size-4" stroke-width="3"></i>
+                                <i data-lucide="circle-check" class="size-4" stroke-width="2"></i>
                                 <span>Approved</span>
                             </div>
                             {% elif donation.approval_status == 'rejected' %}
                             <div class="text-red-600 flex items-center  gap-2">
-                                <i data-lucide="circle-x" class=" size-4" stroke-width="3"></i>
+                                <i data-lucide="circle-x" class=" size-4" stroke-width="2"></i>
                                 <span>Rejected</span>
                             </div>
                             {% endif %}
@@ -101,7 +101,7 @@
                             <div class="relative">
                                 <button data-id="{{ donation.id }}"
                                     class="size-8 actions-btn group/button relative  aspect-square rounded  hover:bg-neutral-100 text-neutral-600 flex items-center justify-center   p-2 ">
-                                    <i data-lucide="ellipsis" class="size-5" stroke-width="3"></i>
+                                    <i data-lucide="ellipsis" class="size-5" stroke-width="2"></i>
                                 </button>
 
                                 <div data-id="{{ donation.id }}" id="actionsMenuBackdrop{{ donation.id }}"
@@ -109,20 +109,17 @@
                                 <div id="actionsMenu{{ donation.id }}"
                                     class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
                                     <a href="{% url 'approve-donation' donation.id %}">
-                                        <button
-                                            class="flex rounded-md font-medium items-center gap-2 px-2 py-1 hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                        <button class="dropdown-item">
                                             <i data-lucide="check" class="shrink-0 size-4"></i>
                                             Approve donation
                                         </button>
                                     </a>
-                                    <button data-id="{{ donation.id }}" class="flex rounded-md reject-btn font-medium items-center gap-2 px-2 py-1
-                                        hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                    <button data-id="{{ donation.id }}" class="reject-btn dropdown-item">
                                         <i data-lucide="x" class="size-4 shrink-0"></i>
                                         Reject donation
                                     </button>
                                     <a href="{% url 'mark_donation_complete' donation.id %}">
-                                        <button
-                                            class="flex rounded-md font-medium items-center gap-2 px-2 py-1 hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                        <button class="dropdown-item">
                                             <i data-lucide="circle-check" class="shrink-0 size-4"></i>
 
                                             Mark as complete

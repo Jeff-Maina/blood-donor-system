@@ -107,14 +107,12 @@
                                 <div id="actionsMenu{{ request.id }}"
                                     class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
                                     <a href="{% url 'approve-request' request.id %}">
-                                        <button
-                                            class="flex rounded-md font-medium items-center gap-2 px-2 py-1 hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                        <button class="dropdown-item">
                                             <i data-lucide="check" class="shrink-0 size-4"></i>
                                             Approve request
                                         </button>
                                     </a>
-                                    <button data-id="{{ request.id }}" class="flex rounded-md reject-btn font-medium items-center gap-2 px-2 py-1
-                                    hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                    <button data-id="{{ request.id }}" class="reject-btn dropdown-item">
                                         <i data-lucide="x" class="size-4 shrink-0"></i>
                                         Reject request
                                     </button>
@@ -190,8 +188,8 @@
             })
         })
 
-        const rejectModels = document.querySelectorAll('[id^="rejectModal"]');
-        rejectModels.forEach(modal => {
+        const rejectModals = document.querySelectorAll('[id^="rejectModal"]');
+        rejectModals.forEach(modal => {
             closeModalOnBackdropClick(modal.id);
         });
 

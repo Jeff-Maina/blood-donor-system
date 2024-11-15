@@ -42,76 +42,99 @@
                         <th class="p-2 text-left font-semibold">Request Type</th>
                         <th class="p-2 text-left font-semibold">Request Amount</th>
                         <th class="p-2 text-left font-semibold">Request Status</th>
-                        <th class="p-2 text-left font-semibold">Approval Status</th>
                         <th class="p-2 text-left font-semibold">Urgency Level</th>
                         <th class="p-2 text-left font-semibold">Needed By</th>
+                        <th class="p-2 text-left font-semibold">Approval Status</th>
                         <th class="p-2 text-left font-semibold">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for request in requests %}
                     <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <td class="p-2  truncate text-neutral-800">{{ request.facility.name }}</td>
-                        <td class="p-2  truncate text-neutral-800">{{ request.request_type }}</td>
-                        <td class="p-2  truncate text-neutral-800">{{ request.request_amount }}</td>
-                        <td class="p-2  truncate text-neutral-800">{{ request.request_status }}</td>
-                        <td
-                            class="p-2.5 truncate h-full  text-neutral-800 text-sm  !capitalize flex  !items-center gap-2">
+                        <td class="p-2  truncate text-neutral-800">{{request.facility.name}}</td>
+                        <td class="p-2  truncate text-neutral-800 capitalize">{{request.request_type}}</td>
+                        <td class="p-2  truncate text-neutral-800">{{request.request_amount}} ml</td>
+                        <td class="p-2  truncate text-neutral-800">
+                            {% if request.request_status == 'scheduled' %}
+                            <div class="text-purple-600 flex items-center  gap-2">
+                                <i data-lucide="clock" class=" size-4" stroke-width="2"></i>
+                                <span>Scheduled</span>
+                            </div>
+                            {% elif request.request_status == 'cancelled' %}
+                            <div class="text-red-600 flex items-center  gap-2">
+                                <i data-lucide="x" class=" size-4" stroke-width="2"></i>
+                                <span>Cancelled</span>
+                            </div>
+                            {% elif request.request_status == 'completed' %}
+                            <div class="text-green-600 flex items-center  gap-2">
+                                <i data-lucide="check" class=" size-4" stroke-width="2"></i>
+                                <span>Completed</span>
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <td class="p-2  truncate text-neutral-800 capitalize">
+                            <p class="
+                            {% if request.urgency_level == 'normal' %} text-blue-600 
+                            {% elif request.urgency_level == 'urgent' %} text-yellow-600 
+                            {% elif request.urgency_level == 'critical' %} text-red-600 
+                            {% endif %} font-medium">{{request.urgency_level}}</p>
+                        </td>
+                        <td class="p-2  truncate text-neutral-800">{{ request.needed_by|date:"Y-m-d" }}</td>
+                        <td class="p-2.5 truncate h-full  text-neutral-800  !capitalize flex  !items-center gap-2">
 
                             {% if request.approval_status == 'pending' %}
-                            <div class="text-purple-600 flex items-center  gap-2 font-medium">
+                            <div class="text-purple-600 flex items-center  gap-2 ">
                                 <i data-lucide="clock" class=" size-4" stroke-width="3"></i>
                                 <span>Pending</span>
                             </div>
                             {% elif request.approval_status == 'approved' %}
-                            <div class="text-green-600 flex items-center  gap-2 font-medium">
+                            <div class="text-green-600 flex items-center  gap-2 ">
                                 <i data-lucide="circle-check" class="size-4" stroke-width="3"></i>
                                 <span>Approved</span>
                             </div>
                             {% elif request.approval_status == 'rejected' %}
-                            <div class="text-red-600 flex items-center  gap-2 font-medium">
-                                <i data-lucide="circle-check" class=" size-4" stroke-width="3"></i>
+                            <div class="text-red-600 flex items-center  gap-2 ">
+                                <i data-lucide="circle-x" class=" size-4" stroke-width="3"></i>
                                 <span>Rejected</span>
                             </div>
                             {% endif %}
                         </td>
-                        <td class="p-2  truncate text-neutral-800">{{ request.urgency_level }}</td>
-                        <td class="p-2  truncate text-neutral-800">{{ request.needed_by|date:"Y-m-d" }}</td>
                         <td class="p-2  gap-2">
-                            <button data-id="{{ request.id }}"
-                                class="h-full cancel-btn group/button relative  aspect-square rounded    p-2 {% if request.approval_status == 'completed' or request.approval_status == 'cancelled' %} disabled !text-neutral-500 !cursor-not-allowed pointer-events-none {% else %} text-red-500 hover:text-red-600 hover:bg-red-100 {% endif %} ">
-                                <div
-                                    class="absolute w-[170px] min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Cancel request
-                                </div>
-                                <i data-lucide="x" class="size-3" stroke-width="3"></i>
-                            </button>
+                            <div class="relative">
+                                <button data-id="{{ request.id }}"
+                                    class="size-8 actions-btn group/button relative  aspect-square rounded  hover:bg-neutral-100 text-neutral-600 flex items-center justify-center   p-2 ">
+                                    <i data-lucide="ellipsis" class="size-5" stroke-width="3"></i>
+                                </button>
 
-                            <button
-                                class="h-full group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
-                                <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Edit
+                                <div data-id="{{ request.id }}" id="actionsMenuBackdrop{{ request.id }}"
+                                    class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
+                                <div id="actionsMenu{{ request.id }}"
+                                    class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
+                                    <button
+                                        class="flex w-full rounded-md font-medium items-center gap-2 p-2 hover:bg-neutral-100 text-neutral-700 hover:text-black">
+                                        <i data-lucide="pencil" class="shrink-0 size-3"></i>
+                                        Edit
+                                    </button>
+                                    <button data-id="{{ request.id }}" class="flex rounded-md more-details-btn font-medium items-center gap-2 p-2
+                                    hover:bg-neutral-100 w-full text-neutral-700 hover:text-black">
+                                        <i data-lucide="info" class="size-3 shrink-0"></i>
+                                        More details
+                                    </button>
+                                    <button data-id="{{ request.id }}" class="flex rounded-md cancel-btn font-medium items-center gap-2 p-2
+                                    hover:bg-neutral-100 w-full text-neutral-700 hover:text-black">
+                                        <i data-lucide="x" class="size-3 shrink-0"></i>
+                                        Cancel request
+                                    </button>
+                                    <hr class="my-2">
+                                    <button data-id="{{ request.id }}" class="flex rounded-md delete-btn font-medium items-center gap-2 p-2
+                                    hover:bg-red-50 w-full text-red-600 hover:text-red-700">
+                                        <i data-lucide="trash" class="size-3 shrink-0"></i>
+                                        Delete request
+                                    </button>
                                 </div>
-                                <i data-lucide="pencil" class="size-3" stroke-width="3"></i>
-                            </button>
 
-                            <button data-id="{{ request.id }}" data-modal-target="#detailsModal{{ request.id }}"
-                                class="h-full more-details-btn group/button relative  aspect-square rounded hover:bg-neutral-200 text-neutral-600 hover:text-black  p-2">
-                                <div
-                                    class="absolute !min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    <p class="min-w-fit w-[85px]">More details</p>
-                                </div>
-                                <i data-lucide="info" class="size-3" stroke-width="3"></i>
-                            </button>
-                            <button data-id="{{ request.id }}"
-                                class="h-full delete-btn group/button relative  aspect-square rounded hover:bg-red-100 text-red-500 hover:text-red-600  p-2">
-                                <div
-                                    class="absolute min-w-fit  bottom-[120%] pointer-events-none opacity-0 group-hover/button:opacity-100  py-1 px-3 left-2/4 -translate-x-2/4 text-sm font-medium translate-y-2 group-hover/button:translate-y-0 transition-all duration-100 bg-white text-black border shadow rounded-md">
-                                    Delete
-                                </div>
-                                <i data-lucide="trash" class="size-3" stroke-width="3"></i>
-                            </button>
+                            </div>
 
                             <!--details modal -->
                             <div id="detailsModal{{ request.id }}"
@@ -174,9 +197,7 @@
                                         <hr>
                                         <div class="flex  flex-col gap-2">
                                             <p class="text-neutral-500 font-medium">Reason for rejection</p>
-                                            <p class="font-medium">We have done extensive tests and come to the
-                                                conclusion that your blood does indeed suck quite alot and will
-                                                therefore not be able to proceed with you sample yo</p>
+                                            <p class="font-medium">{{request.rejection_reason}}</p>
                                         </div>
 
                                         {% endif %}
@@ -271,20 +292,19 @@
                         <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.open_days }}</td>
                         <td class="p-2 truncate text-neutral-800">{{ facility.opening_time|date:"g:i a" }} -
                             {{facility.closing_time|date:"g:i a" }}</td>
-
                         <td>
                             {% if facility.total_blood is not None and facility.total_blood > 800 %}
                             <a href="{% url 'make-request' facility.id %}">
                                 <button
-                                    class="px-3 w-full text-white py-0.5  font-medium  rounded {% if facility.total_blood is not None and facility.total_blood > 800 %} bg-green-500 {% else %} bg-neutral-400 disabled cursor-not-allowed{% endif %}">
+                                    class="px-3 w-full text-white py-1  font-medium text-sm  rounded {% if facility.total_blood is not None and facility.total_blood > 800 %} bg-green-500 {% else %} bg-neutral-400 disabled cursor-not-allowed{% endif %}">
 
                                     Request
                                 </button>
                             </a>
                             {% else %}
                             <button
-                                class="px-3 w-full text-white py-0.5 font-medium rounded bg-neutral-400 disabled cursor-not-allowed">
-                                not available
+                                class="px-3 w-full text-white py-1 font-medium text-sm rounded bg-neutral-300 disabled cursor-not-allowed">
+                                Not available
                             </button>
                             {% endif %}
                         </td>
@@ -366,8 +386,29 @@
             })
         })
 
+        const action_buttons = document.querySelectorAll(".actions-btn")
 
+        action_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${button.dataset.id}`)
+                const backdrop = document.querySelector(`#actionsMenuBackdrop${button.dataset.id}`)
+                menu.classList.remove("hidden")
+                backdrop.classList.remove("hidden")
+            })
+        })
 
+        const backdrops = document.querySelectorAll(".backdrop")
+
+        backdrops.forEach((backdrop) => {
+            backdrop.addEventListener("click", (e) => {
+                console.log("clicked")
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${backdrop.dataset.id}`)
+                menu.classList.add("hidden")
+                backdrop.classList.add("hidden")
+            })
+        })
 
 
     })
