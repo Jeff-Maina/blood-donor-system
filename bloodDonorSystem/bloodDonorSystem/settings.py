@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_browser_reload",
+    'django_tables2'
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "users.context_processors.notification_processor",
+                "django.template.context_processors.request"
             ],
         },
     },
@@ -77,7 +79,8 @@ WSGI_APPLICATION = "bloodDonorSystem.wsgi.application"
 
 
 AUTHENTICATION_BACKENDS = [
-    'users.auth_backends.EmailBackend',  # Replace 'yourapp' with your actual app name
+    # Replace 'yourapp' with your actual app name
+    'users.auth_backends.EmailBackend',
 ]
 
 # Database
