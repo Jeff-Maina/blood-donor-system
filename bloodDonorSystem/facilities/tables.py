@@ -17,13 +17,19 @@ class FacilityDonationsTable(tables.Table):
     blood_type = tables.Column(
         accessor='user.blood_group', verbose_name='Blood Type')
 
+    actions = tables.TemplateColumn(
+        template_name='facility/donations/row-actions.html',
+        verbose_name='Actions',
+        orderable=False
+    )
+
     class Meta:
         model = Donation
         fields = ('row_number', 'user', 'email', 'phone', 'blood_type', 'donation_type',
-                  'amount', 'donation_date', 'status', 'approval_status')
+                  'amount', 'donation_date', 'status', 'approval_status', 'actions')
 
         sequence = ('row_number', 'user', 'email', 'phone', 'blood_type', 'donation_type',
-                    'amount',  'status', 'donation_date', 'approval_status')
+                    'amount',  'status', 'donation_date', 'approval_status', 'actions')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,7 +51,7 @@ class FacilityDonationsTable(tables.Table):
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='clock' class='size-4' stroke-width='2'></i> Scheduled</p>")
         elif record.status == 'cancelled':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='x' class='size-4' stroke-width='2'></i> Cancelled</p>")
-    
+
     def render_approval_status(self, record):
         if record.approval_status == 'approved':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='check' class='size-4' stroke-width='2'></i> Approved</p>")

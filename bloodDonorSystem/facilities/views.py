@@ -235,7 +235,7 @@ def donations_view(request):
         'facility_donations_table': facility_donations_table
     }
 
-    return render(request, "facility/facility-donations.html", context)
+    return render(request, "facility/donations/facility-donations.html", context)
 
 
 @login_required
@@ -361,7 +361,7 @@ def inventory_view(request):
         'bloodunits': bloodunits
     }
 
-    return render(request, 'facility/inventory.html', context)
+    return render(request, 'donations/inventory.html', context)
 
 
 @receiver(post_save, sender=Donation)
