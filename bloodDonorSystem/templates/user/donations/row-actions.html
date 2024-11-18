@@ -1,0 +1,165 @@
+<div>
+
+    <div class="relative">
+        <button data-id="{{ donation.id }}"
+            class="size-8 actions-btn group/button relative  aspect-square rounded  hover:bg-neutral-100 text-neutral-600 flex items-center justify-center   p-2 ">
+            <i data-lucide="ellipsis" class="size-5" stroke-width="3"></i>
+        </button>
+
+        <div data-id="{{ donation.id }}" id="actionsMenuBackdrop{{ donation.id }}"
+            class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
+        <div id="actionsMenu{{ donation.id }}"
+            class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
+            <a href="{% url 'update-donation' record.id %}">
+                <button
+                    class="dropdown-item">
+                    <i data-lucide="pencil" class="shrink-0 size-3"></i>
+                    Edit
+                </button>
+            </a>
+            <button data-id="{{ donation.id }}" class="more-details-btn dropdown-item">
+                <i data-lucide="info" class="size-3 shrink-0"></i>
+                More details
+            </button>
+            <button data-id="{{ donation.id }}" class="cancel-btn dropdown-item">
+                <i data-lucide="x" class="size-3 shrink-0"></i>
+                Cancel appointment
+            </button>
+            <hr class="my-2">
+            <button data-id="{{ donation.id }}" class="flex rounded-md delete-btn font-medium items-center gap-2 p-2
+            hover:bg-red-50 w-full text-red-600 hover:text-red-700">
+                <i data-lucide="trash" class="size-3 shrink-0"></i>
+                Delete appointment
+            </button>
+        </div>
+
+    </div>
+
+    <!--details modal -->
+    <div id="detailsModal{{ donation.id }}" class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+        <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="w-[450px] max-h-[70vh] p-4 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-6 mt-20">
+            <h1 class="font-semibold">Donation details</h1>
+            <div class="flex flex-col gap-6 relative">
+
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Facility</p>
+                        <p class="font-medium">{{ record.facility.name }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Donation Date</p>
+                        <p class="font-medium">{{ record.donation_date|date:"F j, Y"}}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Appointment Time</p>
+                        <p class="font-medium">{{ record.donation_date|date:"g:i a"}}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Blood Amount</p>
+                        <p class="font-medium">{{ record.amount }} ml</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Donation Type</p>
+                        <p class="font-medium">{{ record.donation_type }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Donation status</p>
+                        <p class="font-medium">{{ record.status }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Approval Status</p>
+                        <p class="font-medium">{{ record.approval_status }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Approval Date</p>
+                        <p class="font-medium">
+                            {% if record.approval_date %}
+                            {{ record.approval_date }}
+                            {% else %}
+                            Pending
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% if record.remarks %}
+                <hr>
+                <div class="flex flex-col gap-2">
+                    <p class="text-neutral-500 font-medium">Your Remarks</p>
+                    <p class="font-medium">{{ record.remarks }}</p>
+                </div>
+                {% endif %}
+                {% if record.approval_status == 'rejected' %}
+                <hr>
+                <div class="flex  flex-col gap-2">
+                    <p class="text-neutral-500 font-medium">Reason for rejection</p>
+                    <p class="font-medium">{{record.rejection_reason}}</p>
+                </div>
+
+                {% endif %}
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- delete modal -->
+    <div id="deleteModal{{ donation.id }}" class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+        <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
+            <h1 class="font-semibold text-xl">Confirm Deletion</h1>
+            <p class="text-neutral-600">
+                Are you sure you want to delete this <span class="font-medium text-black">
+                    {{ record.donation_type }}
+                </span> donation scheduled on <span class="font-medium text-black">
+                    {{record.donation_date|date:"F j, Y"}}</span> at <span
+                    class="font-medium text-black">{{record.donation_date|date:"g:ia"}}</span>
+                ? This action is
+                irreversible, and all related data will be permanently removed.
+            </p>
+            <a href="{% url 'delete-donation' record.id %}">
+
+                <button
+                    class="w-full h-9 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium">Delete</button>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- cancel appointment modal -->
+    <div id="cancelModal{{ donation.id }}" class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
+        <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
+            <h1 class="font-semibold text-xl">Cancel Appointment</h1>
+            <p class="text-neutral-600">
+                Are you sure you want to cancle this <span class="font-medium text-black">
+                    {{ record.donation_type }}
+                </span> donation appointment scheduled on <span class="font-medium text-black">
+                    {{record.donation_date|date:"F j, Y"}}</span> at <span
+                    class="font-medium text-black">{{record.donation_date|date:"g:ia"}}</span>
+                ? This action is
+                irreversible.
+            </p>
+
+            <a href="{% url 'cancel-appointment' record.id %}">
+
+                <button
+                    class="w-full h-9 bg-red-500 hover:bg-red-600 text-white rounded-md font-medium">Cancel appointment</button>
+            </a>
+
+
+        </div>
+    </div>
+
+
+
+</div>

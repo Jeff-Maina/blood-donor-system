@@ -1,4 +1,5 @@
 /bloodDonorSystem/node_modules
+/bloodDonorSystem/venv
 /bloodDonorSystem/db.sqlite3
 
 # Ignore Python bytecode files

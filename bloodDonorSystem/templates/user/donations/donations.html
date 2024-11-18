@@ -1,0 +1,205 @@
+{% extends "user/dashboard-layout.html" %}
+
+{% load render_table from django_tables2 %}
+
+{% block title %} Blood Donor System | User Dashboard{% endblock %}
+
+
+
+{% block content %}
+<div class="w-full p-4 flex flex-col gap-4">
+    <nav class="flex items-center justify-end">
+        <a href="{% url 'check-eligibility' %}">
+            <button id="donation-button"
+                class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
+                Make donation
+                <i data-lucide="plus" class="size-4" stroke-width="3"></i>
+            </button>
+        </a>
+    </nav>
+    <div class="w-full grid grid-cols-3 gap-4">
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Total Donations</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ total_donations }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Last donation on</p>
+                <p class="text-2xl font-semibold tracking-tight">{{ last_donation_date }}</p>
+            </div>
+        </div>
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Blood group</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ profile.blood_group }}</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <div class="flex items-center justify-between">
+            <h1 class="font-semibold">Donation History</h1>
+            <div>
+                <button id="filter-btn"
+                    class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-600 text-white font-medium text-sm rounded">
+                    Add filter <i data-lucide="list-filter" class="size-4" stroke-width="3"></i>
+                </button>
+            </div>
+        </div>
+        <div class="w-full">
+            {% render_table table %}
+        </div>
+    </div>
+
+
+    <div id="filter-modal" class="fixed hidden h-screen w-full top-0 left-0 z-20">
+        <div id="filter-backdrop"
+            class="absolute top-0 left-0 w-full bg-black/40 h-full opacity-0 transition-opacity duration-200"></div>
+        <div id="filter-sheet"
+            class="absolute right-0 top-0 h-screen w-[500px]  z-20 p-4 transform translate-x-full transition-transform duration-300">
+            <div class="w-full h-full bg-white shadow rounded-md relative">
+                <button id="close-sheet-btn"
+                    class="size-4 rounded-full grid place-items-center hover:bg-neutral-100 absolute top-3 right-4">
+                    <i data-lucide="x" class="size-5" stroke-width="2"></i>
+                </button>
+                <div class="pt-4">
+                    <h1 class="font-semibold tracking-tight px-6 text-xl">Add filters</h1>
+                    <form method="get" class="flex flex-col p-6 gap-2 mb-4">
+                        {{ filter.form.as_p }}
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 h-9 font-medium px-3 rounded text-white flex items-center justify-center gap-2">
+                           Add filters <i data-lucide="plus" class="size-4"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% block eligibility %} {% endblock %}
+{% block book-appointment-modal %} {% endblock %} </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        function closeModalOnBackdropClick(modalId) {
+            const modal = document.getElementById(modalId);
+            const backdrop = modal.querySelector('.backdrop');
+
+            backdrop.addEventListener('click', function () {
+                modal.classList.add('hidden');
+            });
+        }
+
+        const modals = document.querySelectorAll('[id^="detailsModal"]');
+        modals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const deleteModals = document.querySelectorAll('[id^="deleteModal"]');
+        deleteModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const cancelModals = document.querySelectorAll('[id^="cancelModal"]');
+        cancelModals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+
+
+        const buttons = document.querySelectorAll(".more-details-btn")
+        buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+
+        const delete_buttons = document.querySelectorAll(".delete-btn")
+        delete_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const modal = document.querySelector(`#deleteModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+        const cancel_buttons = document.querySelectorAll(".cancel-btn")
+        cancel_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const modal = document.querySelector(`#cancelModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+        const action_buttons = document.querySelectorAll(".actions-btn")
+
+        action_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${button.dataset.id}`)
+                const backdrop = document.querySelector(`#actionsMenuBackdrop${button.dataset.id}`)
+                menu.classList.remove("hidden")
+                backdrop.classList.remove("hidden")
+            })
+        })
+
+        const backdrops = document.querySelectorAll(".backdrop")
+
+        backdrops.forEach((backdrop) => {
+            backdrop.addEventListener("click", (e) => {
+                console.log("clicked")
+                e.preventDefault()
+                const menu = document.querySelector(`#actionsMenu${backdrop.dataset.id}`)
+                menu.classList.add("hidden")
+                backdrop.classList.add("hidden")
+            })
+        })
+
+
+        // add filter sheet
+        const filter_modal = document.getElementById("filter-modal")
+        const filter_sheet = document.getElementById("filter-sheet")
+        const filter_button = document.getElementById('filter-btn')
+        const close_sheet_btn = document.getElementById("close-sheet-btn")
+        const filter_backdrop = document.getElementById("filter-backdrop")
+
+        const openFilterSheet = () => {
+            console.log('clicked')
+            filter_modal.classList.remove("hidden")
+            setTimeout(() => {
+                filter_sheet.classList.remove("translate-x-full")
+                filter_backdrop.classList.replace("opacity-0", "opacity-100")
+            }, 10);
+        }
+
+        const closeSheet = () => {
+            filter_sheet.classList.add("translate-x-full")
+            filter_backdrop.classList.replace("opacity-100", "opacity-0")
+
+            setTimeout(() => {
+                filter_modal.classList.add("hidden")
+            }, 300)
+        }
+
+        filter_button.addEventListener("click", openFilterSheet)
+        close_sheet_btn.addEventListener("click", closeSheet)
+        filter_backdrop.addEventListener('click', closeSheet)
+
+
+
+    })
+
+</script>
+{% endblock %}

@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Sum, Q
 from decimal import Decimal
+from .tables import DonationTable
+from .filters import DonationFilter
+from django_tables2 import RequestConfig
 # Create your views here.
 
 
@@ -153,6 +156,7 @@ def donations_view(request):
     if user.is_superuser:
         return redirect('admin:index')
 
+    # context stuff
     profile = UserProfile.objects.filter(user=user).first()
     donations = profile.donations.all()
     total_donations = donations.count()
@@ -170,6 +174,13 @@ def donations_view(request):
     else:
         last_donation_date = '-'
 
+    # table stuff
+    filter = DonationFilter(request.GET, queryset=donations)
+    filtered_donations = filter.qs
+
+    table = DonationTable(filtered_donations)
+    RequestConfig(request).configure(table)
+
     context = {
         'user': user,
         'profile': profile,
@@ -177,11 +188,13 @@ def donations_view(request):
         'total_donations': total_donations,
         'last_donation_date': last_donation_date,
         'facilities': facilities,
+        'table': table,
+        'filter': filter
 
     }
 
     if user.role == 'individual':
-        return render(request, 'user/donations.html', context)
+        return render(request, 'user/donations/donations.html', context)
     else:
         return redirect(request, 'facility-dashboard')
 

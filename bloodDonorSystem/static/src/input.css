@@ -113,3 +113,22 @@ textarea {
 .dropdown-item {
   @apply flex w-full rounded-md font-medium items-center gap-2 p-2 hover:bg-neutral-100 text-neutral-700 hover:text-black;
 }
+
+.table-container {
+  width: 100%;
+}
+.table-container table {
+  width: 100%;
+  text-align: left;
+}
+.table-container table  th {
+  padding: 10px 0px;
+
+}
+.table-container table tbody tr:nth-child(odd) {
+  background-color: #eeeeee;
+}
+
+.table-container tr td {
+  padding: 6px 0px;
+}
