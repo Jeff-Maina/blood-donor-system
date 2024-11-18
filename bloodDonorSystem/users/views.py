@@ -206,7 +206,7 @@ def donations_view(request):
         'last_donation_date': last_donation_date,
         'facilities': facilities,
         'donations_table': donations_table,
-        'donations_filter': filter,
+        'donations_filter': donations_filter,
         'selected_facility_name': selected_facility_name
     }
 

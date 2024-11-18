@@ -216,11 +216,10 @@ def donations_view(request):
 
     # table logic
 
-    donations_filter = FacilityDonationsFilter(
+    facility_donations_filter = FacilityDonationsFilter(
         request.GET, queryset=donations)
-    
-    filtered_donations = donations_filter.qs
 
+    filtered_donations = facility_donations_filter.qs
     facility_donations_table = FacilityDonationsTable(filtered_donations)
 
     RequestConfig(request).configure(facility_donations_table)
@@ -232,6 +231,7 @@ def donations_view(request):
         'total_blood_donated': total_blood_donated/1000,
         'profile': profile,
         'user': user,
+        'facility_donations_filter': facility_donations_filter,
         'facility_donations_table': facility_donations_table
     }
 
