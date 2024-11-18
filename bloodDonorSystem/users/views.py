@@ -155,6 +155,9 @@ def donations_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')
+    
+    if user.role == 'facility':
+        return redirect('facility-donations')
 
     # context stuff
     profile = UserProfile.objects.filter(user=user).first()
@@ -443,7 +446,7 @@ def make_request(request, facility_id):
                           {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
     else:
         form = RequestBloodForm()
-    return render(request, 'user/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
+    return render(request, 'user/requests/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
 
 
 @login_required

@@ -62,7 +62,7 @@
     </div>
 
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
-        <h1 class="font-semibold">Book Appoinment</h1>
+        <h1 class="font-semibold">Request Blood</h1>
         <div class="w-full">
             <table class="w-full max-h-80">
                 <thead class="border-b">
@@ -78,7 +78,7 @@
                 </thead>
                 <tbody>
                     {% for facility in facilities %}
-                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-[#eeeeee] {% else %}bg-white{% endif %}">
                         <td class="p-2 truncate text-neutral-800">{{ facility.name }}</td>
                         <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.facility_type}}</td>
                         <td class="p-2 truncate text-neutral-800">{{ facility.county}}</td>

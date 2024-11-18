@@ -1,5 +1,6 @@
 import django_tables2 as tables
 from .models import Donation, Request
+from facilities.models import FacilityProfile
 import itertools
 from django.utils.html import format_html
 from django_filters.views import FilterView
@@ -95,3 +96,5 @@ class RequestsTable(tables.Table):
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='x' class='size-4' stroke-width='2'></i> Rejected</p>")
         elif record.approval_status == 'pending':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='hourglass' class='size-4' stroke-width='2'></i> Pending</p>")
+
+
