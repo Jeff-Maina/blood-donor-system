@@ -10,8 +10,8 @@ from django.dispatch import receiver
 from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
-from .tables import FacilityDonationsTable
-from .filters import FacilityDonationsFilter
+from .tables import FacilityDonationsTable, FaciltyRequestsTable
+from .filters import FacilityDonationsFilter, FacilityRequestsFilter
 from django_tables2 import RequestConfig
 
 # Create your views here.
@@ -143,6 +143,13 @@ def requests_view(request):
     pending_requests_count = requests.filter(
         approval_status='pending').count()
 
+    facility_requests_filter = FacilityRequestsFilter(
+        request.GET, queryset=requests)
+    filtered_requests = facility_requests_filter.qs
+
+    facility_requests_table = FaciltyRequestsTable(filtered_requests)
+    RequestConfig(request).configure(facility_requests_table)
+
     context = {
         'requests': requests,
         'total_requests': total_requests,
@@ -150,10 +157,12 @@ def requests_view(request):
         'rejected_requests_count': rejected_requests_count,
         'pending_requests_count': pending_requests_count,
         'profile': profile,
-        'user': user
+        'user': user,
+        'facility_requests_table': facility_requests_table,
+        'facility_requests_filter': facility_requests_filter
     }
 
-    return render(request, "facility/blood-requests.html", context)
+    return render(request, "facility/requests/blood-requests.html", context)
 
 
 @login_required
