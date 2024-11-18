@@ -11,6 +11,9 @@ from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
 from .tables import FacilityDonationsTable
+from .filters import FacilityDonationsFilter
+from django_tables2 import RequestConfig
+
 # Create your views here.
 
 
@@ -213,7 +216,14 @@ def donations_view(request):
 
     # table logic
 
-    facility_donations_table = FacilityDonationsTable(donations)
+    donations_filter = FacilityDonationsFilter(
+        request.GET, queryset=donations)
+    
+    filtered_donations = donations_filter.qs
+
+    facility_donations_table = FacilityDonationsTable(filtered_donations)
+
+    RequestConfig(request).configure(facility_donations_table)
 
     context = {
         'donations': donations,
