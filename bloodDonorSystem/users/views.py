@@ -108,7 +108,7 @@ def complete_profile(request):
             return redirect("user-dashboard")
     else:
         form = UserProfileForm()
-    return render(request, "user/complete-profile.html", {"form": form})
+    return render(request, "user/donations/complete-profile.html", {"form": form})
 
 
 @login_required
@@ -205,7 +205,6 @@ def donations_view(request):
         'table': table,
         'filter': filter,
         'selected_facility_name': selected_facility_name
-
     }
 
     if user.role == 'individual':
@@ -278,10 +277,10 @@ def check_eligibility(request):
             if is_eligible:
                 return redirect('book-donation-appointment')
             else:
-                return render(request, 'user/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
+                return render(request, 'user/donations/not-eligible.html', {'reasons': reasons, 'donations': donations, 'total_donations': total_donations})
     else:
         form = EligibilityForm(instance=eligibility_record)
-    return render(request, 'user/eligibility-form.html', {
+    return render(request, 'user/donations/eligibility-form.html', {
         'form': form,
         'profile': profile,
         'is_eligible': is_eligible,
@@ -322,10 +321,10 @@ def book_appointment(request):
 
             return redirect('donations')
         else:
-            return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
+            return render(request, 'user/donations/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
     else:
         form = BookDonationForm()
-    return render(request, 'user/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
+    return render(request, 'user/donations/book-donation.html', {'form': form, 'donations': donations, 'total_donations': total_donations})
 
 
 @login_required
@@ -354,7 +353,7 @@ def updateDonation(request, id):
             return redirect("donations")
     else:
         form = BookDonationForm(instance=donation)
-    return render(request, "user/update-donation.html", {"form": form, 'user': user, 'profile': profile, })
+    return render(request, "user/donations/update-donation.html", {"form": form, 'user': user, 'profile': profile, })
 
 
 @login_required
