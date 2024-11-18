@@ -101,6 +101,16 @@ select {
   border-radius: 10px;
 }
 
+.custom-scrollbar-sm::-webkit-scrollbar {
+  background-color: transparent;
+  width: 2px;
+  height: 2px;
+}
+
+.custom-scrollbar-sm::-webkit-scrollbar-thumb {
+  background: #a2a2a2;
+}
+
 .list {
   list-style-type: decimal !important;
   list-style-position: inside !important;
@@ -129,7 +139,7 @@ textarea {
 }
 
 .table-container tr td {
-  padding: 6px 4px;
+  padding: 4px;
 }
 
 .table-container thead th.orderable a {

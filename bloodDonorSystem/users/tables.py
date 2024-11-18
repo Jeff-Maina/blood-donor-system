@@ -1,9 +1,11 @@
 import django_tables2 as tables
 from .models import Donation
+from facilities.models import FacilityProfile
 import itertools
 from django.utils.html import format_html
 from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
+import django_filters
 
 
 class DonationTable(tables.Table):
@@ -18,7 +20,6 @@ class DonationTable(tables.Table):
             'td': {
                 'class': lambda record: 'status-{}'. format(record.status)}}
     )
-
 
     actions = tables.TemplateColumn(
         template_name="user/donations/row-actions.html", verbose_name="actions", orderable=False, extra_context={'donation': tables.A('self')})

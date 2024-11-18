@@ -175,6 +175,20 @@ def donations_view(request):
         last_donation_date = '-'
 
     # table stuff
+    if 'clear_filters' in request.GET:
+        request.GET = request.GET.copy()
+        request.GET.clear()
+
+    selected_facility_id = request.GET.get('facility', None)
+    selected_facility_name = None
+
+    if selected_facility_id:
+        try:
+            selected_facility_name = FacilityProfile.objects.get(
+                id=selected_facility_id)
+        except FacilityProfile.DoesNotExist:
+            selected_facility_name = None
+
     filter = DonationFilter(request.GET, queryset=donations)
     filtered_donations = filter.qs
 
@@ -189,7 +203,8 @@ def donations_view(request):
         'last_donation_date': last_donation_date,
         'facilities': facilities,
         'table': table,
-        'filter': filter
+        'filter': filter,
+        'selected_facility_name': selected_facility_name
 
     }
 

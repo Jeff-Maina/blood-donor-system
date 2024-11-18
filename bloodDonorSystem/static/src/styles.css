@@ -665,10 +665,6 @@ video {
   margin-bottom: 1rem;
 }
 
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -854,6 +850,10 @@ video {
   width: 500px;
 }
 
+.w-\[600px\] {
+  width: 600px;
+}
+
 .w-full {
   width: 100%;
 }
@@ -882,6 +882,14 @@ video {
 
 .max-w-lg {
   max-width: 32rem;
+}
+
+.max-w-4xl {
+  max-width: 56rem;
+}
+
+.max-w-5xl {
+  max-width: 64rem;
 }
 
 .shrink-0 {
@@ -1002,6 +1010,10 @@ video {
   border-color: rgb(229 229 229 / var(--tw-divide-opacity));
 }
 
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
 .overflow-y-auto {
   overflow-y: auto;
 }
@@ -1042,6 +1054,10 @@ video {
 
 .border-t {
   border-top-width: 1px;
+}
+
+.border-dotted {
+  border-style: dotted;
 }
 
 .border-neutral-200 {
@@ -1241,6 +1257,10 @@ video {
   padding-bottom: 0.75rem;
 }
 
+.pb-3 {
+  padding-bottom: 0.75rem;
+}
+
 .pl-5 {
   padding-left: 1.25rem;
 }
@@ -1267,6 +1287,10 @@ video {
 
 .text-start {
   text-align: start;
+}
+
+.\!text-\[8px\] {
+  font-size: 8px !important;
 }
 
 .\!text-xs {
@@ -1625,6 +1649,16 @@ select {
   border-radius: 10px;
 }
 
+.custom-scrollbar-sm::-webkit-scrollbar {
+  background-color: transparent;
+  width: 2px;
+  height: 2px;
+}
+
+.custom-scrollbar-sm::-webkit-scrollbar-thumb {
+  background: #a2a2a2;
+}
+
 .list {
   list-style-type: decimal !important;
   list-style-position: inside !important;
@@ -1700,7 +1734,7 @@ textarea:focus {
 }
 
 .table-container tr td {
-  padding: 6px 4px;
+  padding: 4px;
 }
 
 .table-container thead th.orderable a {
