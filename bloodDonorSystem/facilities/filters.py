@@ -31,9 +31,16 @@ class FacilityDonationsFilter(django_filters.FilterSet):
         label='End Date'
     )
 
+    blood_group = django_filters.ChoiceFilter(
+        field_name='user__blood_group',
+        choices=BLOOD_TYPES,
+        lookup_expr='iexact',
+        label='Blood Group'
+    )
+
     class Meta:
         model = Donation
-        fields = ['donation_type', 'status', 'approval_status']
+        fields = ['donation_type','blood_group', 'status', 'approval_status']
 
 
 class FacilityRequestsFilter(django_filters.FilterSet):
