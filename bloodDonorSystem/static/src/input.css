@@ -143,6 +143,10 @@ textarea {
   text-transform: capitalize;
 }
 
+.email-col {
+  text-transform: lowercase !important;
+}
+
 .table-container thead th.orderable a {
   padding: 4px 24px 6px 8px;
   position: relative;

@@ -10,6 +10,7 @@ from django.dispatch import receiver
 from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
+from .tables import FacilityDonationsTable
 # Create your views here.
 
 
@@ -19,7 +20,6 @@ def dashboard_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')
-
 
     if user.role == 'facility':
         if user.is_approved:
@@ -211,13 +211,18 @@ def donations_view(request):
     total_blood_donated = sum(
         donation.amount for donation in completed_donations)
 
+    # table logic
+
+    facility_donations_table = FacilityDonationsTable(donations)
+
     context = {
         'donations': donations,
         'total_donations': total_donations,
         'completed_donations_count': completed_donations.count(),
         'total_blood_donated': total_blood_donated/1000,
         'profile': profile,
-        'user': user
+        'user': user,
+        'facility_donations_table': facility_donations_table
     }
 
     return render(request, "facility/facility-donations.html", context)

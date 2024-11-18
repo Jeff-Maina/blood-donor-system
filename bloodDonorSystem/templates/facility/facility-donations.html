@@ -1,5 +1,7 @@
 {% extends "facility/layout.html" %}
 
+{% load render_table from django_tables2 %}
+
 {% block title %} Blood Donor System | Donations {% endblock %}
 
 
@@ -30,130 +32,9 @@
     </div>
 
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
-        <h1 class="font-semibold">Requests</h1>
+        <h1 class="font-semibold">Donations</h1>
         <div class="w-full">
-            <table class="w-full">
-                <thead>
-                    <tr class="">
-                        <th class="p-2 text-left font-semibold">Individual</th>
-                        <th class="p-2 text-left font-semibold">Email</th>
-                        <th class="p-2 text-left font-semibold">Phone</th>
-                        <th class="p-2 text-left font-semibold">Blood Type</th>
-                        <th class="p-2 text-left font-semibold">Type</th>
-                        <th class="p-2 text-left font-semibold">Amount</th>
-                        <th class="p-2 text-left font-semibold">Progress</th>
-                        <th class="p-2 text-left font-semibold">Donation Date/Time</th>
-                        <th class="p-2 text-left font-semibold">Approval Status</th>
-                        <th class="p-2 text-left font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for donation in donations %}
-                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <td class="p-2  truncate text-neutral-800">{{donation.user.firstname}}
-                            {{donation.user.lastname}}</td>
-                        <td class="p-2  truncate text-neutral-800">{{donation.user.user.email}}</td>
-                        <td class="p-2  truncate text-neutral-800">{{donation.user.phone}}</td>
-                        <td class="p-2  truncate text-neutral-800">{{donation.user.blood_group}}</td>
-                        <td class="p-2  truncate text-neutral-800 capitalize">{{donation.donation_type}}</td>
-                        <td class="p-2  truncate text-neutral-800">{{donation.amount}} ml</td>
-                        <td class="p-2  truncate text-neutral-800 capitalize">
-                            {% if donation.status == 'scheduled' %}
-                            <div class="text-purple-600 flex items-center  gap-2">
-                                <i data-lucide="clock" class=" size-4" stroke-width="2"></i>
-                                <span>Scheduled</span>
-                            </div>
-                            {% elif donation.status == 'cancelled' %}
-                            <div class="text-red-600 flex items-center  gap-2">
-                                <i data-lucide="x" class=" size-4" stroke-width="2"></i>
-                                <span>Cancelled</span>
-                            </div>
-                            {% elif donation.status == 'completed' %}
-                            <div class="text-green-600 flex items-center  gap-2">
-                                <i data-lucide="check" class=" size-4" stroke-width="2"></i>
-                                <span>Completed</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td class="p-2  truncate text-neutral-800">
-                            {{donation.donation_date|date:'Y-m-d, g:i a'}}
-                        </td>
-                        <td class="p-2  truncate text-neutral-800">
-                            {% if donation.approval_status == 'pending' %}
-                            <div class="text-purple-600 flex items-center  gap-2">
-                                <i data-lucide="hourglass" class=" size-4" stroke-width="2"></i>
-                                <span>Pending</span>
-                            </div>
-                            {% elif donation.approval_status == 'approved' %}
-                            <div class="text-green-600 flex items-center  gap-2">
-                                <i data-lucide="circle-check" class="size-4" stroke-width="2"></i>
-                                <span>Approved</span>
-                            </div>
-                            {% elif donation.approval_status == 'rejected' %}
-                            <div class="text-red-600 flex items-center  gap-2">
-                                <i data-lucide="circle-x" class=" size-4" stroke-width="2"></i>
-                                <span>Rejected</span>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td class=" w-16 flex items-center justify-center h-10">
-
-                            <div class="relative">
-                                <button data-id="{{ donation.id }}"
-                                    class="size-8 actions-btn group/button relative  aspect-square rounded  hover:bg-neutral-100 text-neutral-600 flex items-center justify-center   p-2 ">
-                                    <i data-lucide="ellipsis" class="size-5" stroke-width="2"></i>
-                                </button>
-
-                                <div data-id="{{ donation.id }}" id="actionsMenuBackdrop{{ donation.id }}"
-                                    class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
-                                <div id="actionsMenu{{ donation.id }}"
-                                    class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
-                                    <a href="{% url 'approve-donation' donation.id %}">
-                                        <button class="dropdown-item">
-                                            <i data-lucide="check" class="shrink-0 size-4"></i>
-                                            Approve donation
-                                        </button>
-                                    </a>
-                                    <button data-id="{{ donation.id }}" class="reject-btn dropdown-item">
-                                        <i data-lucide="x" class="size-4 shrink-0"></i>
-                                        Reject donation
-                                    </button>
-                                    <a href="{% url 'mark_donation_complete' donation.id %}">
-                                        <button class="dropdown-item">
-                                            <i data-lucide="circle-check" class="shrink-0 size-4"></i>
-
-                                            Mark as complete
-                                        </button>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div id="rejectModal{{ donation.id }}"
-                                class="w-full hidden modal  h-screen fixed top-0 left-0 z-50">
-                                <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
-                                <div
-                                    class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
-                                    <h1 class="font-semibold text-xl">Reject Donation</h1>
-                                    <form action="{% url 'reject-donation' donation.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <div class="form-group !list-decimal">
-                                            <label for="reason">Reason for rejection</label>
-                                            <input type="text" name="reason" id="reason"
-                                                class="form-control w-full border rounded p-2" required>
-                                        </div>
-                                        <button type="submit"
-                                            class="w-full h-9 bg-blue-500 hover:bg-blue-600 text-white rounded-md font-medium mt-4">
-                                            Confirm
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+           {% render_table facility_donations_table%}
         </div>
     </div>
 </div>
@@ -216,6 +97,5 @@
     }
     )
 </script>
-
 
 {% endblock %}
