@@ -8,8 +8,8 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from django.db.models import Sum, Q
 from decimal import Decimal
-from .tables import DonationTable
-from .filters import DonationFilter
+from .tables import DonationTable, RequestsTable
+from .filters import DonationFilter, RequestsFilter
 from django_tables2 import RequestConfig
 # Create your views here.
 
@@ -189,11 +189,11 @@ def donations_view(request):
         except FacilityProfile.DoesNotExist:
             selected_facility_name = None
 
-    filter = DonationFilter(request.GET, queryset=donations)
-    filtered_donations = filter.qs
+    donations_filter = DonationFilter(request.GET, queryset=donations)
+    filtered_donations = donations_filter.qs
 
-    table = DonationTable(filtered_donations)
-    RequestConfig(request).configure(table)
+    donations_table = DonationTable(filtered_donations)
+    RequestConfig(request).configure(donations_table)
 
     context = {
         'user': user,
@@ -202,8 +202,8 @@ def donations_view(request):
         'total_donations': total_donations,
         'last_donation_date': last_donation_date,
         'facilities': facilities,
-        'table': table,
-        'filter': filter,
+        'donations_table': donations_table,
+        'donations_filter': filter,
         'selected_facility_name': selected_facility_name
     }
 
@@ -228,6 +228,27 @@ def requests_view(request):
         approval_status='rejected').count()
     total_requests = requests.count()
 
+    # table logic
+    if 'clear_filters' in request.GET:
+        request.GET = request.GET.copy()
+        request.GET.clear()
+
+    selected_facility_id = request.GET.get('facility', None)
+    selected_facility_name = None
+
+    if selected_facility_id:
+        try:
+            selected_facility_name = FacilityProfile.objects.get(
+                id=selected_facility_id)
+        except FacilityProfile.DoesNotExist:
+            selected_facility_name = None
+
+    requests_filter = RequestsFilter(request.GET, queryset=requests)
+    filtered_requests = requests_filter.qs
+
+    requests_table = RequestsTable(filtered_requests)
+    RequestConfig(request).configure(requests_table)
+
     if user.role == 'individual':
         facilities = FacilityProfile.objects.filter(is_approved=True).annotate(
             total_blood=Sum('inventory__quantity', filter=Q(
@@ -240,9 +261,12 @@ def requests_view(request):
             'approved_requests_count': approved_requests_count,
             'rejected_requests_count': rejected_requests_count,
             'total_requests': total_requests,
-            'facilities': facilities
+            'facilities': facilities,
+            'requests_table': requests_table,
+            'requests_filter': requests_filter,
+            'selected_facility_name': selected_facility_name
         }
-        return render(request, 'user/requests.html', context)
+        return render(request, 'user/requests/requests.html', context)
     else:
         return redirect(request, 'facility-dashboard')
 
@@ -415,7 +439,7 @@ def make_request(request, facility_id):
             return redirect('requests')
         else:
 
-            return render(request, 'user/make-request.html',
+            return render(request, 'user/requests/make-request.html',
                           {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
     else:
         form = RequestBloodForm()

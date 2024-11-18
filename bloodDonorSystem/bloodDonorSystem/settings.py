@@ -72,6 +72,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "users.context_processors.notification_processor",
                 "users.context_processors.donations_filter_processor",
+                "users.context_processors.requests_filter_processor",
             ],
         },
     },

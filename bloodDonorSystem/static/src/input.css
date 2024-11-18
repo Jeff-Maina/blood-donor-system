@@ -121,7 +121,7 @@ textarea {
 }
 
 .dropdown-item {
-  @apply flex w-full rounded-md font-medium items-center gap-2 p-2 hover:bg-neutral-100 text-neutral-700 hover:text-black;
+  @apply flex w-full rounded-md font-medium items-center gap-2 p-2 py-1.5 hover:bg-neutral-100 text-neutral-700 hover:text-black;
 }
 
 .table-container {
@@ -139,7 +139,8 @@ textarea {
 }
 
 .table-container tr td {
-  padding: 4px;
+  padding:3px 6px !important;
+  text-transform: capitalize;
 }
 
 .table-container thead th.orderable a {

@@ -2,51 +2,42 @@
 
 {% load render_table from django_tables2 %}
 
-{% block title %} Blood Donor System | User Dashboard{% endblock %}
-
+{% block title %} Blood Donor System | Requests{% endblock %}
 
 
 {% block content %}
 <div class="w-full p-4 flex flex-col gap-4">
-    <nav class="flex items-center justify-end">
-        <a href="{% url 'check-eligibility' %}">
-            <button id="donation-button"
-                class="bg-blue-600 text-sm text-white px-3 py-2 font-medium rounded-md flex items-center gap-1">
-                Make donation
-                <i data-lucide="plus" class="size-4" stroke-width="3"></i>
-            </button>
-        </a>
-    </nav>
+    {% comment %} metric cards {% endcomment %}
     <div class="w-full grid grid-cols-3 gap-4">
         <div class="w-full h-36 rounded-md shadow p-6 border">
             <div class="flex flex-col gap-4">
-                <p class="font-medium">Total Donations</p>
-                <p class="text-3xl font-semibold tracking-tight">{{ total_donations }}</p>
-            </div>
-        </div>
-        <div class="w-full h-36 rounded-md shadow p-6 border">
-            <div class="flex flex-col gap-4">
-                <p class="font-medium">Last donation on</p>
-                <p class="text-2xl font-semibold tracking-tight">{{ last_donation_date }}</p>
-            </div>
-        </div>
-        <div class="w-full h-36 rounded-md shadow p-6 border">
-            <div class="flex flex-col gap-4">
-                <p class="font-medium">Blood group</p>
-                <p class="text-3xl font-semibold tracking-tight">{{ profile.blood_group }}</p>
+                <p class="font-medium">Requests made</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ total_requests }}</p>
             </div>
         </div>
 
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests approved</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ approved_requests_count }}</p>
+            </div>
+        </div>
+
+        <div class="w-full h-36 rounded-md shadow p-6 border">
+            <div class="flex flex-col gap-4">
+                <p class="font-medium">Requests rejected</p>
+                <p class="text-3xl font-semibold tracking-tight">{{ rejected_requests_count }}</p>
+            </div>
+        </div>
     </div>
 
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-2 ">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-6">
-                <h1 class="font-semibold">Donation History</h1>
-
+                <h1 class="font-semibold">Requests</h1>
                 <div class="flex items-center text-sm gap-2 max-w-5xl overflow-x-auto custom-scrollbar-sm">
-                    {% if donations_filter.form %}
-                        {% for field in donations_filter.form %}
+                    {% if requests_filter.form %}
+                        {% for field in requests_filter.form %}
                             {% if field.value %}
                                 {% if field.name == 'facility' %}
                                         <div class='border min-w-fit border-dotted flex items-center border-neutral-300 gap-3 px-3 py-0.5 rounded text-neutral-700'><span class='text-black font-medium'>{{ field.label }}</span> <small class='!text-[8px] font-semibold text-neutral-500'>|</small> {{ selected_facility_name }} </div>
@@ -66,10 +57,61 @@
             </div>
         </div>
         <div class="w-full">
-            {% render_table donations_table %}
+            {% render_table requests_table %}
         </div>
     </div>
 
+    <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
+        <h1 class="font-semibold">Book Appoinment</h1>
+        <div class="w-full">
+            <table class="w-full max-h-80">
+                <thead class="border-b">
+                    <tr class=" ">
+                        <th class="text-start p-2 font-semibold">Facility</th>
+                        <th class="text-start p-2 font-semibold">Type</th>
+                        <th class="text-start p-2 font-semibold">Location</th>
+                        <th class="text-start p-2 font-semibold">Contact</th>
+                        <th class="text-start p-2 font-semibold">Open Days</th>
+                        <th class="text-start p-2 font-semibold">Working Hrs</th>
+                        <th class="text-start p-2 font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for facility in facilities %}
+                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
+                        <td class="p-2 truncate text-neutral-800">{{ facility.name }}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.facility_type}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.county}}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.contact_number}}</td>
+                        <td class="p-2 truncate text-neutral-800 capitalize">{{ facility.open_days }}</td>
+                        <td class="p-2 truncate text-neutral-800">{{ facility.opening_time|date:"g:i a" }} -
+                            {{facility.closing_time|date:"g:i a" }}</td>
+                        <td>
+                            {% if facility.total_blood is not None and facility.total_blood > 800 %}
+                            <a href="{% url 'make-request' facility.id %}">
+                                <button
+                                    class="px-3 w-full text-white py-1  font-medium text-sm  rounded {% if facility.total_blood is not None and facility.total_blood > 800 %} bg-green-500 {% else %} bg-neutral-400 disabled cursor-not-allowed{% endif %}">
+
+                                    Request
+                                </button>
+                            </a>
+                            {% else %}
+                            <button
+                                class="px-3 w-full text-white py-1 font-medium text-sm rounded bg-neutral-300 disabled cursor-not-allowed">
+                                Not available
+                            </button>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    {% comment %} filters modal {% endcomment %}
 
     <div id="filter-modal" class="fixed hidden h-screen w-full top-0 left-0 z-20">
         <div id="filter-backdrop"
@@ -85,28 +127,32 @@
                     <h1 class="font-semibold tracking-tight px-6 text-xl">Add filters</h1>
                     <form method="get" class="flex flex-col p-6 pb-3 gap-4">
                         <div class="form-group">
-                            {{ donations_filter.form.facility.label_tag }}
-                            {{ donations_filter.form.facility }}
+                            {{ requests_filter.form.facility.label_tag }}
+                            {{ requests_filter.form.facility }}
                         </div>
                         <div class="form-group">
-                            {{ donations_filter.form.donation_type.label_tag }}
-                            {{ donations_filter.form.donation_type }}
+                            {{ requests_filter.form.request_type.label_tag }}
+                            {{ requests_filter.form.request_type }}
                         </div>
                         <div class="form-group">
-                            {{ donations_filter.form.status.label_tag }}
-                            {{ donations_filter.form.status }}
+                            {{ requests_filter.form.request_status.label_tag }}
+                            {{ requests_filter.form.request_status }}
                         </div>
                         <div class="form-group">
-                            {{ donations_filter.form.approval_status.label_tag }}
-                            {{ donations_filter.form.approval_status }}
+                            {{ requests_filter.form.urgency_level.label_tag }}
+                            {{ requests_filter.form.urgency_level }}
                         </div>
                         <div class="form-group">
-                            {{ donations_filter.form.start_date.label_tag }}
-                            {{ donations_filter.form.start_date }}
+                            {{ requests_filter.form.approval_status.label_tag }}
+                            {{ requests_filter.form.approval_status }}
                         </div>
                         <div class="form-group">
-                            {{ donations_filter.form.end_date.label_tag }}
-                            {{ donations_filter.form.end_date }}
+                            {{ requests_filter.form.start_date.label_tag }}
+                            {{ requests_filter.form.start_date }}
+                        </div>
+                        <div class="form-group">
+                            {{ requests_filter.form.end_date.label_tag }}
+                            {{ requests_filter.form.end_date }}
                         </div>
                         <button type="submit"
                             class="bg-blue-500 hover:bg-blue-600 h-9 font-medium px-3 rounded text-white flex items-center justify-center gap-2">
@@ -124,10 +170,10 @@
         </div>
     </div>
 
-</div>
+    {% block make-request %}
+    {% endblock %}
 
-{% block eligibility %} {% endblock %}
-{% block book-appointment-modal %} {% endblock %} </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -164,6 +210,7 @@
         const buttons = document.querySelectorAll(".more-details-btn")
         buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
                 modal.classList.remove("hidden")
@@ -174,6 +221,7 @@
         const delete_buttons = document.querySelectorAll(".delete-btn")
         delete_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#deleteModal${button.dataset.id}`)
                 modal.classList.remove("hidden")
@@ -183,6 +231,7 @@
         const cancel_buttons = document.querySelectorAll(".cancel-btn")
         cancel_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
                 e.preventDefault()
                 const modal = document.querySelector(`#cancelModal${button.dataset.id}`)
                 modal.classList.remove("hidden")
@@ -213,8 +262,7 @@
             })
         })
 
-
-        // add filter sheet
+                // add filter sheet
         const filter_modal = document.getElementById("filter-modal")
         const filter_sheet = document.getElementById("filter-sheet")
         const filter_button = document.getElementById('filter-btn')
@@ -243,6 +291,9 @@
         close_sheet_btn.addEventListener("click", closeSheet)
         filter_backdrop.addEventListener('click', closeSheet)
 
+        
+
+        
 
 
     })
