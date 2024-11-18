@@ -6,11 +6,11 @@ from django_filters.views import FilterView
 from django_tables2.views import SingleTableMixin
 
 
-
 class DonationTable(tables.Table):
     row_number = tables.Column(
         empty_values=(),
         verbose_name='#',
+        orderable=False,
     )
 
     status = tables.Column(
@@ -18,6 +18,7 @@ class DonationTable(tables.Table):
             'td': {
                 'class': lambda record: 'status-{}'. format(record.status)}}
     )
+
 
     actions = tables.TemplateColumn(
         template_name="user/donations/row-actions.html", verbose_name="actions", orderable=False, extra_context={'donation': tables.A('self')})

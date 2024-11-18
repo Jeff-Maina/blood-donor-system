@@ -121,14 +121,44 @@ textarea {
   width: 100%;
   text-align: left;
 }
-.table-container table  th {
+.table-container table th {
   padding: 10px 0px;
-
 }
 .table-container table tbody tr:nth-child(odd) {
   background-color: #eeeeee;
 }
 
 .table-container tr td {
-  padding: 6px 0px;
+  padding: 6px 4px;
+}
+
+.table-container thead th.orderable a {
+  padding: 4px 24px 6px 8px;
+  position: relative;
+  border-radius: 5px;
+}
+.table-container thead th.orderable a:hover {
+  background: #eee;
+}
+
+.table-container thead th.orderable a::after {
+  content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZDNkM2QiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZXZyb25zLXVwLWRvd24iPjxwYXRoIGQ9Im03IDE1IDUgNSA1LTUiLz48cGF0aCBkPSJtNyA5IDUtNSA1IDUiLz48L3N2Zz4=");
+  position: absolute;
+  right: 3px;
+  top: calc(50% - 10px);
+  z-index: 10;
+}
+.table-container thead th.asc a::after {
+  content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZDNkM2QiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFycm93LXVwIj48cGF0aCBkPSJtNSAxMiA3LTcgNyA3Ii8+PHBhdGggZD0iTTEyIDE5VjUiLz48L3N2Zz4=");
+  position: absolute;
+  right: 3px;
+  top: calc(50% - 10px);
+  z-index: 10;
+}
+.table-container thead th.desc a::after {
+  content: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMzZDNkM2QiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFycm93LWRvd24iPjxwYXRoIGQ9Ik0xMiA1djE0Ii8+PHBhdGggZD0ibTE5IDEyLTcgNy03LTciLz48L3N2Zz4=");
+  position: absolute;
+  right: 3px;
+  top: calc(50% - 10px);
+  z-index: 10;
 }
