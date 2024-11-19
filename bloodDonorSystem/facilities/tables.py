@@ -1,5 +1,5 @@
 import django_tables2 as tables
-from users.models import Donation, Request
+from users.models import Donation, Request, UserProfile
 from .models import Inventory, BloodUnit
 import itertools
 from django.utils.html import format_html
@@ -222,3 +222,59 @@ class BloodUnitsTable(tables.Table):
             days_left = (record.expiration_date - today).days
             return f"{days_left} days" if days_left >= 0 else "Expired"
         return "No Expiration Date"
+
+
+class DonorsTable(tables.Table):
+    row_number = tables.Column(
+        orderable=False,
+        empty_values=(),
+        verbose_name='#'
+    )
+
+    fullname = tables.Column(verbose_name='Full Name', empty_values=())
+    gender = tables.Column(accessor='profile.gender', verbose_name='Gender')
+    email = tables.Column(accessor='profile.user.email', verbose_name='Email',
+                          attrs={'td': {'class': 'email-col'}})
+
+    phone = tables.Column(accessor='profile.phone',
+                          verbose_name='Phone', empty_values=())
+    county = tables.Column(accessor='profile.county',
+                           verbose_name='County', empty_values=())
+    blood_group = tables.Column(
+        accessor='profile.blood_group', verbose_name='Blood Type', empty_values=())
+    completed_donations = tables.Column(
+        verbose_name='Completed Donations', empty_values=())
+    blood_donated = tables.Column(
+        verbose_name='Blood Donated', empty_values=())
+    requests = tables.Column(verbose_name='Requests', empty_values=())
+
+    class Meta:
+        model = UserProfile
+        fields = ('row_number','fullname','gender', 'email', 'phone', 'county', 'blood_group',
+                  'completed_donations', 'blood_donated', 'requests')
+        sequence = fields
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counter = itertools.count(1)
+
+    def render_row_number(self, record):
+        return f"{next(self.counter)}"
+
+    def render_fullname(self, record):
+        return f'{record["profile"].firstname} {record["profile"].lastname}'
+
+    def render_blood_donated(self,record):
+        return f"{record['total_blood_donated']} L"
+    
+    def render_requests(self, record):
+        return format_html(
+            '<p><span class="text-purple-600 text-lg">{}</span> - '
+            '<span class="text-green-600 text-lg">{}</span> - '
+            '<span class="text-red-600 text-lg">{}</span> - '
+            '<span class="text-black text-lg">{}</span></p>',
+            record['pending_requests'],
+            record['approved_requests'],
+            record['rejected_requests'],
+            record['total_requests']
+        )

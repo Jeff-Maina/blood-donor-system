@@ -1,5 +1,5 @@
 import django_filters
-from users.models import Donation, Request
+from users.models import Donation, Request, UserProfile
 from django import forms
 from .models import Inventory, BloodUnit
 
@@ -12,6 +12,12 @@ BLOOD_TYPES = [
     ('O-', 'O-'),
     ('AB+', 'AB+'),
     ('AB-', 'AB-'),
+]
+
+GENDERS = [
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Other', 'Other')
 ]
 
 
@@ -84,3 +90,29 @@ class BloodUnitsFilter(django_filters.FilterSet):
     class Meta:
         model = BloodUnit
         fields = ['blood_type', 'donation_type', 'status']
+
+
+class DonorsFilter(django_filters.FilterSet):
+    blood_group = django_filters.ChoiceFilter(
+        field_name='blood_group',
+        choices=BLOOD_TYPES,
+        lookup_expr='iexact',
+        label='Blood Group'
+    )
+
+    gender = django_filters.ChoiceFilter(
+        field_name='gender',
+        choices=GENDERS,
+        lookup_expr='iexact',
+        label='Gender'
+    )
+
+    county = django_filters.CharFilter(
+        field_name='county',
+        lookup_expr='iexact',
+        label='County'
+    )
+
+    class Meta:
+        model = UserProfile
+        fields = ['county', 'blood_group', 'gender']

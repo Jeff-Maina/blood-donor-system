@@ -1,5 +1,7 @@
 {% extends "facility/layout.html" %}
 
+{% load render_table from django_tables2%}
+
 {% block title %} Blood Donor System | Donor Management {% endblock %}
 
 
@@ -52,47 +54,115 @@
     </div>
 
     <div class="w-full col-span-2 rounded-md shadow p-6 border flex flex-col gap-4 ">
-        <h1 class="font-semibold">Requests</h1>
-        <div class="w-full">
-            <table class="w-full">
-                <thead>
-                    <tr class="">
-                        <th class="p-2 text-left font-semibold">Fullname</th>
-                        <th class="p-2 text-left font-semibold">Email</th>
-                        <th class="p-2 text-left font-semibold">Phone</th>
-                        <th class="p-2 text-left font-semibold">County</th>
-                        <th class="p-2 text-left font-semibold">Blood Type</th>
-                        <th class="p-2 text-left font-semibold">Completed Donations</th>
-                        <th class="p-2 text-left font-semibold">Blood Donated</th>
-                        <th class="p-2 text-left font-semibold text-sm flex">Requests</th>
-                        <th class="p-2 text-left font-semibold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for donor in donors %}
-                    <tr class="{% if forloop.counter|divisibleby:2 %}bg-neutral-100 {% else %}bg-white{% endif %}">
-                        <td class="p-2  truncate text-neutral-800">{{donor.profile.firstname}}
-                            {{donor.profile.lastname}}</td>
-                        <td class="p-2  truncate text-neutral-800">{{donor.profile.user.email}} </td>
-                        <td class="p-2  truncate text-neutral-800">{{donor.profile.phone}} </td>
-                        <td class="p-2  truncate text-neutral-800">{{donor.profile.county}} </td>
-                        <td class="p-2  truncate text-neutral-800">{{donor.profile.blood_group}} </td>
-                        <td class="p-2  truncate text-neutral-800 ">{{donor.completed_donations}} </td>
-                        <td class="p-2  truncate text-neutral-600"><span class="font-medium text-neutral-800">
-                                {{donor.total_blood_donated }}</span> Litres</td>
-                        <td class="p-2  truncate font-semibold text-neutral-600 flex items-center gap-1 !text-xs"> <span
-                                class="text-purple-600 text-lg">{{donor.pending_requests}}</span> - <span
-                                class="text-green-600 text-lg">{{donor.approved_requests}}</span> - <span
-                                class="text-red-600 text-lg">{{donor.rejected_requests}}</span> - <span
-                                class="text-black text-lg">{{donor.total_requests}}</span> </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <h1 class="font-semibold">Donors</h1>
+
+                <div class="flex items-center text-sm gap-2 max-w-5xl overflow-x-auto custom-scrollbar-sm">
+                    {% if donors_filter.form %}
+                        {% for field in donors_filter.form %}
+                            {% if field.value %}
+                                        <div class='border min-w-fit border-dotted flex items-center border-neutral-300 gap-3 px-3 py-0.5 rounded text-neutral-700'><span class='text-black font-medium'>{{ field.label }}</span> <small class='!text-[8px] font-semibold text-neutral-500'>|</small> {{ field.value }}  </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div>
+                <button id="filter-btn"
+                    class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-600 text-white font-medium text-sm rounded">
+                    Add filter <i data-lucide="list-filter" class="size-4" stroke-width="3"></i>
+                </button>
+            </div>
+        </div>        <div class="w-full">
+           {% render_table donors_table%}
         </div>
     </div>
+
+    <div id="filter-modal" class="fixed hidden h-screen w-full top-0 left-0 z-20">
+        <div id="filter-backdrop"
+            class="absolute top-0 left-0 w-full bg-black/40 h-full opacity-0 transition-opacity duration-200"></div>
+        <div id="filter-sheet"
+            class="absolute right-0 top-0 h-screen w-[500px]  z-20 p-4 transform translate-x-full transition-transform duration-300">
+            <div class="w-full h-full bg-white shadow rounded-md relative">
+                <button id="close-sheet-btn"
+                    class="size-4 rounded-full grid place-items-center hover:bg-neutral-100 absolute top-3 right-4">
+                    <i data-lucide="x" class="size-5" stroke-width="2"></i>
+                </button>
+                <div class="pt-4">
+                    <h1 class="font-semibold tracking-tight px-6 text-xl">Add filters</h1>
+                    <form method="get" class="flex flex-col p-6 pb-3 gap-4">
+
+                        <div class="form-group">
+                            {{ donors_filter.form.county.label_tag }}
+                            {{ donors_filter.form.county }}
+                        </div>
+                        <div class="form-group">
+                            {{ donors_filter.form.blood_group.label_tag }}
+                            {{ donors_filter.form.blood_group }}
+                        </div>
+                        <div class="form-group">
+                            {{ donors_filter.form.gender.label_tag }}
+                            {{ donors_filter.form.gender }}
+                        </div>
+                     
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 h-9 font-medium px-3 rounded text-white flex items-center justify-center gap-2">
+                            Add filters <i data-lucide="plus" class="size-4"></i>
+                        </button>
+                    </form>
+                    <form action="" method="get" class="flex items-center gap-2 px-6">
+                        <button type="submit" name="clear_donors_filters" value="true" class="bg-red-500 hover:bg-red-600 text-white font-medium py-1 px-3 rounded w-2/4 justify-center flex items-center gap-2">
+                            Clear Filters
+                            <i data-lucide='trash' class='size-4'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </div>
 
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
+
+        // add filter sheet
+        const filter_modal = document.getElementById("filter-modal")
+        const filter_sheet = document.getElementById("filter-sheet")
+        const filter_button = document.getElementById('filter-btn')
+        const close_sheet_btn = document.getElementById("close-sheet-btn")
+        const filter_backdrop = document.getElementById("filter-backdrop")
+
+        const openFilterSheet = () => {
+            console.log('clicked')
+            filter_modal.classList.remove("hidden")
+            setTimeout(() => {
+                filter_sheet.classList.remove("translate-x-full")
+                filter_backdrop.classList.replace("opacity-0", "opacity-100")
+            }, 10);
+        }
+
+        const closeSheet = () => {
+            filter_sheet.classList.add("translate-x-full")
+            filter_backdrop.classList.replace("opacity-100", "opacity-0")
+
+            setTimeout(() => {
+                filter_modal.classList.add("hidden")
+            }, 300)
+        }
+
+        filter_button.addEventListener("click", openFilterSheet)
+        close_sheet_btn.addEventListener("click", closeSheet)
+        filter_backdrop.addEventListener('click', closeSheet)
+
+        
+    })
+</script>
 {% endblock %}
 

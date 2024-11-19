@@ -10,8 +10,8 @@ from django.dispatch import receiver
 from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
-from .tables import FacilityDonationsTable, FaciltyRequestsTable, InventoryTable, BloodUnitsTable
-from .filters import FacilityDonationsFilter, FacilityRequestsFilter, InventoryFilter, BloodUnitsFilter
+from .tables import FacilityDonationsTable, FaciltyRequestsTable, InventoryTable, BloodUnitsTable, DonorsTable
+from .filters import FacilityDonationsFilter, FacilityRequestsFilter, InventoryFilter, BloodUnitsFilter,DonorsFilter
 from django_tables2 import RequestConfig
 
 # Create your views here.
@@ -142,7 +142,7 @@ def requests_view(request):
         approval_status='rejected').count()
     pending_requests_count = requests.filter(
         approval_status='pending').count()
-    
+
     if 'clear_facility_requests_filters' in request.GET:
         request.GET = request.GET.copy()
         request.GET.clear()
@@ -380,7 +380,8 @@ def inventory_view(request):
 
     # bloodunits table
 
-    bloodunits_filter = BloodUnitsFilter(request.GET, queryset=bloodunits, prefix='bloodunit')
+    bloodunits_filter = BloodUnitsFilter(
+        request.GET, queryset=bloodunits, prefix='bloodunit')
     filtered_bloodunits = bloodunits_filter.qs
 
     bloodunits_table = BloodUnitsTable(filtered_bloodunits, prefix='2-')
@@ -429,7 +430,11 @@ def donor_management_view(request):
 
     donors_info = []
 
-    for user_profile in user_profiles:
+
+    donors_filter = DonorsFilter(request.GET, queryset=user_profiles)
+    filtered_donors = donors_filter.qs
+
+    for user_profile in filtered_donors:
         user_requests = Request.objects.filter(
             user=user_profile, facility=profile)
 
@@ -447,10 +452,16 @@ def donor_management_view(request):
 
         donors_info.append(profile_info)
 
+
+    donors_table = DonorsTable(donors_info)
+    RequestConfig(request).configure(donors_table)
+
     context = {
         'donors': donors_info,
         'profile': profile,
         'user': request.user,
+        'donors_table': donors_table,
+        'donors_filter': donors_filter
     }
 
     return render(request, 'facility/donor-management.html', context)
