@@ -1,0 +1,53 @@
+{% extends "facility/layout.html" %}
+
+{% block title %} Blood Donor System | Profile Settings {% endblock %}
+
+
+{% block content %}
+<div class="w-full flex flex-col pt-10">
+    <div class="mx-auto max-w-xl border w-full rounded-md">
+        <div class="flex flex-col gap-2 p-4">
+            <h1 class="text-2xl font-bold tracking-tight text-neutral-800">Profile Settings</h1>
+
+        </div>
+
+        <form method="POST" action="{% url 'facility-profile-settings' %}" class="form w-full p-4 pt-0">
+            {% csrf_token %}
+   
+            <div class="form-group">
+               {{ form.name.label_tag }}
+               {{ form.name }}
+            </div>
+
+            <div class="form-group">
+               {{ form.contact_number.label_tag }}
+               {{ form.contact_number }}
+            </div>
+            <div class="form-group">
+               {{ form.facility_type.label_tag }}
+               {{ form.facility_type }}
+            </div>
+            <div class="form-group">
+               {{ form.county.label_tag }}
+               {{ form.county }}
+            </div>
+            <div class="custom-select form-group">
+               {{ form.open_days.label_tag }}
+               {{ form.open_days }} 
+            </div>
+            <div class="custom-select form-group">
+               {{ form.opening_time.label_tag }}
+               {{ form.opening_time }} 
+            </div>
+            <div class="custom-select form-group">
+               {{ form.closing_time.label_tag }}
+               {{ form.closing_time }} 
+            </div>
+            <button type="submit"
+               class="bg-blue-500 hover:bg-blue-600 transition-all p-2 flex items-center gap-2 px-3 rounded py-2 justify-center font-medium text-white">Update Details
+               <i data-lucide="arrow-right" class="size-3.5" stroke-width="3"></i>
+            </button>
+         </form>
+    </div> 
+</div>
+{% endblock %}

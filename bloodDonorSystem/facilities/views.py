@@ -11,7 +11,7 @@ from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
 from .tables import FacilityDonationsTable, FaciltyRequestsTable, InventoryTable, BloodUnitsTable, DonorsTable
-from .filters import FacilityDonationsFilter, FacilityRequestsFilter, InventoryFilter, BloodUnitsFilter,DonorsFilter
+from .filters import FacilityDonationsFilter, FacilityRequestsFilter, InventoryFilter, BloodUnitsFilter, DonorsFilter
 from django_tables2 import RequestConfig
 
 # Create your views here.
@@ -126,7 +126,23 @@ def complete_profile(request):
     return render(request, "facility/complete-profile.html", {'form': form, 'error': form.errors})
 
 
+@login_required
+def profile_settings_view(request):
+    user = request.user
+    profile = FacilityProfile.objects.filter(user=user).first()
+
+    if request.method == 'POST':
+        form = ProfileFacilityForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            return redirect("facility-profile-settings")
+    else:
+        form = ProfileFacilityForm(instance=profile)
+    return render(request, "facility/profile-settings.html", {"form": form})
+
 # ! REQUESTS
+
 
 @login_required
 def requests_view(request):
@@ -430,7 +446,6 @@ def donor_management_view(request):
 
     donors_info = []
 
-
     donors_filter = DonorsFilter(request.GET, queryset=user_profiles)
     filtered_donors = donors_filter.qs
 
@@ -451,7 +466,6 @@ def donor_management_view(request):
         }
 
         donors_info.append(profile_info)
-
 
     donors_table = DonorsTable(donors_info)
     RequestConfig(request).configure(donors_table)
