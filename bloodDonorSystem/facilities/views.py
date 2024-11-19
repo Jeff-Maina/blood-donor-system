@@ -315,10 +315,8 @@ def reject_donation(request, id):
 @login_required
 def mark_donation_complete(request, id):
     donation = get_object_or_404(Donation, id=id)
-    unit_id = f"{donation.id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
     blood_unit = BloodUnit.objects.create(
-        unit_id=unit_id,
         blood_type=donation.user.blood_group,
         donation_type=donation.donation_type,
         quantity=donation.amount,
@@ -480,4 +478,9 @@ def donor_management_view(request):
         'donors_filter': donors_filter
     }
 
-    return render(request, 'facility/donor-management.html', context)
+    return render(request, 'facility/donors/donor-management.html', context)
+
+
+@login_required
+def donor_view(request):
+    pass

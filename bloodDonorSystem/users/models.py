@@ -2,10 +2,15 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from .manager import CustomUserManager
 from django.utils import timezone
-from datetime import timedelta
-
-
+from datetime import timedelta, datetime
+import hashlib
 # Create your models here.
+
+
+def generate_hash(*args):
+    return hashlib.sha256("".join(map(str, args)).encode()).hexdigest()[:10].upper()
+
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
@@ -116,6 +121,7 @@ class Donation(models.Model):
         ('rejected', 'Rejected'),
     ]
 
+    donation_id = models.CharField(max_length=50, unique=True, null=True)
     user = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name='donations')
     facility = models.ForeignKey(
@@ -137,6 +143,12 @@ class Donation(models.Model):
 
     def __str__(self):
         return f"Donation for {self.user} on {self.created_at.date()} with status {self.status}"
+
+    def save(self, *args, **kwargs):
+        if not self.donation_id:
+            unique_str = f"{self.user.id}-{self.facility.id if self.facility else 'NA'}-{self.donation_type}-{datetime.now()}"
+            self.donation_id = f"DON-{generate_hash(unique_str)}"
+        super().save(*args, **kwargs)
 
 
 class Request(models.Model):
@@ -166,7 +178,8 @@ class Request(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
-
+    request_id = models.CharField(max_length=50, unique=True, null=True)
+    
     user = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name='requests')
     facility = models.ForeignKey(
@@ -190,6 +203,12 @@ class Request(models.Model):
 
     def __str__(self):
         return f"Request by {self.user} on {self.created_at.date()} ({self.request_amount} ml)"
+
+    def save(self, *args, **kwargs):
+        if not self.request_id:
+            unique_str = f"{self.user.id}-{self.facility.id if self.facility else 'NA'}-{self.request_type}-{datetime.now()}"
+            self.request_id = f"REQ-{generate_hash(unique_str)}"
+        super().save(*args, **kwargs)
 
 
 class Notification(models.Model):

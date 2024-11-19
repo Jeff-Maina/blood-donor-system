@@ -26,10 +26,10 @@ class DonationTable(tables.Table):
 
     class Meta:
         model = Donation
-        fields = ('row_number', 'facility', 'donation_type',
+        fields = ('row_number', 'donation_id', 'facility', 'donation_type',
                   'donation_date', 'status', 'approval_status', 'actions')
 
-        sequence = ('row_number', 'facility', 'donation_type', 'status',
+        sequence = ('row_number', 'donation_id', 'facility', 'donation_type', 'status',
                     'donation_date', 'approval_status', 'actions')
 
     def __init__(self, *args, **kwargs):
@@ -68,10 +68,10 @@ class RequestsTable(tables.Table):
 
     class Meta:
         model = Request
-        fields = ('row_number', 'facility', 'request_type',
+        fields = ('row_number', 'request_id', 'facility', 'request_type',
                   'request_amount', 'request_status', 'urgency_level', 'needed_by', 'approval_status', 'actions')
 
-        sequence = ('row_number', 'facility', 'request_type',
+        sequence = ('row_number', 'request_id', 'facility', 'request_type',
                     'request_amount', 'request_status', 'needed_by', 'urgency_level', 'approval_status', 'actions')
 
     def __init__(self, *args, **kwargs):
@@ -96,5 +96,3 @@ class RequestsTable(tables.Table):
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='x' class='size-4' stroke-width='2'></i> Rejected</p>")
         elif record.approval_status == 'pending':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='hourglass' class='size-4' stroke-width='2'></i> Pending</p>")
-
-

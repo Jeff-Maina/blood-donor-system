@@ -22,6 +22,8 @@ urlpatterns = [
     path('donations/mark-donation-complete/<int:id>/',
          view=views.mark_donation_complete, name='mark_donation_complete'),
     path("inventory", view=views.inventory_view, name='facility-inventory'),
-    path("donor-management", view=views.donor_management_view,
+    path("donors", view=views.donor_management_view,
+         name='donors-management'),
+    path("donors/<int:id>", view=views.donor_management_view,
          name='donors-management'),
 ]

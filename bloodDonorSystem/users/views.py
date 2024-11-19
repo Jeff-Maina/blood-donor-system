@@ -433,7 +433,7 @@ def cancel_appointment(request, id):
 
     if donation.user != profile:
         return redirect("home")
-    
+
     if request.method == 'POST':
         rejection_reason = request.POST.get('reason')
         donation.status = 'cancelled'
@@ -473,19 +473,19 @@ def make_request(request, facility_id):
         form = RequestBloodForm(request.POST)
 
         if form.is_valid():
-            request = form.save(commit=False)
-            request.user = profile
-            request.facility = facility
+            user_request = form.save(commit=False)
+            user_request.user = profile
+            user_request.facility = facility
 
             notification = Notification.objects.create(
-                doer=f'{request.user.firstname} {request.user.lastname}',
-                action=f'has made a request for <span style="color: black; font-weight: 600"> {request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {request.request_type} </span> donation.',
-                user=request.facility.user,
+                doer=f'{user_request.user.firstname} {user_request.user.lastname}',
+                action=f'has made a request for <span style="color: black; font-weight: 600"> {user_request.request_amount} ml </span> <span style="color: black; font-weight: 600"> {user_request.request_type} </span> donation.',
+                user=user_request.facility.user,
                 type='request-made'
             )
 
             notification.save()
-            request.save()
+            user_request.save()
             return redirect('requests')
         else:
 
@@ -494,7 +494,6 @@ def make_request(request, facility_id):
     else:
         form = RequestBloodForm()
     return render(request, 'user/requests/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
-
 
 
 @login_required

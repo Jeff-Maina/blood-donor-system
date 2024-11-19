@@ -1,7 +1,8 @@
 from django.db import models
 from users.models import CustomUser, UserProfile
 from datetime import timedelta, datetime
-
+import random
+import string
 # Create your models here.
 FACILITY_TYPES = [
     ('hospital', 'Hospital'),
@@ -29,6 +30,7 @@ BLOOD_TYPES = [
     ('AB+', 'AB+'),
     ('AB-', 'AB-'),
 ]
+
 
 
 class FacilityProfile(models.Model):
@@ -117,6 +119,11 @@ class BloodUnit(models.Model):
             elif self.donation_type == 'double red cells':
                 self.expiration_date = self.collection_date + \
                     timedelta(days=42)
+                
+        if not self.unit_id:
+            random_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            date_str = self.collection_date.strftime('%Y%m%d')
+            facility_id = self.facility.id if self.facility else "NA"
+            self.unit_id = f"BU-{self.blood_type}-{facility_id}-{date_str}-{random_code}"
+        
         super().save(*args, **kwargs)
-
-
