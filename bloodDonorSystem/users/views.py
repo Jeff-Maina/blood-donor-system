@@ -11,6 +11,7 @@ from decimal import Decimal
 from .tables import DonationTable, RequestsTable
 from .filters import DonationFilter, RequestsFilter
 from django_tables2 import RequestConfig
+
 # Create your views here.
 
 
@@ -88,6 +89,8 @@ def logout_view(request):
     else:
         return redirect("home")
 
+# ! PROFILE
+
 
 @login_required
 def complete_profile(request):
@@ -108,7 +111,46 @@ def complete_profile(request):
             return redirect("user-dashboard")
     else:
         form = UserProfileForm()
-    return render(request, "user/donations/complete-profile.html", {"form": form})
+    return render(request, "user/complete-profile.html", {"form": form})
+
+
+@login_required
+def profile_settings_view(request):
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+
+    facilities = FacilityProfile.objects.filter(
+        donations__user__user=user, donations__status='completed'
+    ).distinct()
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            form.save()
+            changes = [
+                (f'<span style="color: black; font-weight: 500">{field.replace("_", " ").capitalize()}</span>',
+                    form.cleaned_data.get(field))
+                for field in form.changed_data
+            ]
+
+            if changes:
+                for facility in facilities:
+                    notification = Notification.objects.create(
+                        doer=f'{profile.firstname} {profile.lastname}',
+                        action=(
+                            f"has changed the following profile details: "
+                            f"{', '.join([f'{field} to {new_value}' for field, new_value in changes])}."
+                        ),
+                        user=facility.user,
+                        type='profile-update'
+                    )
+
+            return redirect("profile-settings")
+
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, "user/profile-settings.html", {"form": form})
 
 
 @login_required
@@ -155,7 +197,7 @@ def donations_view(request):
 
     if user.is_superuser:
         return redirect('admin:index')
-    
+
     if user.role == 'facility':
         return redirect('facility-donations')
 

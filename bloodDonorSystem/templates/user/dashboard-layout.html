@@ -124,10 +124,10 @@
                     </div>
                     <div class="p-2 w-full">
 
-                        <a href="{}"
+                        <a href="{% url 'profile-settings' %}"
                             class=" transition-all p-2 text-neutral-700 font-medium hover:text-black w-full flex items-center gap-2 px-3 text-sm rounded-md py-1.5 hover:bg-neutral-100  ">
                             <i data-lucide="user-round" class="size-3.5" stroke-width="3"></i>
-                            Profile
+                            Profile settings
                         </a>
 
                         <form action="{% url 'logout' %}" method="post">
@@ -145,6 +145,7 @@
         {% block content %}
         {% endblock %}
     </div>
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         document.getElementById("dropdown-trigger").addEventListener("click", function (event) {
