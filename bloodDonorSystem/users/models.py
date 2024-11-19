@@ -4,6 +4,8 @@ from .manager import CustomUserManager
 from django.utils import timezone
 from datetime import timedelta, datetime
 import hashlib
+import string
+import random
 # Create your models here.
 
 
@@ -33,6 +35,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class UserProfile(models.Model):
+    user_uuid = models.CharField(max_length=50, unique=True, null=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     firstname = models.CharField(max_length=15, null=True)
     lastname = models.CharField(max_length=15, null=True)
@@ -49,6 +52,13 @@ class UserProfile(models.Model):
     @property
     def age_display(self):
         return self.age()
+
+    def save(self, *args, **kwargs):
+        if not self.user_uuid:
+            initials = f"{self.firstname[0].upper()}{self.lastname[0].upper()}"
+            random_code = ''.join(random.choices(string.digits, k=5))
+            self.user_uuid = f"DNR-{initials}-{random_code}"
+        super().save(*args, **kwargs)
 
 
 class DonationEligibity(models.Model):
@@ -179,7 +189,7 @@ class Request(models.Model):
         ('cancelled', 'Cancelled'),
     ]
     request_id = models.CharField(max_length=50, unique=True, null=True)
-    
+
     user = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name='requests')
     facility = models.ForeignKey(

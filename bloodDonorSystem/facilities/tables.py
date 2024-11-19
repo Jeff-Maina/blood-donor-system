@@ -231,6 +231,8 @@ class DonorsTable(tables.Table):
         verbose_name='#'
     )
 
+    user_uuid = tables.Column(
+        accessor='profile.user_uuid', verbose_name='Donor-ID', orderable=False)
     fullname = tables.Column(verbose_name='Full Name', empty_values=())
     gender = tables.Column(accessor='profile.gender', verbose_name='Gender')
     email = tables.Column(accessor='profile.user.email', verbose_name='Email',
@@ -250,7 +252,7 @@ class DonorsTable(tables.Table):
 
     class Meta:
         model = UserProfile
-        fields = ('row_number','fullname','gender', 'email', 'phone', 'county', 'blood_group',
+        fields = ('row_number', 'user_uuid', 'fullname', 'gender', 'email', 'phone', 'county', 'blood_group',
                   'completed_donations', 'blood_donated', 'requests')
         sequence = fields
 
@@ -264,9 +266,9 @@ class DonorsTable(tables.Table):
     def render_fullname(self, record):
         return f'{record["profile"].firstname} {record["profile"].lastname}'
 
-    def render_blood_donated(self,record):
+    def render_blood_donated(self, record):
         return f"{record['total_blood_donated']} L"
-    
+
     def render_requests(self, record):
         return format_html(
             '<p><span class="text-purple-600 text-lg">{}</span> - '
