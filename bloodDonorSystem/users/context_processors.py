@@ -26,7 +26,7 @@ def notification_processor(request):
 
             unread_notifications = notifications.filter(read=False).count()
     else:
-        notifications = []
+        formatted_notifications = []
         unread_notifications = 0
 
     return {

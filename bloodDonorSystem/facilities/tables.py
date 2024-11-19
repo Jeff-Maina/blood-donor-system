@@ -4,6 +4,7 @@ from .models import Inventory, BloodUnit
 import itertools
 from django.utils.html import format_html
 from django.utils.timezone import localdate
+from django.urls import reverse
 
 
 class FacilityDonationsTable(tables.Table):
@@ -25,12 +26,17 @@ class FacilityDonationsTable(tables.Table):
         orderable=False
     )
 
+    donation_id = tables.Column(
+        verbose_name='Donation-ID',
+        orderable=False
+    )
+
     class Meta:
         model = Donation
-        fields = ('row_number', 'user', 'email', 'phone', 'blood_type', 'donation_type',
+        fields = ('row_number', 'donation_id', 'user', 'email', 'phone', 'blood_type', 'donation_type',
                   'amount', 'donation_date', 'status', 'approval_status', 'actions')
 
-        sequence = ('row_number', 'user', 'email', 'phone', 'blood_type', 'donation_type',
+        sequence = ('row_number',  'donation_id', 'user', 'email', 'phone', 'blood_type', 'donation_type',
                     'amount',  'status', 'donation_date', 'approval_status', 'actions')
 
     def __init__(self, *args, **kwargs):
@@ -77,6 +83,11 @@ class FaciltyRequestsTable(tables.Table):
         attrs={'td': {'class': 'email-col'}}
     )
 
+    request_id = tables.Column(
+        verbose_name='Request-ID',
+        orderable=False
+    )
+
     phone = tables.Column(accessor='user.phone', verbose_name='Phone')
     blood_type = tables.Column(
         accessor='user.blood_group', verbose_name='Blood Type')
@@ -102,10 +113,10 @@ class FaciltyRequestsTable(tables.Table):
 
     class Meta:
         model = Request
-        fields = ('row_number', 'user', 'email',  'blood_type', 'request_type',
+        fields = ('row_number','request_id', 'user', 'email',  'blood_type', 'request_type',
                   'request_amount', 'urgency_level', 'request_status', 'needed_by', 'approval_status', 'actions')
 
-        sequence = ('row_number', 'user', 'email',  'blood_type', 'request_type',
+        sequence = ('row_number','request_id', 'user', 'email',  'blood_type', 'request_type',
                     'request_amount', 'urgency_level', 'request_status', 'needed_by', 'approval_status', 'actions')
 
         exclude = ('phone',)
@@ -196,6 +207,11 @@ class BloodUnitsTable(tables.Table):
         orderable=False
     )
 
+    unit_id = tables.Column(
+        verbose_name='Unit-ID',
+        orderable=False
+    )
+
     class Meta:
         model = BloodUnit
         fields = ('row_number', "unit_id", "donor", "blood_type", "quantity",
@@ -264,7 +280,9 @@ class DonorsTable(tables.Table):
         return f"{next(self.counter)}"
 
     def render_fullname(self, record):
-        return f'{record["profile"].firstname} {record["profile"].lastname}'
+        user_uuid = record['profile'].user_uuid
+        url = reverse('donor-detail', kwargs={'user_uuid': user_uuid})
+        return format_html("<a href='{}' class='text-blue-500 hover:underline' >{} {}</a>", url, record['profile'].firstname, record['profile'].lastname)
 
     def render_blood_donated(self, record):
         return f"{record['total_blood_donated']} L"

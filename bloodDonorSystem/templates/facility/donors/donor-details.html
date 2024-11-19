@@ -1,0 +1,94 @@
+{% extends "facility/layout.html" %} {% block title %} Blood Donor System |
+Donor {% endblock %} {% block content %}
+
+<div class="w-full p-4 flex flex-col gap-4">
+  <div class="w-full gap-4">
+    <div
+      class="w-full max-w-2xl mx-auto border p-4 rounded-md flex flex-col gap-6"
+    >
+      <h1 class="text-2xl font-semibold tracking-tight">Donor details</h1>
+
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <!-- Donor Full Name -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Fullname</p>
+            <p class="font-medium">
+              {{ donor_profile.firstname }} {{ donor_profile.lastname }}
+            </p>
+          </div>
+
+          <!-- Donor Email -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Email</p>
+            <p class="font-medium">{{ donor_profile.user.email }}</p>
+          </div>
+
+          <!-- Donor Phone Number -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Phone</p>
+            <p class="font-medium">{{ donor_profile.phone }}</p>
+          </div>
+
+          <!-- Donor County -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">County</p>
+            <p class="font-medium">{{ donor_profile.county }}</p>
+          </div>
+
+          <!-- Donor Blood Type -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Blood Type</p>
+            <p class="font-medium">{{ donor_profile.blood_group }}</p>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="flex flex-col gap-2">
+          <!-- Donation Info -->
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Booked Appointments</p>
+            <p class="font-medium">{{ total_donations }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Completed Donations</p>
+            <p class="font-medium">{{ completed_donations }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Pending Appointments</p>
+            <p class="font-medium">{{ pending_donations }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Cancelled Appointments</p>
+            <p class="font-medium">{{ cancelled_donations }}</p>
+          </div>
+        </div>
+        <hr />
+
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Total Requests</p>
+            <p class="font-medium">{{ total_requests }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Pending Requests</p>
+            <p class="font-medium">{{ pending_requests }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Rejected Requests</p>
+            <p class="font-medium">{{ rejected_requests }}</p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-neutral-500 font-medium">Approved Requests</p>
+            <p class="font-medium">{{ approved_requests }}</p>
+          </div>
+        </div>
+
+        <!-- Completed Donations -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

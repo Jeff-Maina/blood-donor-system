@@ -8,7 +8,8 @@ urlpatterns = [
          name='awaiting-approval'),
     path("complete-profile/", view=views.complete_profile,
          name='complete-facility-profile'),
-    path("profile-settings/", views.profile_settings_view, name="facility-profile-settings"),
+    path("profile-settings/", views.profile_settings_view,
+         name="facility-profile-settings"),
     path("requests", view=views.requests_view, name='facility-requests'),
     path('requests/approve-request/<int:id>/',
          view=views.approve_request, name='approve-request'),
@@ -24,6 +25,6 @@ urlpatterns = [
     path("inventory", view=views.inventory_view, name='facility-inventory'),
     path("donors", view=views.donor_management_view,
          name='donors-management'),
-    path("donors/<int:id>", view=views.donor_management_view,
-         name='donors-management'),
+    path('donors/<str:user_uuid>/', views.donor_view, name='donor-detail')
+
 ]

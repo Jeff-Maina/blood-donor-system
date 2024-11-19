@@ -23,6 +23,12 @@ class DonationTable(tables.Table):
 
     actions = tables.TemplateColumn(
         template_name="user/donations/row-actions.html", verbose_name="actions", orderable=False)
+    
+
+    donation_id = tables.Column(
+        verbose_name='Donation-ID',
+        orderable=False
+    )
 
     class Meta:
         model = Donation
@@ -66,6 +72,11 @@ class RequestsTable(tables.Table):
     actions = tables.TemplateColumn(
         template_name="user/requests/requests-row-actions.html", verbose_name="actions", orderable=False)
 
+    request_id = tables.Column(
+        verbose_name='Request-ID',
+        orderable=False
+    )
+
     class Meta:
         model = Request
         fields = ('row_number', 'request_id', 'facility', 'request_type',
@@ -73,6 +84,8 @@ class RequestsTable(tables.Table):
 
         sequence = ('row_number', 'request_id', 'facility', 'request_type',
                     'request_amount', 'request_status', 'needed_by', 'urgency_level', 'approval_status', 'actions')
+
+        empty_text = 'No blood requests available'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

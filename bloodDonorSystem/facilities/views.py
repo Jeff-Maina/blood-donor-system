@@ -482,5 +482,33 @@ def donor_management_view(request):
 
 
 @login_required
-def donor_view(request):
-    pass
+def donor_view(request, user_uuid):
+    user = request.user
+    facility_profile = user.facilityprofile
+    donor_profile = get_object_or_404(UserProfile, user_uuid=user_uuid)
+    donor_requests = donor_profile.requests.all().filter(facility=facility_profile)
+    donor_donations = donor_profile.donations.all().filter(facility=facility_profile)
+
+    pending_requests = donor_requests.filter(approval_status='pending').count()
+    rejected_requests = donor_requests.filter(approval_status='rejected').count()
+    approved_requests = donor_requests.filter(approval_status='approved').count()
+
+    completed_donations = donor_donations.filter(status='completed').count()
+    pending_donations = donor_donations.filter(status='scheduled').count()
+    cancelled_donations = donor_donations.filter(status='cancelled').count()
+
+    context = {
+        'donor_profile': donor_profile,
+        'user': user,
+        'profile': facility_profile,
+        'total_requests': donor_requests.count(),
+        'total_donations': donor_donations.count(),
+        'pending_requests': pending_requests,
+        'rejected_requests': rejected_requests,
+        'approved_requests': approved_requests,
+        'completed_donations': completed_donations,
+        'pending_donations': pending_donations,
+        'cancelled_donations': cancelled_donations
+    }
+
+    return render(request, "facility/donors/donor-details.html", context)
