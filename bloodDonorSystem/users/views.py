@@ -150,7 +150,7 @@ def profile_settings_view(request):
 
     else:
         form = UserProfileForm(instance=profile)
-    return render(request, "user/profile-settings.html", {"form": form})
+    return render(request, "user/profile-settings.html", {"form": form, 'user': user, 'profile': profile})
 
 
 @login_required

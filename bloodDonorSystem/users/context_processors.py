@@ -2,6 +2,8 @@ from users.models import Notification, Donation, UserProfile
 from users.filters import DonationFilter, RequestsFilter
 from users.tables import DonationTable, RequestsTable
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from django.utils.timesince import timesince
 
 
 def notification_processor(request):
@@ -10,13 +12,25 @@ def notification_processor(request):
             user=request.user
         ).order_by('read', '-created_at')
 
-        unread_notifications = notifications.filter(read=False).count()
+        formatted_notifications = []
+
+        for notification in notifications:
+            time_diff = timesince(notification.created_at, timezone.now())
+
+            time_diff_parts = time_diff.split(",")
+
+            formatted_notifications.append({
+                'notification': notification,
+                'time_ago': time_diff_parts[0].strip() 
+            })
+
+            unread_notifications = notifications.filter(read=False).count()
     else:
         notifications = []
         unread_notifications = 0
 
     return {
-        'notifications': notifications,
+        'notifications': formatted_notifications,
         'unread_notifications': unread_notifications
     }
 

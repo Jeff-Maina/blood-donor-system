@@ -139,7 +139,7 @@ def profile_settings_view(request):
             return redirect("facility-profile-settings")
     else:
         form = ProfileFacilityForm(instance=profile)
-    return render(request, "facility/profile-settings.html", {"form": form})
+    return render(request, "facility/profile-settings.html", {"form": form, 'user': user, 'profile': profile})
 
 # ! REQUESTS
 
@@ -214,7 +214,7 @@ def reject_request(request, id):
 
         notification = Notification.objects.create(
             doer=f'{user_request.facility.name}',
-            action=f'rejected your request for <span style="color: black; font-weight: 600">{user_request.request_amount} ml , {user_request.request_type}</span> due to <span style="color: red; font-weight: 600">{user_request.rejection_reason}</span>',
+            action=f'rejected your request for <span style="color: black; font-weight: 600">{user_request.request_amount} ml , {user_request.request_type}</span> due to <span style="color: black; font-weight: 600">{user_request.rejection_reason}</span>',
             user=user_request.user.user,
             type='request-rejection'
         )
@@ -299,7 +299,7 @@ def reject_donation(request, id):
 
         notification = Notification.objects.create(
             doer=f'{donation.facility.name}',
-            action=f'rejected your appointment for <span style="color: black; font-weight: 600">{donation.donation_type}</span> on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span> due to <span style="color: red; font-weight: 600">{donation.rejection_reason}</span>',
+            action=f'rejected your appointment for <span style="color: black; font-weight: 600">{donation.donation_type}</span> on <span style="color: black; font-weight: 600">{donation.donation_date.date()}</span> due to <span style="color: black; font-weight: 600">{donation.rejection_reason}</span>',
             user=donation.user.user,
             type='appointment-rejection'
         )
