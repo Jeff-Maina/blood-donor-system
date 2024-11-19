@@ -496,6 +496,45 @@ def make_request(request, facility_id):
     return render(request, 'user/requests/make-request.html', {'form': form, 'user': user, 'profile': profile, 'requests': requests, 'approved_requests_count': approved_requests_count, 'rejected_requests_count': rejected_requests_count, 'total_requests': total_requests, 'facility': facility, 'facilities': facilities})
 
 
+
+@login_required
+def updateRequest(request, id):
+    user_request = get_object_or_404(Request, id=id)
+    user = request.user
+    profile = UserProfile.objects.filter(user=user).first()
+
+    if user_request.user != profile:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = RequestBloodForm(request.POST, instance=user_request)
+
+        if form.is_valid():
+            form.save()
+
+            changes = [
+                (f'<span style="color: black; font-weight: 500">{field.replace("_", " ").capitalize()}</span>',
+                    form.cleaned_data.get(field))
+                for field in form.changed_data
+            ]
+
+            if changes:
+                notification = Notification.objects.create(
+                    doer=f'{profile.firstname} {profile.lastname}',
+                    action=(
+                        f"has changed the following request details: "
+                        f"{', '.join([f'{field} to {new_value}' for field, new_value in changes])}."
+                    ),
+                    user=user_request.facility.user,
+                    type='request-update'
+                )
+
+            return redirect("requests")
+    else:
+        form = RequestBloodForm(instance=user_request)
+    return render(request, "user/requests/update-request.html", {"form": form, 'user': user, 'profile': profile, })
+
+
 @login_required
 def deleteRequest(request, id):
     request = get_object_or_404(Request, id=id)

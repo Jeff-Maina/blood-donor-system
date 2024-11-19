@@ -22,6 +22,10 @@
                 More details
             </button>
             {% if record.status != 'completed'%}
+            <button data-id="{{ record.id }}" class="cancel-btn dropdown-item">
+                <i data-lucide="x" class="size-3 shrink-0"></i>
+                Cancel appointment
+            </button>
             {% else %}
             <button  class="disabled dropdown-item cursor-not-allowed">
                 <i data-lucide="x" class="size-3 shrink-0"></i>

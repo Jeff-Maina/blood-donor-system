@@ -10,11 +10,14 @@
             class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
         <div id="actionsMenu{{ record.id }}"
             class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
+            <a href="{% url 'update-request' record.id %}">
+
             <button
                 class="dropdown-item">
                 <i data-lucide="pencil" class="shrink-0 size-3"></i>
                 Edit
             </button>
+        </a>
             <button data-id="{{ record.id }}" class="more-details-btn dropdown-item">
                 <i data-lucide="info" class="size-3 shrink-0"></i>
                 More details
