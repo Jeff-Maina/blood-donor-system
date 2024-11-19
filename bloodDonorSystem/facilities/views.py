@@ -457,7 +457,9 @@ def donor_management_view(request):
     RequestConfig(request).configure(donors_table)
 
     context = {
-        'donors': donors_info,
+        'total_donors': len(donors_info),
+        'male_donors_count': user_profiles.filter(gender='Male').count(),
+        'female_donors_count': user_profiles.filter(gender='Female').count(),
         'profile': profile,
         'user': request.user,
         'donors_table': donors_table,
