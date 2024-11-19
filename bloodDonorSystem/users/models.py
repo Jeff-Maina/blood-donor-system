@@ -133,6 +133,7 @@ class Donation(models.Model):
     rejection_reason = models.TextField(null=True, blank=True, default='')
     approval_date = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Donation for {self.user} on {self.created_at.date()} with status {self.status}"

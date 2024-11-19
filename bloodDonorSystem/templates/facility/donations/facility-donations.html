@@ -168,6 +168,22 @@
         })
 
 
+        const details_modals = document.querySelectorAll('[id^="detailsModal"]');
+        details_modals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+
+        const details_buttons = document.querySelectorAll(".more-details-btn")
+        details_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault()
+                const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
+
         // add filter sheet
         const filter_modal = document.getElementById("filter-modal")
         const filter_sheet = document.getElementById("filter-sheet")

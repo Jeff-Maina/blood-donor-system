@@ -165,6 +165,21 @@
             })
         })
 
+        const details_modals = document.querySelectorAll('[id^="detailsModal"]');
+        details_modals.forEach(modal => {
+            closeModalOnBackdropClick(modal.id);
+        });
+
+        const more_details_buttons = document.querySelectorAll(".more-details-btn")
+        more_details_buttons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                console.log(button.dataset.id)
+                e.preventDefault()
+                const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
+                modal.classList.remove("hidden")
+            })
+        })
+
         const rejectModals = document.querySelectorAll('[id^="rejectModal"]');
         rejectModals.forEach(modal => {
             closeModalOnBackdropClick(modal.id);

@@ -9,16 +9,27 @@
             class="fixed hidden backdrop top-0 left-0 w-full h-full bg-transparent"></div>
         <div id="actionsMenu{{ record.id }}"
             class="absolute p-1.5 z-20 hidden bottom-full border right-full w-[190px] text-sm  min-w-fit rounded-md bg-white shadow-md">
+            <button data-id="{{ record.id }}" class="more-details-btn dropdown-item">
+                <i data-lucide="info" class="size-4 shrink-0"></i>
+                More details
+            </button>
             <a href="{% url 'approve-request' record.id %}">
                 <button class="dropdown-item">
                     <i data-lucide="check" class="shrink-0 size-4"></i>
                     Approve request
                 </button>
             </a>
+            {% if record.approval_status == 'rejected' %}
+            <button disabled class="cursor-not-allowed dropdown-item">
+                <i data-lucide="x" class="size-4 shrink-0"></i>
+                Reject request
+            </button>
+            {% else %}
             <button data-id="{{ record.id }}" class="reject-btn dropdown-item">
                 <i data-lucide="x" class="size-4 shrink-0"></i>
                 Reject request
             </button>
+            {% endif %}
         </div>
     
     </div>
@@ -42,6 +53,101 @@
                     Confirm
                 </button>
             </form>
+        </div>
+    </div>
+
+    <div id="detailsModal{{ record.id }}"
+        class="w-full hidden  modal  h-screen fixed top-0 left-0 z-50">
+        <div class="absolute backdrop top-0 left-0 w-full h-full bg-black/60"></div>
+        <div
+            class="w-[450px] max-h-[75vh] p-4 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-6 mt-20">
+            <h1 class="font-semibold">Request details</h1>
+            <div class="flex flex-col gap-6 relative">
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Patient Name</p>
+                        <p class="font-medium">{{ record.user.firstname }} {{ record.user.lastname }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Email</p>
+                        <p class="font-medium capitalize">{{ record.user.user.email }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Phone</p>
+                        <p class="font-medium capitalize">{{ record.user.phone }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Blood Group</p>
+                        <p class="font-medium capitalize">{{ record.user.blood_group }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Location</p>
+                        <p class="font-medium capitalize">{{ record.facility.county }}</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Donation type requested</p>
+                        <p class="font-medium capitalize">{{ record.request_type }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Requested Amount</p>
+                        <p class="font-medium">{{ record.request_amount }} ml</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Needed By</p>
+                        <p class="font-medium">{{ record.needed_by|date:"Y-m-d" }}</p>
+                    </div>
+
+                </div>
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Request Status</p>
+                        <p class="font-medium">{{ record.request_status }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Request Approval Status</p>
+                        <p class="font-medium">{{ record.approval_status }}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Approval Date</p>
+                        <p class="font-medium">
+                            {% if record.approval_status == 'approved' %}
+                            {{ record.approval_date }}
+                            {% elif record.approval_status == 'rejected' %}
+                            ~
+                            {% else %}
+                            Pending
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="flex  flex-col gap-2">
+                    <p class="text-neutral-500 font-medium">Patient Remarks</p>
+                    <p class="font-medium">{{ record.remarks }}</p>
+                </div>
+                {% if record.approval_status == 'rejected' %}
+                <hr>
+                <div class="flex  flex-col gap-2">
+                    <p class="text-neutral-500 font-medium">Reason for rejection</p>
+                    <p class="font-medium">{{record.rejection_reason}}</p>
+                </div>
+                {% endif %}
+                <hr>
+                <div class="flex flex-col gap-2 ">
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Request made on</p>
+                        <p class="font-medium">{{record.created_at}}</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p class="text-neutral-500 font-medium">Last updated on:</p>
+                        <p class="font-medium">{{record.updated_at}}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

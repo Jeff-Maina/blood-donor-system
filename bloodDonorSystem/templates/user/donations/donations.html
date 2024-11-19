@@ -147,8 +147,8 @@
             });
         }
 
-        const modals = document.querySelectorAll('[id^="detailsModal"]');
-        modals.forEach(modal => {
+        const details_modals = document.querySelectorAll('[id^="detailsModal"]');
+        details_modals.forEach(modal => {
             closeModalOnBackdropClick(modal.id);
         });
 
@@ -164,8 +164,8 @@
 
 
 
-        const buttons = document.querySelectorAll(".more-details-btn")
-        buttons.forEach((button) => {
+        const details_buttons = document.querySelectorAll(".more-details-btn")
+        details_buttons.forEach((button) => {
             button.addEventListener("click", (e) => {
                 e.preventDefault()
                 const modal = document.querySelector(`#detailsModal${button.dataset.id}`)
