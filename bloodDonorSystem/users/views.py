@@ -430,19 +430,24 @@ def cancel_appointment(request, id):
     donation = get_object_or_404(Donation, id=id)
     user = request.user
     profile = UserProfile.objects.filter(user=user).first()
+
     if donation.user != profile:
         return redirect("home")
+    
+    if request.method == 'POST':
+        rejection_reason = request.POST.get('reason')
+        donation.status = 'cancelled'
+        donation.rejection_reason = rejection_reason
 
-    notification = Notification.objects.create(
-        doer=f'{donation.user.firstname} {donation.user.lastname}',
-        action=f'has cancelled their appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black; font-weight: 600"> {donation.donation_date.date()} </span>',
-        user=donation.facility.user,
-        type='appointment-cancellation'
-    )
+        notification = Notification.objects.create(
+            doer=f'{donation.user.firstname} {donation.user.lastname}',
+            action=f'has cancelled their appointment for <span style="color: black; font-weight: 600"> {donation.donation_type} </span> donation on <span style="color: black;"> {donation.donation_date.date()} </span> due to <span style="color: black;">{donation.rejection_reason}</span>',
+            user=donation.facility.user,
+            type='appointment-cancellation'
+        )
 
-    notification.save()
-    donation.status = 'cancelled'
-    donation.save()
+        donation.save()
+        notification.save()
 
     return redirect('donations')
 

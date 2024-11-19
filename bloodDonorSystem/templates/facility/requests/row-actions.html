@@ -29,11 +29,12 @@
         <div
             class="w-[500px] p-4 mt-64 custom-scrollbar overflow-y-auto bg-white rounded-md relative mx-auto flex flex-col gap-4">
             <h1 class="font-semibold text-xl">Reject Request</h1>
+            
             <form action="{% url 'reject-request' record.id %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group !list-decimal">
                     <label for="reason">Reason for rejection</label>
-                    <input type="text" name="reason" id="reason"
+                    <input type="text" name="reason" id="reason" placeholder='Reason for rejection'
                         class="form-control w-full border rounded p-2" required>
                 </div>
                 <button type="submit"
