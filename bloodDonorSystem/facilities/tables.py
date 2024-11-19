@@ -1,7 +1,9 @@
 import django_tables2 as tables
 from users.models import Donation, Request
+from .models import Inventory, BloodUnit
 import itertools
 from django.utils.html import format_html
+from django.utils.timezone import localdate
 
 
 class FacilityDonationsTable(tables.Table):
@@ -136,3 +138,87 @@ class FaciltyRequestsTable(tables.Table):
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='x' class='size-4' stroke-width='2'></i> Rejected</p>")
         elif record.approval_status == 'pending':
             return format_html("<p class='flex items-center gap-2'> <i data-lucide='hourglass' class='size-4' stroke-width='2'></i> Pending</p>")
+
+
+class InventoryTable(tables.Table):
+
+    row_number = tables.Column(
+        orderable=False,
+        empty_values=(),
+        verbose_name='#'
+    )
+
+    blood_type = tables.Column(verbose_name='Blood Type')
+    total_quantity = tables.Column(verbose_name='Total Quantity (L)')
+    units_received = tables.Column(verbose_name='Units Received')
+    available_units = tables.Column(verbose_name='Available Units')
+    restock_status = tables.Column(verbose_name='Restock Status')
+    updated_at = tables.DateTimeColumn(verbose_name='Last Updated')
+
+    class Meta:
+        fields = ('row_number', 'blood_type', 'total_quantity',
+                  'units_received', 'available_units', 'restock_status', 'updated_at')
+        sequence = fields
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counter = itertools.count(1)
+
+    def render_row_number(self, record):
+        return f"{next(self.counter)}"
+
+    def render_total_quantity(self, record):
+        return f"{record['total_quantity']} L"
+
+    def render_units_received(self, record):
+        return record['units_received']
+
+    def render_available_units(self, record):
+        return record['available_units']
+
+    def render_restock_status(self, record):
+        return record['restock_status']
+
+    def render_updated_at(self, record):
+        return record['updated_at'].strftime("%Y-%m-%d, %H:%M")
+
+
+class BloodUnitsTable(tables.Table):
+    row_number = tables.Column(
+        orderable=False,
+        empty_values=(),
+        verbose_name='#'
+    )
+
+    days_left = tables.Column(
+        verbose_name="Days Left",
+        empty_values=(),
+        orderable=False
+    )
+
+    class Meta:
+        model = BloodUnit
+        fields = ('row_number', "unit_id", "donor", "blood_type", "quantity",
+                  "donation_type", "collection_date", 'expiration_date', 'days_left', 'status')
+        sequence = ('row_number', "unit_id", "donor", "blood_type", "quantity",
+                    "donation_type", "collection_date", 'expiration_date', 'days_left', 'status')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.counter = itertools.count(1)
+
+    def render_row_number(self, record):
+        return f"{next(self.counter)}"
+
+    def render_donor(self, record):
+        return f"{record.donor.firstname} {record.donor.lastname}"
+
+    def render_quantity(self, record):
+        return f"{record.quantity} ml"
+
+    def render_days_left(self, record):
+        today = localdate()
+        if record.expiration_date:
+            days_left = (record.expiration_date - today).days
+            return f"{days_left} days" if days_left >= 0 else "Expired"
+        return "No Expiration Date"

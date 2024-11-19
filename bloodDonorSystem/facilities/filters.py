@@ -1,6 +1,7 @@
 import django_filters
 from users.models import Donation, Request
 from django import forms
+from .models import Inventory, BloodUnit
 
 BLOOD_TYPES = [
     ('A+', 'A+'),
@@ -40,7 +41,7 @@ class FacilityDonationsFilter(django_filters.FilterSet):
 
     class Meta:
         model = Donation
-        fields = ['donation_type','blood_group', 'status', 'approval_status']
+        fields = ['donation_type', 'blood_group', 'status', 'approval_status']
 
 
 class FacilityRequestsFilter(django_filters.FilterSet):
@@ -71,3 +72,15 @@ class FacilityRequestsFilter(django_filters.FilterSet):
         model = Request
         fields = ['request_type', 'blood_group',
                   'request_status', 'approval_status', 'urgency_level']
+
+
+class InventoryFilter(django_filters.FilterSet):
+    class Meta:
+        model = Inventory
+        fields = ['blood_type']
+
+
+class BloodUnitsFilter(django_filters.FilterSet):
+    class Meta:
+        model = BloodUnit
+        fields = ['blood_type', 'donation_type', 'status']

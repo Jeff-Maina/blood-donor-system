@@ -10,8 +10,8 @@ from django.dispatch import receiver
 from decimal import Decimal
 from django.db.models import Sum, Count
 from datetime import datetime
-from .tables import FacilityDonationsTable, FaciltyRequestsTable
-from .filters import FacilityDonationsFilter, FacilityRequestsFilter
+from .tables import FacilityDonationsTable, FaciltyRequestsTable, InventoryTable, BloodUnitsTable
+from .filters import FacilityDonationsFilter, FacilityRequestsFilter, InventoryFilter, BloodUnitsFilter
 from django_tables2 import RequestConfig
 
 # Create your views here.
@@ -142,6 +142,10 @@ def requests_view(request):
         approval_status='rejected').count()
     pending_requests_count = requests.filter(
         approval_status='pending').count()
+    
+    if 'clear_facility_requests_filters' in request.GET:
+        request.GET = request.GET.copy()
+        request.GET.clear()
 
     facility_requests_filter = FacilityRequestsFilter(
         request.GET, queryset=requests)
@@ -224,6 +228,9 @@ def donations_view(request):
         donation.amount for donation in completed_donations)
 
     # table logic
+    if 'clear_facility_donations_filters' in request.GET:
+        request.GET = request.GET.copy()
+        request.GET.clear()
 
     facility_donations_filter = FacilityDonationsFilter(
         request.GET, queryset=donations)
@@ -351,26 +358,47 @@ def inventory_view(request):
         else:
             return "Surplus"
 
-    inventory_data = [
+    # tables
+
+    facility_inventory_filter = InventoryFilter(
+        request.GET, queryset=inventory, prefix='inventory')
+    filtered_inventory = facility_inventory_filter.qs
+
+    filtered_inventory_data = [
         {
             "blood_type": item.blood_type,
-            "total_quantity": item.quantity,
+            "total_quantity": round(item.quantity / 1000, 3),
             "units_received": item.units_received,
             "updated_at": item.updated_at,
-            "restock_status": get_restock_label(item.quantity),
+            "restock_status": get_restock_label(round(item.quantity / 1000, 3)),
             "available_units": available_units_map.get(item.blood_type, 0),
         }
-        for item in inventory
+        for item in filtered_inventory
     ]
 
+    inventory_table = InventoryTable(filtered_inventory_data, prefix="1-")
+
+    # bloodunits table
+
+    bloodunits_filter = BloodUnitsFilter(request.GET, queryset=bloodunits, prefix='bloodunit')
+    filtered_bloodunits = bloodunits_filter.qs
+
+    bloodunits_table = BloodUnitsTable(filtered_bloodunits, prefix='2-')
+
+    RequestConfig(request).configure(inventory_table)
+    RequestConfig(request).configure(bloodunits_table)
+
     context = {
-        'inventories': inventory_data,
+        'inventories': filtered_inventory_data,
         'profile': profile,
         'user': user,
-        'bloodunits': bloodunits
+        'bloodunits_filter': bloodunits_filter,
+        'bloodunits_table': bloodunits_table,
+        'facility_inventory_filter': facility_inventory_filter,
+        'inventory_table': inventory_table
     }
 
-    return render(request, 'donations/inventory.html', context)
+    return render(request, 'facility/inventory/inventory.html', context)
 
 
 @receiver(post_save, sender=Donation)
